@@ -7,18 +7,18 @@
 
 ## Summary
 
-Implement a CLI-based todo application with in-memory storage following TDD principles. The application will support core CRUD operations (Add, View, Update, Delete, Mark Complete) with an interactive command-line interface using navigation keys (arrows, enter) and beautified output with colors and icons. Tests will be generated using pytest before implementation using the python-test-generator skill.
+Implement a CLI-based todo application with in-memory storage following TDD principles. The application will support core CRUD operations (Add, View, Update, Delete, Mark Complete) with an interactive command-line interface using navigation keys (arrows, enter) and beautified output with colors and icons. Tests will be generated using pytest before implementation using the python-test-generator skill. The interactive CLI will support arrow-key navigation for all operations, pagination for many tasks, and beautified output with py-cli-beautifier. Edge cases will be handled comprehensively with proper error messaging and validation.
 
 ## Technical Context
 
 **Language/Version**: Python 3.13+ (as per constitution)
-**Primary Dependencies**: inquirer (for interactive CLI), py-cli-beautifier (for UI formatting), python-test-generator (for TDD)
+**Primary Dependencies**: inquirer (for interactive CLI - operates locally with no network communication), py-cli-beautifier (for UI formatting), python-test-generator (for TDD)
 **Storage**: In-memory only (as per constitution - no persistent storage)
 **Testing**: pytest (as per constitution and TDD requirement)
 **Target Platform**: Cross-platform console application (Windows, macOS, Linux)
 **Project Type**: Single console application
-**Performance Goals**: <5 seconds per operation, handle 100+ tasks in memory
-**Constraints**: <100MB memory usage, no network communication, no persistent storage
+**Performance Goals**: <5 seconds per operation, handle 100+ tasks in memory, <100MB memory usage
+**Constraints**: No network communication during runtime, no persistent storage, inquirer library must operate locally only
 **Scale/Scope**: Single user, 100+ tasks in memory
 
 ## Constitution Check
@@ -29,7 +29,7 @@ Implement a CLI-based todo application with in-memory storage following TDD prin
 2. **No Manual Coding**: All code must be generated via Claude Code based on specifications
 3. **Phase 1 Scope**: Implementation limited to core CRUD operations only (no advanced features like priorities, tags, due dates)
 4. **In-Memory Storage**: All data must remain in memory during runtime (no file I/O or databases)
-5. **No Network Communication**: No HTTP requests, sockets, or network APIs allowed
+5. **No Network Communication**: No HTTP requests, sockets, or network APIs allowed during runtime; inquirer library operates locally only
 6. **Python Best Practices**: All code must follow PEP 8 guidelines and include proper error handling
 
 ## Project Structure
@@ -81,3 +81,4 @@ tests/
 |-----------|------------|-------------------------------------|
 | Interactive CLI library (inquirer) | Required for arrow-key navigation as specified | Basic input() would not support navigation keys |
 | py-cli-beautifier dependency | Required for colored output and formatting as specified | Plain text output would not meet UI requirements |
+ 

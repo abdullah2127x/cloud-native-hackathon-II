@@ -3,10 +3,10 @@
 ## Decision: Interactive CLI Library Choice
 **Rationale**: Need a library that supports arrow-key navigation for interactive selection as specified in requirements
 **Alternatives considered**:
-- `inquirer`: Well-maintained, supports arrow-key selection, good for CLI apps
+- `inquirer`: Well-maintained, supports arrow-key selection, good for CLI apps, operates locally without network communication
 - `prompt_toolkit`: More complex but feature-rich, supports advanced CLI interactions
 - `rich`: Good for formatting but requires additional components for full interaction
-**Chosen**: `inquirer` - best balance of functionality and simplicity for this use case
+**Chosen**: `inquirer` - best balance of functionality and simplicity for this use case, operates locally without network communication
 
 ## Decision: UI Beautification Approach
 **Rationale**: Need to format CLI output with colors, spacing, and icons as specified
@@ -34,3 +34,11 @@
 ## Decision: Task Data Model
 **Rationale**: Based on specification requirements for Task entity
 **Fields**: ID (sequential), title, description (optional), completion status (boolean)
+
+## Decision: Pagination/Scrolling for Many Tasks
+**Rationale**: Need to handle display of many tasks as specified in requirements
+**Approach**: Use inquirer's built-in pagination features or implement custom scrolling mechanism for task lists exceeding terminal height
+
+## Decision: Network Communication Compliance
+**Rationale**: Constitution prohibits network communication during runtime
+**Verification**: Confirmed that inquirer library operates locally for UI interaction without network communication during runtime; network may only be used during initial package installation

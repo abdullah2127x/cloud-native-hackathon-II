@@ -17,6 +17,11 @@
 - **Returns**: List of task dictionaries with id, title, description, completed fields
 - **Note**: Returns empty list if no tasks exist
 
+#### `get_task_by_id(task_id: int) -> Optional[Dict]`
+- **Purpose**: Retrieve a specific task by its ID
+- **Parameters**: task_id (int): ID of task to retrieve
+- **Returns**: Dict of task details if found, None if not found
+
 #### `update_task(task_id: int, title: str = None, description: str = None) -> bool`
 - **Purpose**: Update an existing task's details
 - **Parameters**:
@@ -34,3 +39,15 @@
 - **Purpose**: Toggle the completion status of a task
 - **Parameters**: task_id (int): ID of task to toggle
 - **Returns**: bool - True if toggle successful, False if task not found
+
+#### `get_task_count() -> int`
+- **Purpose**: Get the total number of tasks in the list
+- **Returns**: int - Total count of tasks
+
+#### `get_completed_tasks() -> List[Dict]`
+- **Purpose**: Retrieve all completed tasks
+- **Returns**: List of completed task dictionaries
+
+#### `get_pending_tasks() -> List[Dict]`
+- **Purpose**: Retrieve all pending tasks
+- **Returns**: List of pending task dictionaries

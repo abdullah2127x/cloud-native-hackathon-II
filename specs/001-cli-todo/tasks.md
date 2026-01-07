@@ -87,20 +87,30 @@ Within each user story, these tasks can be executed in parallel:
 
 - [ ] T034 [P] Integrate inquirer library for interactive selection in src/cli/interactive_cli.py
 - [ ] T035 Implement arrow-key navigation for menu selection in interactive CLI
+- [ ] T035.1 [P] [US1] Implement arrow-key navigation for task selection in view operations
+- [ ] T035.2 [P] [US2] Implement arrow-key navigation for task selection in update operations
+- [ ] T035.3 [P] [US2] Implement arrow-key navigation for task selection in delete operations
+- [ ] T035.4 [P] [US3] Implement arrow-key navigation for task selection in mark complete operations
 - [ ] T036 [P] Integrate py-cli-beautifier for colored output and formatting
 - [ ] T037 Add icons and colors to distinguish completed vs pending tasks
 - [ ] T038 Enhance task display with formatting using py-cli-beautifier
 - [ ] T039 Implement proper error messages with formatting using py-cli-beautifier
+- [ ] T039.1 [US1] Add pagination or scrolling for displaying many tasks in view operations
 
 ## Phase 7: Edge Cases and Validation
 
 **Goal**: Handle all edge cases and validation scenarios as specified
 
 - [ ] T040 [P] Add validation for non-existent tasks during update/delete operations
+- [ ] T040.1 [US2] Handle non-existent task update with appropriate error message
+- [ ] T040.2 [US2] Handle non-existent task delete with appropriate error message
 - [ ] T041 Add validation for invalid task IDs during operations
 - [ ] T042 Handle empty task list scenario in view operations
+- [ ] T042.1 [US1] Handle empty task list when viewing with appropriate message
 - [ ] T043 Add description length validation (max 500 characters)
 - [ ] T044 Add proper error handling and user feedback for all operations
+- [ ] T044.1 [US1] Handle empty task title input with user prompt and validation
+- [ ] T044.2 [US2,US3] Handle invalid task IDs during operations with error message
 - [ ] T045 Generate contract tests for TaskService interface in tests/contract/test_task_service_contract.py
 
 ## Phase 8: Integration and Polish
@@ -110,6 +120,7 @@ Within each user story, these tasks can be executed in parallel:
 - [ ] T046 [P] Create integration tests for CLI interface in tests/integration/test_cli.py
 - [ ] T047 Test complete user workflows across all functionality
 - [ ] T048 Add comprehensive error handling throughout application
-- [ ] T049 Optimize performance for handling 100+ tasks in memory
+- [ ] T049 Verify application handles 100+ tasks in memory with <5 seconds response time per operation per SC-001, <100MB memory usage per constitution
 - [ ] T050 Final testing and validation of all user stories and requirements
 - [ ] T051 Update quickstart guide with complete usage instructions
+- [ ] T052 Verify all implemented functionality complies with constitution principles (no network communication, in-memory only, TDD approach)

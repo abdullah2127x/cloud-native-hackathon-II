@@ -13,6 +13,7 @@
 - Description, if provided, must not exceed 500 characters
 - ID must be unique within the application session
 - ID must be auto-generated as sequential numbers (1, 2, 3, etc.)
+- Task must exist before update/delete operations
 
 ### State Transitions
 - `pending` → `completed`: When user marks task as complete
@@ -34,3 +35,8 @@
 - Update Task: Find by ID, update specified fields
 - Mark Complete: Find by ID, toggle completion status
 - List Tasks: Return all tasks in the collection
+- Find Task: Locate task by ID with validation
+
+### Pagination/Display Considerations
+- For large task lists (>20 tasks), implement pagination for display
+- Track current view position for scrolling through long lists
