@@ -208,3 +208,10 @@ Wait for consent; never auto-create ADRs. Group related decisions (stacks, authe
 
 ## Code Standards
 See `.specify/memory/constitution.md` for code quality, testing, performance, security, and architecture principles.
+
+## Active Technologies
+- Python 3.13+ (as per constitution) + inquirer (for interactive CLI), py-cli-beautifier (for UI formatting), python-test-generator (for TDD) (001-cli-todo)
+- In-memory only (as per constitution - no persistent storage) (001-cli-todo)
+
+## Recent Changes
+- 001-cli-todo: Added Python 3.13+ (as per constitution) + inquirer (for interactive CLI), py-cli-beautifier (for UI formatting), python-test-generator (for TDD)
