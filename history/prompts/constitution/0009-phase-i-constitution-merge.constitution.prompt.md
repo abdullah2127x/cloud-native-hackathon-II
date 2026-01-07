@@ -14,7 +14,7 @@ links:
   spec: null
   ticket: null
   adr: null
-  pr: https://github.com/abdullah2127x/claude-native-hackathon-II/pull/1
+  pr: https://github.com/abdullah2127x/cloud-native-hackathon-II/pull/1
 files:
  - .specify/memory/constitution.md
  - history/prompts/constitution/*.md

@@ -85,38 +85,6 @@ wheels = [
 ]
 
 [[package]]
-name = "claude-native-hackathon-II"
-version = "0.1.0"
-source = { editable = "." }
-dependencies = [
-    { name = "colorama" },
-    { name = "inquirer" },
-    { name = "keyboard" },
-    { name = "pyaudio" },
-    { name = "rich" },
-    { name = "speechrecognition" },
-]
-
-[package.optional-dependencies]
-dev = [
-    { name = "pytest" },
-    { name = "pytest-mock" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "colorama", specifier = ">=0.4.0" },
-    { name = "inquirer", specifier = ">=3.1.0" },
-    { name = "keyboard", specifier = ">=0.13.5" },
-    { name = "pyaudio", specifier = ">=0.2.11" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=7.0" },
-    { name = "pytest-mock", marker = "extra == 'dev'", specifier = ">=3.10.0" },
-    { name = "rich", specifier = ">=12.0.0" },
-    { name = "speechrecognition", specifier = ">=3.10.0" },
-]
-provides-extras = ["dev"]
-
-[[package]]
 name = "colorama"
 version = "0.4.6"
 source = { registry = "https://pypi.org/simple" }
@@ -214,6 +182,40 @@ sdist = { url = "https://files.pythonhosted.org/packages/a1/d4/1fc4078c65507b51b
 wheels = [
     { url = "https://files.pythonhosted.org/packages/20/12/38679034af332785aac8774540895e234f4d07f7545804097de4b666afd8/packaging-25.0-py3-none-any.whl", hash = "sha256:29572ef2b1f17581046b3a2227d5c611fb25ec70ca1ba8554b24b0e69331a484", size = 66469, upload-time = "2025-04-19T11:48:57.875Z" },
 ]
+
+[[package]]
+name = "phase-1-cli-todo-app"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "colorama" },
+    { name = "inquirer" },
+    { name = "keyboard" },
+    { name = "pyaudio" },
+    { name = "pytest" },
+    { name = "rich" },
+    { name = "speechrecognition" },
+]
+
+[package.optional-dependencies]
+dev = [
+    { name = "pytest" },
+    { name = "pytest-mock" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "colorama", specifier = ">=0.4.0" },
+    { name = "inquirer", specifier = ">=3.1.0" },
+    { name = "keyboard", specifier = ">=0.13.5" },
+    { name = "pyaudio", specifier = ">=0.2.11" },
+    { name = "pytest", specifier = ">=9.0.2" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=7.0" },
+    { name = "pytest-mock", marker = "extra == 'dev'", specifier = ">=3.10.0" },
+    { name = "rich", specifier = ">=12.0.0" },
+    { name = "speechrecognition", specifier = ">=3.10.0" },
+]
+provides-extras = ["dev"]
 
 [[package]]
 name = "pluggy"
