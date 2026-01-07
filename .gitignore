@@ -10,7 +10,9 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+# Exclude system-level library directories but keep project-specific lib directories
+**/site-packages/
+**/dist-packages/
 lib64/
 parts/
 sdist/
