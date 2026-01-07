@@ -10,11 +10,12 @@
 3. Run the application: `python -m src.cli.main`
 
 ## Usage
-1. Launch the application: `python -m src.cli.main`
+1. Launch the application: `python -m src/cli/main.py`
 2. Use arrow keys to navigate between menu options and tasks
 3. Press Enter to select an option or confirm an action
 4. Follow the interactive prompts for each operation
-5. For large task lists (>20 tasks), use pagination controls (n/p for next/previous page, q to quit)
+5. Tasks are displayed with visual indicators (✓ for completed, ○ for pending) and color coding
+6. For large task lists (>20 tasks), a note will appear suggesting filtering options
 
 ## Available Operations
 - **Add Task**: Create a new task with title and optional description
