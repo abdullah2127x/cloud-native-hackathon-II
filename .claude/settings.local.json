@@ -12,7 +12,8 @@
       "Bash(then ls \"D:/AbdullahQureshi/workspace/Hackathon-2025/hackathon-2/todo-in-memory-console-app/specs/001-cli-todo/checklists\")",
       "Bash(else echo \"No checklists directory found\")",
       "Bash(fi)",
-      "Bash(python -m pytest tests/integration/test_cli.py -v)"
+      "Bash(python -m pytest tests/integration/test_cli.py -v)",
+      "WebSearch"
     ]
   }
 }
