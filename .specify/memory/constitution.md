@@ -1,58 +1,128 @@
-# Claude Native Hackathon II Constitution
-<!-- Constitution for Hackathon II Phase I: Claude Native Todo Console App -->
+# Project Constitution
 
 ## Core Principles
 
+### I. Test-Driven Development
 
-### I. Test-Driven Development (TDD)
-All new features and bug fixes must be implemented using a Test-Driven Development approach; Tests must be written with `pytest` and pass before any functional code is considered complete.
-<!-- Emphasizes TDD and specifies pytest as the testing framework -->
+All features and bug fixes MUST be implemented using Test-Driven Development; Tests MUST pass before code is considered complete.
 
-### II. No Manual Coding Rule
-All code must be generated via Claude Code based on specifications; No hand-written code is permitted; Any deviation violates the constitution.
-<!-- Strict adherence to AI-assisted development methodology -->
+**Rationale**: TDD ensures correctness, provides living documentation, and prevents regressions.
 
-### III. Phase 1 Scope Boundaries
-Implementation limited to Phase 1 requirements only; No features from future phases may be implemented until constitution is updated; Console-only interface with in-memory storage.
-<!-- Clear scope limitations prevent feature creep -->
+### II. No Manual Coding
 
-### IV. In-Memory Storage Constraint
-All data must remain in memory during application runtime; No persistent storage, databases, or file I/O allowed in Phase 1; Data loss on application exit is expected behavior.
-<!-- Technology constraint specific to Phase 1 requirements -->
+All code MUST be generated via Claude Code based on specifications; Hand-written code is prohibited.
 
-### V. Basic CRUD Operations Only
-Must implement core operations for task management; No advanced features like priorities, tags, due dates, or recurring tasks.
-<!-- Feature completeness boundary for Phase 1 -->
+**Rationale**: Spec-Driven Development ensures consistency and traceability from requirements to implementation.
 
-### VI. Clean Python Code Standards
-All code must follow Python best practices and PEP 8 guidelines; Proper error handling and user feedback required; Clear, maintainable code structure mandated.
-<!-- Quality standards for implementation -->
+### III. Code Quality Standards
 
-### VII. Network Communication Prohibition
-Network communication of any kind is prohibited in Phase I; No HTTP requests, sockets, or network APIs may be used; Any implementation that attempts network communication must halt immediately.
-<!-- Hard prohibition on network communication for Phase 1 -->
+All code MUST follow language-specific best practices; Every file MUST reference the Task ID and Spec that authorized its creation.
 
-### VIII. Persistent Storage Prohibition
-Writing data to files, databases, or any external storage must not occur under any circumstance; All data must remain in memory only; Violation of this constraint voids all development work.
-<!-- Absolute prohibition on persistent storage for Phase 1 -->
+**Standards**:
+- Type hints required
+- Linting rules enforced
+- Consistent formatting applied
 
-## Technology Stack Requirements
-<!-- Additional Constraints, Technology Requirements, etc. -->
+**Rationale**: Quality and traceability are non-negotiable.
 
-Python 3.13+ with UV package manager required; Claude Code and Spec-Kit Plus tools mandatory; Console interface only - no web UI or frontend development.
-<!-- Technology stack boundaries and requirements -->
+### IV. Development Workflow
 
-## Development Workflow
-<!-- Development Process, Review Process, Quality Gates, etc. -->
+Specifications MUST be written before implementation; Implementation MUST follow specifications; All changes MUST comply with constitutional principles.
 
-Specifications must be written before implementation; Claude Code must generate all code based on specs; All changes must comply with constitution principles; Regular verification that no manual coding occurred.
-<!-- Process requirements for development workflow -->
+**Required Workflow**: Specify → Plan → Tasks → Implement
 
-## Governance
-<!-- Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
+**Rationale**: Spec-Driven Development prevents unplanned work and ensures requirements drive implementation.
 
-This constitution governs all development activities for Phase 1; Amendments require explicit update to constitution file; All PRs/reviews must verify compliance with these principles; Deviations require constitution update before implementation.
-<!-- Governance and compliance requirements -->
+### V. Governance
 
-**Version**: 1.1.0 | **Ratified**: 2026-01-05 | **Last Amended**: 2026-01-05
-<!-- Version: MAJOR.MINOR.PATCH | Ratified: YYYY-MM-DD | Last Amended: YYYY-MM-DD -->
+This constitution governs all development; Amendments require version bump; Compliance MUST be verified; Deviations require constitutional amendment before proceeding.
+
+**Amendment Procedure**:
+- MAJOR: Incompatible principle changes
+- MINOR: New principles added
+- PATCH: Clarifications only
+
+**Rationale**: Constitutional governance ensures predictability and prevents scope creep.
+
+---
+
+## Project Scope
+
+### VI. Required Features
+
+- Basic CRUD operations (Add, Delete, Update, View, Mark Complete) as web application
+- User authentication
+- Multi-user task isolation
+- RESTful API
+- Persistent database storage
+- Responsive UI
+
+### VII. Prohibited Features
+
+- AI chatbot or natural language processing
+- Advanced task features (priorities, tags, dates, recurring, reminders)
+- Real-time collaboration
+- Mobile native applications
+- Container orchestration
+- Event-driven architecture
+- Voice commands
+
+**Rationale**: Clear boundaries prevent scope creep.
+
+---
+
+## Technical Constraints
+
+### VIII. Persistent Storage
+
+Database storage is REQUIRED; In-memory storage is PROHIBITED; Data MUST persist across restarts.
+
+**Rationale**: Multi-user applications require persistence.
+
+### IX. RESTful API Architecture
+
+Backend MUST expose RESTful API; Frontend MUST communicate via HTTP/HTTPS; JSON format required.
+
+**Rationale**: Standard contract between frontend and backend.
+
+### X. Security & User Isolation
+
+Every user MUST only access their own data; User identity MUST be cryptographically verified; User identity MUST filter all data queries; Cross-user data access is PROHIBITED.
+
+**Rationale**: Multi-user security requires strict isolation and verified identity.
+
+### XI. Authentication
+
+JWT-based authentication is REQUIRED; Shared secret MUST secure frontend and backend communication; Token verification MUST occur before data access.
+
+**Rationale**: Stateless authentication enables scalability.
+
+### XII. Architecture
+
+Monorepo structure is REQUIRED; Frontend and backend MUST be separated; Specifications MUST be shared between both.
+
+**Rationale**: Single repository enables full context visibility and simplifies specification management.
+
+---
+
+## Technology Stack
+
+**Frontend**: Next.js, TypeScript, Tailwind CSS, Better Auth
+
+**Backend**: Python, FastAPI, SQLModel, Pydantic
+
+**Database**: PostgreSQL (Neon Serverless)
+
+**Development**: Claude Code, Spec-Kit Plus
+
+**Rationale**: Technology stack is fixed.
+
+---
+
+**Version**: 2.0.0
+**Ratified**: 2026-01-05
+**Last Amended**: 2026-01-08
+
+---
+
+*This constitution is the single source of truth. All development MUST comply with these principles.*
