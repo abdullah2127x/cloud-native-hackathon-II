@@ -22,12 +22,12 @@ Todo Operations:
 - Each user sees ONLY their own todos
 
 Data Requirements:
-- Title: required, 1-200 characters
-- Description: optional, max 1000 characters
+- Title: required, 1-200 Unicode characters (UTF-8 encoded)
+- Description: optional, max 1000 Unicode characters (UTF-8 encoded)
 - Completed: boolean status
-- Created timestamp
-- Updated timestamp
-- User association (todos belong to authenticated user)
+- Created timestamp: ISO 8601 format
+- Updated timestamp: ISO 8601 format
+- User association: foreign key to authenticated user
 UI Requirements:
 - Responsive design (mobile-first)
 - Clean, modern interface
@@ -35,7 +35,7 @@ UI Requirements:
 - Success/error messages
 - Form validation with helpful errors
 
-This is Phase 2 of the hackathon - we have 5 basic features to implement.
+This is Phase 2 of the hackathon - implementing the Todo CRUD feature.
 This is the foundation that all future features build upon."
 
 ## Clarifications

@@ -91,6 +91,8 @@ Allow authenticated users to create new todo items.
 - [ ] T045 [US3] Add success notifications
 - [ ] T046 [US3] Create unit tests for create functionality
 - [ ] T047 [US3] Create integration tests for create functionality
+- [ ] T048 [US3] Implement responsive form layout for mobile devices
+- [ ] T049 [US3] Add touch-friendly controls for mobile users
 
 ## Phase 6: [US4] Read Todo Items
 
@@ -104,6 +106,8 @@ Display users' todo items with filtering and sorting.
 - [ ] T055 [US4] Implement sorting options
 - [ ] T056 [US4] Add loading states and error handling
 - [ ] T057 [US4] Create tests for read functionality
+- [ ] T058 [US4] Implement performance monitoring for API response times
+- [ ] T059 [US4] Add performance tests to ensure <200ms API responses
 
 ## Phase 7: [US5] Update Todo Items
 
@@ -152,7 +156,9 @@ Final touches and cross-cutting concerns.
 - [ ] T096 Write API documentation
 - [ ] T097 Write user documentation
 - [ ] T098 Conduct end-to-end testing
-- [ ] T099 Prepare for deployment
+- [ ] T099 Prepare Vercel deployment configuration
+- [ ] T100 Set up production environment variables
+- [ ] T101 Test production build process
 
 ---
 
