@@ -14,7 +14,10 @@
       "Bash(fi)",
       "Bash(python -m pytest tests/integration/test_cli.py -v)",
       "WebSearch",
-      "mcp__context7__query-docs"
+      "mcp__context7__query-docs",
+      "Bash(git --version)",
+      "Bash(git rev-parse --is-inside-work-tree)",
+      "Bash(git rev-parse --abbrev-ref HEAD)"
     ]
   }
 }

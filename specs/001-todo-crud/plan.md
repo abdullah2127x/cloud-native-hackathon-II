@@ -94,7 +94,7 @@ specs/001-todo-crud/
 ├── data-model.md        # Phase 1 output (/sp.plan command)
 ├── quickstart.md        # Phase 1 output (/sp.plan command)
 ├── contracts/           # Phase 1 output (/sp.plan command)
-└── tasks.md             # Phase 2 output (/sp.tasks command - NOT created by /sp.plan)
+└── tasks.md             # Phase 2 output (/sp.tasks command)
 ```
 
 ### Source Code (repository root)

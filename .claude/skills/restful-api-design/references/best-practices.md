@@ -8,10 +8,12 @@
 GET /users          # All users
 GET /products       # All products
 GET /orders         # All orders
+GET /categories     # All categories
 
 # Good: Nested resources
 GET /users/123/orders     # All orders for user 123
 GET /products/456/reviews # All reviews for product 456
+GET /orders/789/items     # All items in order 789
 ```
 
 ### ❌ AVOID: Inconsistent Naming
@@ -20,6 +22,10 @@ GET /products/456/reviews # All reviews for product 456
 GET /user           # Inconsistent with other resources
 GET /products       # Should be consistent
 GET /category/123   # Should be /categories/123
+
+# Avoid: Non-descriptive names
+GET /data/123       # Not descriptive enough
+GET /item/456       # Too generic
 ```
 
 ### ✅ DO: Use Descriptive and Consistent Names
@@ -27,28 +33,18 @@ GET /category/123   # Should be /categories/123
 # Good: Clear, descriptive names
 GET /users
 GET /products
-GET /categories
 GET /orders
+GET /customers
 GET /reviews
+GET /categories
+GET /tags
+GET /comments
 
 # Good: Consistent naming across the API
 GET /api/v1/users
 GET /api/v1/products
-GET /api/v1/categories
+GET /api/v1/orders
 # All follow the same pattern
-```
-
-### ✅ DO: Use Hyphens for Multi-Word Resources
-```http
-# Good: Use hyphens for readability
-GET /user-profiles
-GET /order-items
-GET /shopping-carts
-GET /api-keys
-
-# Avoid: Underscores or camelCase in URLs
-GET /user_profiles  # Not recommended
-GET /userProfiles   # Not recommended
 ```
 
 ## HTTP Method Usage Best Practices
@@ -63,28 +59,39 @@ GET /users/123/orders # Get user's orders
 # POST: Create resources or trigger actions
 POST /users         # Create new user
 POST /users/123/orders # Create order for user
+POST /users/123/password-reset # Trigger password reset
 
-# PUT: Update entire resource
+# PUT: Update entire resource (idempotent)
 PUT /users/123      # Replace entire user resource
+Content-Type: application/json
 
-# PATCH: Partial updates
+{
+  "name": "New Name",
+  "email": "new@example.com",
+  "status": "active"
+}
+
+# PATCH: Partial updates (idempotent)
 PATCH /users/123    # Update specific fields only
+Content-Type: application/json
 
-# DELETE: Remove resources
+{
+  "name": "Updated Name"
+}
+
+# DELETE: Remove resources (idempotent)
 DELETE /users/123   # Delete specific user
 ```
 
-### ❌ AVOID: Misusing HTTP Methods
+### ✅ DO: Follow Idempotent Principles
 ```http
-# Avoid: Using GET for modifications
-GET /users/123?delete=true  # Should be DELETE /users/123
+# Idempotent methods (safe to retry)
+GET /users/123      # Always returns the same result
+PUT /users/123      # Same request always produces same result
+DELETE /users/123   # Same request always produces same result
 
-# Avoid: Using POST for everything
-POST /users/123/update      # Should be PUT or PATCH /users/123
-POST /users/123/delete      # Should be DELETE /users/123
-
-# Avoid: Using PUT for partial updates
-PUT /users/123 {"name": "New Name"}  # PUT should include complete resource
+# Non-idempotent methods (results may vary)
+POST /users         # May create different resources each time
 ```
 
 ## Status Code Best Practices
@@ -95,37 +102,57 @@ PUT /users/123 {"name": "New Name"}  # PUT should include complete resource
 200 OK: GET, PUT, PATCH (when returning updated resource)
 201 Created: POST (when resource is created)
 204 No Content: DELETE, PUT, PATCH (when not returning resource)
+202 Accepted: Long-running operations (async processing)
 
 # 4xx Client Errors
-400 Bad Request: Invalid request format
-401 Unauthorized: Authentication required
+400 Bad Request: Invalid request format, validation errors
+401 Unauthorized: Authentication required/failed
 403 Forbidden: Authenticated but not authorized
 404 Not Found: Resource doesn't exist
-409 Conflict: Resource already exists
-422 Unprocessable Entity: Validation errors
+405 Method Not Allowed: Wrong HTTP method
+409 Conflict: Resource already exists, version conflicts
+422 Unprocessable Entity: Valid request but semantic errors
+429 Too Many Requests: Rate limiting
 
 # 5xx Server Errors
 500 Internal Server Error: Unexpected server error
+502 Bad Gateway: Upstream server error
 503 Service Unavailable: Server temporarily unavailable
+504 Gateway Timeout: Upstream server timeout
 ```
 
-### ✅ DO: Handle Status Codes Consistently
-```typescript
-// Good: Consistent error handling
-function handleApiError(status: number, error: any) {
-  switch (status) {
-    case 400:
-      return { code: 'BAD_REQUEST', message: error.message };
-    case 401:
-      return { code: 'UNAUTHORIZED', message: 'Authentication required' };
-    case 403:
-      return { code: 'FORBIDDEN', message: 'Access denied' };
-    case 404:
-      return { code: 'NOT_FOUND', message: 'Resource not found' };
-    case 422:
-      return { code: 'VALIDATION_ERROR', message: 'Validation failed', details: error.details };
-    default:
-      return { code: 'INTERNAL_ERROR', message: 'An unexpected error occurred' };
+### ✅ DO: Be Specific with Error Responses
+```http
+# Good: Specific error response
+HTTP/1.1 400 Bad Request
+Content-Type: application/json
+
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid input data",
+    "details": [
+      {
+        "field": "email",
+        "code": "INVALID_FORMAT",
+        "message": "Invalid email format"
+      }
+    ]
+  }
+}
+
+# Good: Resource not found
+HTTP/1.1 404 Not Found
+Content-Type: application/json
+
+{
+  "success": false,
+  "error": {
+    "code": "RESOURCE_NOT_FOUND",
+    "message": "User not found",
+    "resource": "user",
+    "id": "123"
   }
 }
 ```
@@ -134,34 +161,37 @@ function handleApiError(status: number, error: any) {
 
 ### ✅ DO: Use Consistent Response Structure
 ```json
+// Success response with data
 {
   "success": true,
   "data": {
-    // Resource data here
+    "id": 123,
+    "name": "John Doe",
+    "email": "john@example.com"
   },
-  "message": "Operation completed successfully"
+  "message": "User retrieved successfully"
 }
-```
 
-### ✅ DO: Include Metadata in List Responses
-```json
+// Success response for list
 {
   "success": true,
   "data": [
-    // Array of resources
+    {
+      "id": 123,
+      "name": "John Doe",
+      "email": "john@example.com"
+    }
   ],
+  "message": "Users retrieved successfully",
   "pagination": {
     "page": 1,
     "limit": 10,
     "total": 100,
     "totalPages": 10
-  },
-  "message": "Resources retrieved successfully"
+  }
 }
-```
 
-### ✅ DO: Format Error Responses Consistently
-```json
+// Error response
 {
   "success": false,
   "error": {
@@ -170,10 +200,25 @@ function handleApiError(status: number, error: any) {
     "details": [
       {
         "field": "email",
-        "code": "INVALID_FORMAT",
-        "message": "Invalid email format"
+        "message": "Email is required"
       }
     ]
+  }
+}
+```
+
+### ✅ DO: Handle Empty Lists Properly
+```json
+// Good: Empty list response
+{
+  "success": true,
+  "data": [],
+  "message": "Users retrieved successfully",
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 0,
+    "totalPages": 0
   }
 }
 ```
@@ -184,15 +229,19 @@ function handleApiError(status: number, error: any) {
 ```http
 # Pagination
 GET /users?page=1&limit=10
+GET /users?offset=0&limit=20
+
+# Filtering
+GET /users?status=active&role=admin
+GET /products?category=electronics&minPrice=100&maxPrice=500
+
+# Searching
+GET /users?search=john
+GET /products?search=laptop&q=gaming
 
 # Sorting
 GET /users?sort=name&order=asc
-
-# Filtering
-GET /users?status=active&role=user
-
-# Search
-GET /users?search=john
+GET /users?sortBy=createdAt&sortOrder=desc
 
 # Field selection (if supported)
 GET /users?fields=id,name,email
@@ -267,6 +316,57 @@ function calculatePagination(total: number, page: number, limit: number) {
 }
 ```
 
+## Security Best Practices
+
+### ✅ DO: Implement Proper Authentication
+```http
+# Good: JWT token in Authorization header
+GET /users/123
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+# Good: API Key in header (for service-to-service)
+GET /users/123
+X-API-Key: your-api-key-here
+```
+
+### ✅ DO: Validate Input Properly
+```json
+// Good: Input validation
+{
+  "email": "user@example.com",
+  "name": "John Doe",
+  "age": 30
+}
+
+// Good: Validation response
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Validation failed",
+    "details": [
+      {
+        "field": "email",
+        "message": "Invalid email format"
+      }
+    ]
+  }
+}
+```
+
+### ✅ DO: Implement Rate Limiting
+```http
+# Good: Rate limiting headers
+HTTP/1.1 200 OK
+X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 99
+X-RateLimit-Reset: 1609459200
+
+# Rate limit exceeded
+HTTP/1.1 429 Too Many Requests
+Retry-After: 60
+```
+
 ## Error Handling Best Practices
 
 ### ✅ DO: Provide Meaningful Error Messages
@@ -277,7 +377,7 @@ function calculatePagination(total: number, page: number, limit: number) {
     "code": "USER_NOT_FOUND",
     "message": "The requested user does not exist",
     "timestamp": "2024-01-01T12:00:00Z",
-    "path": "/users/999"
+    "requestId": "req-12345"
   }
 }
 ```
@@ -314,55 +414,9 @@ function logApiError(error: any, context: any) {
     error: error.message,
     stack: error.stack,
     context,
-    user: context.userId || 'anonymous'
+    userId: context.userId || 'anonymous',
+    requestId: context.requestId
   });
-}
-```
-
-## Security Best Practices
-
-### ✅ DO: Implement Rate Limiting
-```http
-# Good: Rate limiting headers
-HTTP/1.1 200 OK
-X-RateLimit-Limit: 100
-X-RateLimit-Remaining: 99
-X-RateLimit-Reset: 1609459200
-
-# Rate limit exceeded
-HTTP/1.1 429 Too Many Requests
-Retry-After: 60
-```
-
-### ✅ DO: Validate Input Data
-```typescript
-// Good: Input validation
-function validateUserInput(input: any) {
-  const errors = [];
-
-  if (!input.email || typeof input.email !== 'string') {
-    errors.push({ field: 'email', message: 'Email is required and must be a string' });
-  }
-
-  if (!input.name || input.name.length < 2) {
-    errors.push({ field: 'name', message: 'Name must be at least 2 characters' });
-  }
-
-  return errors;
-}
-```
-
-### ✅ DO: Sanitize Sensitive Data
-```typescript
-// Good: Sanitize sensitive data before sending
-function sanitizeUserResponse(user: any) {
-  return {
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    createdAt: user.createdAt,
-    // Don't include sensitive fields like password, tokens, etc.
-  };
 }
 ```
 
@@ -443,6 +497,14 @@ function handleUserResponse(user: any, version: string) {
 
 ## Common Anti-Patterns to Avoid
 
+### ❌ Anti-pattern: Inconsistent Status Codes
+```http
+# Avoid: Inconsistent status codes
+POST /users - Returns 200 instead of 201 when creating
+DELETE /users/123 - Returns 200 with body instead of 204
+GET /users/999 - Returns 200 with null instead of 404
+```
+
 ### ❌ Anti-pattern: Inconsistent Response Formats
 ```json
 // Avoid: Inconsistent response formats
@@ -478,80 +540,58 @@ GET /users → {"success": true, "data": [{"id": 123, "name": "John"}]}
 }
 ```
 
-### ❌ Anti-pattern: Returning Too Much Data
+### ❌ Anti-pattern: Exposing Internal Details
 ```json
-// Avoid: Returning full nested objects when not needed
+// Avoid: Exposing internal server details
 {
-  "user": {
-    "id": 123,
-    "name": "John",
-    "orders": [
-      {
-        "id": 456,
-        "items": [
-          {
-            "id": 789,
-            "product": {
-              "id": 101,
-              "name": "Product",
-              "description": "Full product details...",
-              "specifications": { /* lots of data */ }
-            }
-          }
-        ]
-      }
-    ]
+  "success": false,
+  "error": {
+    "message": "Internal Server Error: TypeError: Cannot read property 'name' of undefined at /path/to/file.js:123:45"
   }
 }
 
-// Better: Return references or limited data
+// Good: Generic error with internal tracking
 {
-  "user": {
-    "id": 123,
-    "name": "John",
-    "orderIds": [456]
+  "success": false,
+  "error": {
+    "code": "INTERNAL_ERROR",
+    "message": "An unexpected error occurred",
+    "requestId": "req-12345"  // For internal tracking
   }
 }
 ```
 
 ## Testing Best Practices
 
-### ✅ DO: Test API Endpoints Thoroughly
+### ✅ DO: Test API Endpoints Properly
 ```typescript
-// Good: Comprehensive API testing
+// Good: API testing with different scenarios
 describe('Users API', () => {
-  it('should create a user with valid data', async () => {
+  it('should return 200 and user data when user exists', async () => {
     const response = await request(app)
-      .post('/api/v1/users')
-      .send({
-        name: 'John Doe',
-        email: 'john@example.com'
-      });
+      .get('/api/v1/users/123')
+      .set('Authorization', 'Bearer valid-token');
 
-    expect(response.status).toBe(201);
+    expect(response.status).toBe(200);
     expect(response.body.success).toBe(true);
-    expect(response.body.data.name).toBe('John Doe');
+    expect(response.body.data.id).toBe(123);
   });
 
-  it('should return 422 for invalid data', async () => {
+  it('should return 404 when user does not exist', async () => {
     const response = await request(app)
-      .post('/api/v1/users')
-      .send({
-        name: '',  // Invalid - empty name
-        email: 'invalid-email'  // Invalid email
-      });
-
-    expect(response.status).toBe(422);
-    expect(response.body.success).toBe(false);
-    expect(response.body.error.details).toHaveLength(2);
-  });
-
-  it('should return 404 for non-existent user', async () => {
-    const response = await request(app)
-      .get('/api/v1/users/999999');
+      .get('/api/v1/users/999')
+      .set('Authorization', 'Bearer valid-token');
 
     expect(response.status).toBe(404);
     expect(response.body.success).toBe(false);
+    expect(response.body.error.code).toBe('USER_NOT_FOUND');
+  });
+
+  it('should return 401 when no token provided', async () => {
+    const response = await request(app)
+      .get('/api/v1/users/123');
+
+    expect(response.status).toBe(401);
   });
 });
 ```
@@ -562,7 +602,7 @@ describe('Users API', () => {
 describe('Pagination', () => {
   it('should handle page 0', async () => {
     const response = await request(app).get('/api/v1/users?page=0&limit=10');
-    // Should either return page 1 or proper error
+    // Should either return page 1 or proper validation error
   });
 
   it('should handle large page numbers', async () => {
@@ -577,90 +617,52 @@ describe('Pagination', () => {
 });
 ```
 
-## Documentation Best Practices
+## Performance Optimization Patterns
 
-### ✅ DO: Maintain API Documentation
-```yaml
-# Good: OpenAPI specification
-openapi: 3.0.0
-info:
-  title: My API
-  version: 1.0.0
-paths:
-  /users:
-    post:
-      summary: Create a new user
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - name
-                - email
-              properties:
-                name:
-                  type: string
-                  minLength: 2
-                email:
-                  type: string
-                  format: email
-      responses:
-        '201':
-          description: User created successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                  data:
-                    $ref: '#/components/schemas/User'
-```
+### ✅ DO: Implement Proper Error Handling
+```typescript
+// Good: Proper error handling with appropriate status codes
+async function getUser(req, res) {
+  try {
+    const user = await userService.findById(req.params.id);
 
-### ✅ DO: Include Example Requests/Responses
-```markdown
-## Create User
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: {
+          code: 'USER_NOT_FOUND',
+          message: 'User not found'
+        }
+      });
+    }
 
-**POST** `/api/v1/users`
+    return res.status(200).json({
+      success: true,
+      data: user,
+      message: 'User retrieved successfully'
+    });
+  } catch (error) {
+    // Log the actual error for debugging
+    console.error('Error retrieving user:', error);
 
-### Request
-```json
-{
-  "name": "John Doe",
-  "email": "john@example.com"
-}
-```
-
-### Response (201 Created)
-```json
-{
-  "success": true,
-  "data": {
-    "id": 123,
-    "name": "John Doe",
-    "email": "john@example.com",
-    "createdAt": "2024-01-01T12:00:00Z"
-  }
-}
-```
-
-### Error Response (422 Unprocessable Entity)
-```json
-{
-  "success": false,
-  "error": {
-    "code": "VALIDATION_ERROR",
-    "message": "Validation failed",
-    "details": [
-      {
-        "field": "email",
-        "code": "INVALID_FORMAT",
-        "message": "Invalid email format"
+    // Return generic error to client
+    return res.status(500).json({
+      success: false,
+      error: {
+        code: 'INTERNAL_ERROR',
+        message: 'An unexpected error occurred'
       }
-    ]
+    });
   }
 }
+```
+
+### ✅ DO: Use Proper HTTP Headers
+```http
+# Good: Proper headers for security and performance
+Content-Type: application/json
+Content-Length: [length]
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+Strict-Transport-Security: max-age=31536000; includeSubDomains
 ```
