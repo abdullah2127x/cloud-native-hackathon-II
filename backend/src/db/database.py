@@ -2,13 +2,15 @@
 from sqlmodel import create_engine, Session, SQLModel
 from typing import Generator
 
+# Import all models so SQLModel knows about them when creating tables
+from src.models.user import User  # noqa: F401
+from src.models.task import Task  # noqa: F401
+from src.config import settings
 
-# Database URL will be configured via environment
-DATABASE_URL = "sqlite:///./test.db"  # Placeholder - will be overridden by config
 
 # Create engine
 engine = create_engine(
-    DATABASE_URL,
+    settings.database_url,
     echo=False,  # Set to True for SQL debugging
     connect_args={"check_same_thread": False},  # Needed for SQLite
 )
