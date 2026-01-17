@@ -16,9 +16,9 @@ class Settings(BaseSettings):
     # CORS
     cors_origins: List[str] = ["http://localhost:3000"]
 
-    # JWT
-    jwt_algorithm: str = "RS256"
-    jwt_audience: str = "todo-app"
+    # JWT - Better Auth uses EdDSA (Ed25519) by default, audience is BASE_URL
+    jwt_algorithm: str = "EdDSA"
+    jwt_audience: str = "http://localhost:3000"
 
     # Application
     app_name: str = "Todo Backend"

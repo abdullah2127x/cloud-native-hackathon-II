@@ -10,7 +10,8 @@ logger = logging.getLogger(__name__)
 
 
 # JWKS client for Better Auth
-jwks_url = f"{settings.better_auth_url}/.well-known/jwks.json"
+# Better Auth is mounted at /api/auth, JWKS endpoint is at /api/auth/.well-known/jwks.json
+jwks_url = f"{settings.better_auth_url}/api/auth/.well-known/jwks.json"
 jwks_client = PyJWKClient(jwks_url)
 
 

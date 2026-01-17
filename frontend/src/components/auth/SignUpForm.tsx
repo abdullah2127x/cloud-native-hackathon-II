@@ -4,7 +4,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signUpSchema, type SignUpInput } from "@/lib/validations/auth";
-import { signUp } from "@/lib/auth-client";
+import { signUp, fetchAndStoreJwt } from "@/lib/auth-client";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { useRouter } from "next/navigation";
@@ -32,6 +32,9 @@ export function SignUpForm() {
         password: data.password,
         name: data.name,
       });
+
+      // Fetch and store JWT for API calls
+      await fetchAndStoreJwt();
 
       router.push("/dashboard");
     } catch (err) {

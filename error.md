@@ -1,135 +1,54 @@
-# Errors - RESOLVED ✅
-
-**Status:** All errors fixed in commit `94d5777`
-
-**See SETUP.md for complete setup instructions and troubleshooting.**
-
----
-
-## Error 1: Backend - Table 'user' Not Found ✅ FIXED
-
-**Error Message:**
-```
-sqlalchemy.exc.NoReferencedTableError: Foreign key associated with column 'task.user_id' could not find table 'user'
+I signin with the correct credentials and got signin and get the dashboard ot the browser and on the frontend server logs are:
 ```
 
-**Root Cause:**
-SQLModel couldn't find the User table because the model wasn't imported before `create_all()` was called.
 
-**Fix Applied:**
-- Updated `backend/src/db/database.py` to import User and Task models
-- Changed hardcoded DATABASE_URL to use `settings.database_url`
+> frontend@0.1.0 dev
+> next dev
 
-**File:** `backend/src/db/database.py:6-7`
-```python
-from src.models.user import User  # noqa: F401
-from src.models.task import Task  # noqa: F401
+▲ Next.js 16.1.3 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.7:3000
+- Environments: .env.local, .env
+
+✓ Starting...
+✓ Ready in 3.9s
+○ Compiling /sign-in ...
+ GET /sign-in 200 in 8.2s (compile: 7.4s, render: 807ms)
+ GET /sign-in?returnUrl=%2Fdashboard 200 in 8.1s (compile: 7.5s, render: 598ms)
+ POST /api/auth/sign-in/email 200 in 6.7s (compile: 4.7s, render: 2.0s)
+ GET /api/auth/token 200 in 773ms (compile: 43ms, render: 730ms)
+ GET /dashboard 200 in 1826ms (compile: 1746ms, render: 79ms)
+ GET /api/auth/get-session 200 in 744ms (compile: 20ms, render: 724ms)
+ GET /api/auth/get-session 200 in 741ms (compile: 19ms, render: 722ms)
+ GET /api/auth/.well-known/jwks.json 200 in 962ms (compile: 37ms, render: 925ms)
+ GET /api/auth/get-session 200 in 788ms (compile: 49ms, render: 739ms)
 ```
 
-**No action required** - already fixed in codebase.
-
----
-
-## Error 2: Frontend - Module 'better-auth/react' Not Found ✅ FIXED
-
-**Error Message:**
+and at the same time the log on the backend server is :
 ```
-Module not found: Can't resolve 'better-auth/react'
-```
-
-**Root Cause:**
-Missing dependencies in `package.json`:
-- better-auth (authentication)
-- react-hook-form (forms)
-- @hookform/resolvers (validation)
-- zod (schema validation)
-- axios (HTTP client)
-- Testing libraries
-
-**Fix Applied:**
-Updated `frontend/package.json` with all required dependencies.
-
-**ACTION REQUIRED:**
-```bash
-cd frontend
-npm install
-```
-
-This will install:
-- better-auth ^1.2.0
-- react-hook-form ^7.53.2
-- @hookform/resolvers ^3.9.1
-- zod ^3.24.1
-- axios ^1.7.9
-- All testing libraries (jest, testing-library, msw)
-
----
-
-## Verification
-
-After running `npm install`, both servers should start without errors:
-
-**Backend:**
-```bash
-cd backend
-uv run uvicorn src.main:app --reload --port 8000
-```
-
-Expected output:
-```
-INFO:     Started server process
+(todo-backend) PS D:\AbdullahQureshi\workspace\Hackathon-2025\hackathon-2\todo-in-memory-console-app\backend> uv run uvicorn src.main:app --reload --port 8000
+INFO:     Will watch for changes in these directories: ['D:\\AbdullahQureshi\\workspace\\Hackathon-2025\\hackathon-2\\todo-in-memory-console-app\\backend']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [25588] using StatReload
+INFO:     Started server process [21856]
 INFO:     Waiting for application startup.
-INFO:     Starting up Todo Backend API...
-INFO:     Database tables created/verified
+2026-01-17 20:24:59,977 - src.main - INFO - Starting up Todo Backend API...
+2026-01-17 20:25:04,414 - src.main - INFO - Database tables created/verified
 INFO:     Application startup complete.
+2026-01-17 20:27:28,400 - src.middleware.logging - INFO - GET /api/todos
+2026-01-17 20:27:28,402 - src.middleware.logging - INFO - GET /api/todos status=307 duration=0.003s
+INFO:     127.0.0.1:58848 - "GET /api/todos HTTP/1.1" 307 Temporary Redirect
+2026-01-17 20:27:28,410 - src.middleware.logging - INFO - GET /api/todos
+2026-01-17 20:27:28,411 - src.middleware.logging - INFO - GET /api/todos status=307 duration=0.001s
+INFO:     127.0.0.1:58848 - "GET /api/todos HTTP/1.1" 307 Temporary Redirect
+2026-01-17 20:27:28,415 - src.middleware.logging - INFO - GET /api/todos/
+2026-01-17 20:27:30,131 - src.middleware.logging - INFO - GET /api/todos/ status=200 duration=1.717s
+INFO:     127.0.0.1:58848 - "GET /api/todos/ HTTP/1.1" 200 OK
+2026-01-17 20:27:30,134 - src.middleware.logging - INFO - GET /api/todos/
+2026-01-17 20:27:31,977 - src.middleware.logging - INFO - GET /api/todos/ status=200 duration=1.843s
+INFO:     127.0.0.1:54497 - "GET /api/todos/ HTTP/1.1" 200 OK
 ```
 
-**Frontend:**
-```bash
-cd frontend
-npm run dev
-```
 
-Expected output:
-```
-✓ Ready in X.Xs
-○ Compiling / ...
-✓ Compiled / in XXXms
-```
-
----
-
-## Next Steps
-
-1. **Run npm install** in the frontend directory
-2. Follow the complete setup guide in **SETUP.md**
-3. Configure environment variables in `.env` and `.env.local`
-4. Start both servers
-5. Access the app at http://localhost:3000
-
----
-
-## Original Error Logs (For Reference)
-
-<details>
-<summary>Click to expand original error logs</summary>
-
-### Backend Error Log
-```
-2026-01-17 14:30:13,715 - src.main - INFO - Starting up Todo Backend API...
-ERROR:    Traceback (most recent call last):
-  ...
-sqlalchemy.exc.NoReferencedTableError: Foreign key associated with column 'task.user_id' could not find table 'user' with which to generate a foreign key to target column 'id'
-```
-
-### Frontend Error Log
-```
-⨯ ./src/lib/auth-client.ts:4:1
-Module not found: Can't resolve 'better-auth/react'
-```
-
-</details>
-
----
-
-**All errors have been resolved. Follow SETUP.md for complete instructions.**
+now the next part is 
+when i try to sign in again with the incorrect credentials so the logs: 

@@ -2,7 +2,7 @@
 // Handles JWT token injection, error handling, and request/response interceptors
 
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
-import { authClient } from '@/lib/auth-client';
+import { getJwtToken, clearJwtToken } from '@/lib/auth-client';
 
 // Create API client
 export const apiClient = axios.create({
@@ -13,14 +13,14 @@ export const apiClient = axios.create({
   },
 });
 
-// Request interceptor - add JWT token
+// Request interceptor - add JWT token from localStorage
 apiClient.interceptors.request.use(
-  async (config: InternalAxiosRequestConfig) => {
-    // Get session from Better Auth
-    const session = await authClient.getSession();
+  (config: InternalAxiosRequestConfig) => {
+    // Get JWT token stored after sign-in
+    const token = getJwtToken();
 
-    if (session?.accessToken) {
-      config.headers.Authorization = `Bearer ${session.accessToken}`;
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
 
     return config;
@@ -34,8 +34,10 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    // Handle 401 Unauthorized - redirect to sign-in
+    // Handle 401 Unauthorized - clear token and redirect to sign-in
     if (error.response?.status === 401) {
+      // Clear invalid/expired token
+      clearJwtToken();
       // Save current location for return after sign-in
       const returnUrl = window.location.pathname;
       window.location.href = `/sign-in?returnUrl=${encodeURIComponent(returnUrl)}`;
