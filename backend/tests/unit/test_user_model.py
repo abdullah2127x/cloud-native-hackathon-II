@@ -40,18 +40,16 @@ class TestUserModel:
 
     def test_user_email_is_unique_field(self):
         """Test that email field has unique constraint"""
-        # Arrange & Act
-        user = User(
-            id="user-123",
-            email="unique@example.com",
-            name="Test User",
-        )
+        # Arrange - Access SQLModel table columns
+        from sqlalchemy import inspect
 
-        # Assert - Check field metadata (SQLModel stores in field_info.extra)
-        email_field = User.model_fields["email"]
-        field_extra = email_field.json_schema_extra or {}
-        assert field_extra.get("unique") is True or email_field.metadata
-        assert field_extra.get("index") is True or email_field.metadata
+        # Act - Get column information
+        mapper = inspect(User)
+        email_column = mapper.columns['email']
+
+        # Assert - Check unique constraint and index
+        assert email_column.unique is True, "Email should have unique constraint"
+        assert email_column.index is True, "Email should be indexed"
 
     def test_user_email_verified_defaults_to_false(self):
         """Test that emailVerified defaults to False when not provided"""
@@ -67,17 +65,15 @@ class TestUserModel:
 
     def test_user_has_primary_key(self):
         """Test that User model has id as primary key"""
-        # Arrange & Act
-        user = User(
-            id="user-789",
-            email="pk@example.com",
-            name="PK User",
-        )
+        # Arrange - Access SQLModel table columns
+        from sqlalchemy import inspect
 
-        # Assert - Check if id is defined as primary key in SQLModel
-        id_field = User.model_fields["id"]
-        field_extra = id_field.json_schema_extra or {}
-        assert field_extra.get("primary_key") is True or id_field.metadata
+        # Act - Get column information
+        mapper = inspect(User)
+        id_column = mapper.columns['id']
+
+        # Assert - Check primary key
+        assert id_column.primary_key is True, "ID should be primary key"
 
     def test_user_timestamps_are_set(self):
         """Test that createdAt and updatedAt timestamps are properly set"""
