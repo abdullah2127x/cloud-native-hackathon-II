@@ -7,9 +7,10 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { api } from "@/middleware/api-interceptor";
+ 
 import type { Task } from "@/types/task";
 import type { TaskCreateInput, TaskUpdateInput } from "@/lib/validations/task";
+import api from "@/middleware/api-interceptor";
 
 interface UseTasksReturn {
   tasks: Task[];

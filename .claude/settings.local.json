@@ -14,7 +14,10 @@
       "Bash(fi)",
       "Bash(python -m pytest tests/integration/test_cli.py -v)",
       "WebSearch",
-      "mcp__context7__query-docs"
+      "mcp__context7__query-docs",
+      "Bash(uv run pytest:*)",
+      "Bash(git add:*)",
+      "Bash(PYTHONPATH=. uv run pytest:*)"
     ]
   }
 }
