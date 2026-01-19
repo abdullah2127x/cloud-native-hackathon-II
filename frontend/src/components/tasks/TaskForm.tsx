@@ -38,9 +38,15 @@ export function TaskForm({
   });
 
   const handleFormSubmit = async (data: TaskCreateInput) => {
-    await onSubmit(data);
-    if (mode === "create") {
-      reset(); // Clear form after successful creation
+    try {
+      await onSubmit(data);
+      if (mode === "create") {
+        // Reset form with empty values to clear all fields and errors
+        reset({ title: "", description: "" });
+      }
+    } catch (error) {
+      // Error is already handled by parent component
+      // Don't reset form if submission fails
     }
   };
 
