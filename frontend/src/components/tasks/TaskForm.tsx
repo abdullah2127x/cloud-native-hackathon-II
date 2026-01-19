@@ -38,15 +38,11 @@ export function TaskForm({
   });
 
   const handleFormSubmit = async (data: TaskCreateInput) => {
-    try {
-      await onSubmit(data);
-      if (mode === "create") {
-        // Reset form with empty values to clear all fields and errors
-        reset({ title: "", description: "" });
-      }
-    } catch (error) {
-      // Error is already handled by parent component
-      // Don't reset form if submission fails
+    await onSubmit(data);
+    // Note: Create form is remounted via key prop in parent component
+    // Edit form stays mounted and user can cancel or continue editing
+    if (mode === "edit") {
+      // Could add success feedback here if needed
     }
   };
 

@@ -15,6 +15,7 @@ import type { TaskCreateInput } from "@/lib/validations/task";
 export default function DashboardPage() {
   const { tasks, isLoading, error, fetchTasks, createTask, updateTask, deleteTask, toggleTask } = useTasks();
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
+  const [formKey, setFormKey] = useState(0);
 
   useEffect(() => {
     fetchTasks();
@@ -22,6 +23,8 @@ export default function DashboardPage() {
 
   const handleCreateTask = async (data: TaskCreateInput) => {
     await createTask(data);
+    // Force form to remount with fresh state
+    setFormKey(prev => prev + 1);
   };
 
   const handleEditTask = (taskId: string) => {
@@ -75,7 +78,12 @@ export default function DashboardPage() {
       {/* Task creation form */}
       <div className="bg-white shadow rounded-lg p-6 mb-6">
         <h3 className="text-lg font-medium text-gray-900 mb-4">Create New Task</h3>
-        <TaskForm onSubmit={handleCreateTask} isLoading={isLoading} />
+        <TaskForm
+          key={formKey}
+          onSubmit={handleCreateTask}
+          isLoading={isLoading}
+          defaultValues={{ title: "", description: "" }}
+        />
       </div>
 
       {/* Tasks list */}
