@@ -45,4 +45,7 @@ export interface Tag {
   task_count: number;
 }
 
+// Todo is an alias for Task (used interchangeably in UI)
+export type Todo = Task;
+
 export type { TaskFilters, SortField, SortOrder };
