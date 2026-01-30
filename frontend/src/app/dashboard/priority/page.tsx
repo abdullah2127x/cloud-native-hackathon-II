@@ -4,10 +4,11 @@ import { useEffect } from "react";
 import { useTasks } from "@/hooks/useTasks";
 import { PriorityTabs } from "../components/PriorityTabs";
 import { TodoCard } from "../components/TodoCard";
+import { Flag } from "lucide-react";
 import type { Todo } from "@/types/task";
 
 export default function PriorityPage() {
-  const { tasks, isLoading, fetchTasks, updateTask, deleteTask, toggleTask } = useTasks();
+  const { tasks, isLoading, fetchTasks, deleteTask, toggleTask } = useTasks();
 
   useEffect(() => {
     fetchTasks();
@@ -17,6 +18,7 @@ export default function PriorityPage() {
     if (todos.length === 0) {
       return (
         <div className="text-center py-8 bg-slate-50 dark:bg-slate-900 rounded-lg">
+          <Flag className="h-12 w-12 text-slate-300 dark:text-slate-600 mx-auto mb-4" />
           <p className="text-slate-600 dark:text-slate-400">
             No tasks at this priority level
           </p>
@@ -32,7 +34,7 @@ export default function PriorityPage() {
             todo={todo}
             onToggle={() => toggleTask(todo.id)}
             onEdit={(t) => {
-              // Handle edit - would open dialog in parent
+              // Edit functionality handled in main dashboard
             }}
             onDelete={() => deleteTask(todo.id)}
           />
