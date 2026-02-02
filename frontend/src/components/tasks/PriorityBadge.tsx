@@ -12,7 +12,7 @@ interface PriorityBadgeProps {
   size?: "sm" | "md";
 }
 
-export function PriorityBadge({ priority, size = "md" }: PriorityBadgeProps): JSX.Element {
+export function PriorityBadge({ priority, size = "md" }: PriorityBadgeProps){
   const config = PRIORITY_CONFIG[priority];
 
   const sizeClasses = {

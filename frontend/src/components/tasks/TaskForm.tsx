@@ -143,7 +143,7 @@ export function TaskForm({
         )}
         <Button
           type="submit"
-          variant="primary"
+          variant="default"
           disabled={isLoading}
         >
           {mode === "edit"

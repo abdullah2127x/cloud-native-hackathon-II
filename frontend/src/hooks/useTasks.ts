@@ -22,6 +22,12 @@ interface FetchTasksParams {
   order?: "asc" | "desc";
 }
 
+interface TaskListResponse {
+  tasks: Task[];
+  total: number;
+  filtered: number;
+}
+
 interface UseTasksReturn {
   tasks: Task[];
   total: number;

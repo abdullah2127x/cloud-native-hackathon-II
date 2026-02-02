@@ -44,7 +44,7 @@ export function SignInForm() {
           onError: (ctx) => {
             const errorMessage = ctx.error.message || "Failed to sign in";
             const statusCode = ctx.error.status;
-            const errorCode = (ctx.error as any)?.code;
+            const errorCode = (ctx.error as { code?: string })?.code;
 
             // Handle specific error cases
             if (
@@ -99,18 +99,18 @@ export function SignInForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <Input
-        label="Email"
+        // label="Email"
         type="email"
         {...register("email")}
-        error={errors.email?.message}
+        // error={errors.email?.message}
         disabled={isLoading}
       />
 
       <Input
-        label="Password"
+        // label="Password"
         type="password"
         {...register("password")}
-        error={errors.password?.message}
+        // error={errors.password?.message}
         disabled={isLoading}
       />
 
@@ -125,7 +125,7 @@ export function SignInForm() {
       </Button>
 
       <p className="text-center text-sm text-gray-600">
-        Don't have an account?{" "}
+        Don&apos;t have an account?{" "}
         <Link href="/sign-up" className="font-medium text-blue-600 hover:text-blue-500">
           Sign up
         </Link>

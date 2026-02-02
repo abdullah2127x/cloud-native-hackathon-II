@@ -1,0 +1,295 @@
+src/components/tasks/FilterPanel.test.tsx(10,1): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/FilterPanel.test.tsx(18,31): error TS2708: Cannot use namespace 'jest' as a value.
+src/components/tasks/FilterPanel.test.tsx(19,30): error TS2708: Cannot use namespace 'jest' as a value.
+src/components/tasks/FilterPanel.test.tsx(21,3): error TS2304: Cannot find name 'beforeEach'.
+src/components/tasks/FilterPanel.test.tsx(26,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/FilterPanel.test.tsx(29,9): error TS2322: Type '{ status: string; priority: string; tags: never[]; noTags: boolean; }' is not assignable to type '{ status: "completed" | "all" | "pending"; priority: "none" | "low" | "medium" | "high" | "all"; tags: string[]; noTags: boolean; }'.
+  Types of property 'status' are incompatible.
+    Type 'string' is not assignable to type '"completed" | "all" | "pending"'.
+src/components/tasks/FilterPanel.test.tsx(37,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/FilterPanel.test.tsx(38,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/FilterPanel.test.tsx(39,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/FilterPanel.test.tsx(42,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/FilterPanel.test.tsx(45,9): error TS2322: Type '{ status: string; priority: string; tags: never[]; noTags: boolean; }' is not assignable to type '{ status: "completed" | "all" | "pending"; priority: "none" | "low" | "medium" | "high" | "all"; tags: string[]; noTags: boolean; }'.
+  Types of property 'status' are incompatible.
+    Type 'string' is not assignable to type '"completed" | "all" | "pending"'.
+src/components/tasks/FilterPanel.test.tsx(54,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/FilterPanel.test.tsx(57,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/FilterPanel.test.tsx(60,9): error TS2322: Type '{ status: string; priority: string; tags: never[]; noTags: boolean; }' is not assignable to type '{ status: "completed" | "all" | "pending"; priority: "none" | "low" | "medium" | "high" | "all"; tags: string[]; noTags: boolean; }'.
+  Types of property 'status' are incompatible.
+    Type 'string' is not assignable to type '"completed" | "all" | "pending"'.
+src/components/tasks/FilterPanel.test.tsx(69,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/FilterPanel.test.tsx(72,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/FilterPanel.test.tsx(75,9): error TS2322: Type '{ status: string; priority: string; tags: never[]; noTags: boolean; }' is not assignable to type '{ status: "completed" | "all" | "pending"; priority: "none" | "low" | "medium" | "high" | "all"; tags: string[]; noTags: boolean; }'.
+  Types of property 'status' are incompatible.
+    Type 'string' is not assignable to type '"completed" | "all" | "pending"'.
+src/components/tasks/FilterPanel.test.tsx(86,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/FilterPanel.test.tsx(92,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/FilterPanel.test.tsx(95,9): error TS2322: Type '{ status: string; priority: string; tags: never[]; noTags: boolean; }' is not assignable to type '{ status: "completed" | "all" | "pending"; priority: "none" | "low" | "medium" | "high" | "all"; tags: string[]; noTags: boolean; }'.
+  Types of property 'status' are incompatible.
+    Type 'string' is not assignable to type '"completed" | "all" | "pending"'.
+src/components/tasks/FilterPanel.test.tsx(106,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/FilterPanel.test.tsx(112,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/FilterPanel.test.tsx(115,9): error TS2322: Type '{ status: string; priority: string; tags: never[]; noTags: boolean; }' is not assignable to type '{ status: "completed" | "all" | "pending"; priority: "none" | "low" | "medium" | "high" | "all"; tags: string[]; noTags: boolean; }'.
+  Types of property 'status' are incompatible.
+    Type 'string' is not assignable to type '"completed" | "all" | "pending"'.
+src/components/tasks/FilterPanel.test.tsx(129,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/FilterPanel.test.tsx(135,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/FilterPanel.test.tsx(143,9): error TS2322: Type '{ tags: string[]; status: string; priority: string; noTags: boolean; }' is not assignable to type '{ status: "completed" | "all" | "pending"; priority: "none" | "low" | "medium" | "high" | "all"; tags: string[]; noTags: boolean; }'.
+  Types of property 'status' are incompatible.
+    Type 'string' is not assignable to type '"completed" | "all" | "pending"'.
+src/components/tasks/FilterPanel.test.tsx(155,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/FilterPanel.test.tsx(161,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/FilterPanel.test.tsx(164,9): error TS2322: Type '{ status: string; priority: string; tags: never[]; noTags: boolean; }' is not assignable to type '{ status: "completed" | "all" | "pending"; priority: "none" | "low" | "medium" | "high" | "all"; tags: string[]; noTags: boolean; }'.
+  Types of property 'status' are incompatible.
+    Type 'string' is not assignable to type '"completed" | "all" | "pending"'.
+src/components/tasks/FilterPanel.test.tsx(178,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/FilterPanel.test.tsx(184,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/FilterPanel.test.tsx(187,9): error TS2322: Type '{ status: string; priority: string; tags: never[]; noTags: boolean; }' is not assignable to type '{ status: "completed" | "all" | "pending"; priority: "none" | "low" | "medium" | "high" | "all"; tags: string[]; noTags: boolean; }'.
+  Types of property 'status' are incompatible.
+    Type 'string' is not assignable to type '"completed" | "all" | "pending"'.
+src/components/tasks/FilterPanel.test.tsx(196,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/FilterPanel.test.tsx(199,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/FilterPanel.test.tsx(202,9): error TS2322: Type '{ status: string; priority: string; tags: never[]; noTags: boolean; }' is not assignable to type '{ status: "completed" | "all" | "pending"; priority: "none" | "low" | "medium" | "high" | "all"; tags: string[]; noTags: boolean; }'.
+  Types of property 'status' are incompatible.
+    Type 'string' is not assignable to type '"completed" | "all" | "pending"'.
+src/components/tasks/FilterPanel.test.tsx(211,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/FilterPanel.test.tsx(214,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/FilterPanel.test.tsx(217,9): error TS2322: Type '{ status: string; priority: string; tags: never[]; noTags: boolean; }' is not assignable to type '{ status: "completed" | "all" | "pending"; priority: "none" | "low" | "medium" | "high" | "all"; tags: string[]; noTags: boolean; }'.
+  Types of property 'status' are incompatible.
+    Type 'string' is not assignable to type '"completed" | "all" | "pending"'.
+src/components/tasks/FilterPanel.test.tsx(228,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/PriorityBadge.test.tsx(10,1): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/PriorityBadge.test.tsx(11,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/PriorityBadge.test.tsx(13,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/PriorityBadge.test.tsx(14,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/PriorityBadge.test.tsx(17,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/PriorityBadge.test.tsx(19,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/PriorityBadge.test.tsx(20,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/PriorityBadge.test.tsx(23,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/PriorityBadge.test.tsx(25,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/PriorityBadge.test.tsx(26,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/PriorityBadge.test.tsx(29,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/PriorityBadge.test.tsx(31,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/PriorityBadge.test.tsx(32,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/PriorityBadge.test.tsx(35,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/PriorityBadge.test.tsx(38,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/PriorityBadge.test.tsx(39,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/PriorityBadge.test.tsx(40,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/PriorityBadge.test.tsx(43,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/PriorityBadge.test.tsx(46,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/PriorityBadge.test.tsx(47,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/PriorityBadge.test.tsx(48,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/PriorityBadge.test.tsx(51,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/PriorityBadge.test.tsx(54,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/PriorityBadge.test.tsx(55,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/PriorityBadge.test.tsx(56,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/SearchBar.test.tsx(10,1): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/SearchBar.test.tsx(11,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/SearchBar.test.tsx(12,42): error TS2708: Cannot use namespace 'jest' as a value.
+src/components/tasks/SearchBar.test.tsx(15,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/SearchBar.test.tsx(18,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/SearchBar.test.tsx(19,42): error TS2708: Cannot use namespace 'jest' as a value.
+src/components/tasks/SearchBar.test.tsx(22,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/SearchBar.test.tsx(25,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/SearchBar.test.tsx(26,26): error TS2708: Cannot use namespace 'jest' as a value.
+src/components/tasks/SearchBar.test.tsx(32,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/SearchBar.test.tsx(35,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/SearchBar.test.tsx(36,46): error TS2708: Cannot use namespace 'jest' as a value.
+src/components/tasks/SearchBar.test.tsx(39,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/SearchBar.test.tsx(42,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/SearchBar.test.tsx(43,42): error TS2708: Cannot use namespace 'jest' as a value.
+src/components/tasks/SearchBar.test.tsx(46,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/SearchBar.test.tsx(49,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/SearchBar.test.tsx(50,26): error TS2708: Cannot use namespace 'jest' as a value.
+src/components/tasks/SearchBar.test.tsx(56,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/SearchBar.test.tsx(59,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/SearchBar.test.tsx(60,56): error TS2708: Cannot use namespace 'jest' as a value.
+src/components/tasks/SearchBar.test.tsx(63,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/SortSelector.test.tsx(10,1): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/SortSelector.test.tsx(11,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/SortSelector.test.tsx(12,53): error TS2708: Cannot use namespace 'jest' as a value.
+src/components/tasks/SortSelector.test.tsx(15,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/SortSelector.test.tsx(18,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/SortSelector.test.tsx(19,53): error TS2708: Cannot use namespace 'jest' as a value.
+src/components/tasks/SortSelector.test.tsx(22,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/SortSelector.test.tsx(25,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/SortSelector.test.tsx(28,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/SortSelector.test.tsx(29,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/SortSelector.test.tsx(30,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/SortSelector.test.tsx(33,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/SortSelector.test.tsx(34,53): error TS2708: Cannot use namespace 'jest' as a value.
+src/components/tasks/SortSelector.test.tsx(37,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/SortSelector.test.tsx(40,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/SortSelector.test.tsx(41,26): error TS2708: Cannot use namespace 'jest' as a value.
+src/components/tasks/SortSelector.test.tsx(47,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/SortSelector.test.tsx(50,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/SortSelector.test.tsx(51,74): error TS2708: Cannot use namespace 'jest' as a value.
+src/components/tasks/SortSelector.test.tsx(54,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/SortSelector.test.tsx(56,52): error TS2708: Cannot use namespace 'jest' as a value.
+src/components/tasks/SortSelector.test.tsx(57,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/SortSelector.test.tsx(60,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/SortSelector.test.tsx(61,74): error TS2708: Cannot use namespace 'jest' as a value.
+src/components/tasks/SortSelector.test.tsx(67,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/SortSelector.test.tsx(68,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/SortSelector.test.tsx(69,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/TagChip.test.tsx(10,1): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/TagChip.test.tsx(11,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/TagChip.test.tsx(13,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/TagChip.test.tsx(16,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/TagChip.test.tsx(17,26): error TS2708: Cannot use namespace 'jest' as a value.
+src/components/tasks/TagChip.test.tsx(21,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/TagChip.test.tsx(24,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/TagChip.test.tsx(27,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/TagChip.test.tsx(31,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/TagChip.test.tsx(34,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/TagChip.test.tsx(35,25): error TS2708: Cannot use namespace 'jest' as a value.
+src/components/tasks/TagChip.test.tsx(39,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/TagChip.test.tsx(42,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/TagChip.test.tsx(43,29): error TS2708: Cannot use namespace 'jest' as a value.
+src/components/tasks/TagChip.test.tsx(44,26): error TS2708: Cannot use namespace 'jest' as a value.
+src/components/tasks/TagChip.test.tsx(55,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/TagChip.test.tsx(56,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/TagInput.test.tsx(10,1): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/TagInput.test.tsx(11,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/TagInput.test.tsx(12,43): error TS2708: Cannot use namespace 'jest' as a value.
+src/components/tasks/TagInput.test.tsx(15,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/TagInput.test.tsx(18,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/TagInput.test.tsx(22,19): error TS2708: Cannot use namespace 'jest' as a value.
+src/components/tasks/TagInput.test.tsx(27,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/TagInput.test.tsx(28,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/TagInput.test.tsx(31,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/TagInput.test.tsx(32,26): error TS2708: Cannot use namespace 'jest' as a value.
+src/components/tasks/TagInput.test.tsx(39,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/TagInput.test.tsx(42,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/TagInput.test.tsx(43,26): error TS2708: Cannot use namespace 'jest' as a value.
+src/components/tasks/TagInput.test.tsx(50,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/TagInput.test.tsx(53,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/TagInput.test.tsx(54,26): error TS2708: Cannot use namespace 'jest' as a value.
+src/components/tasks/TagInput.test.tsx(66,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/TagInput.test.tsx(69,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/TagInput.test.tsx(70,26): error TS2708: Cannot use namespace 'jest' as a value.
+src/components/tasks/TagInput.test.tsx(77,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/TagInput.test.tsx(80,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/TagInput.test.tsx(81,26): error TS2708: Cannot use namespace 'jest' as a value.
+src/components/tasks/TagInput.test.tsx(89,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/TagInput.test.tsx(92,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/TagInput.test.tsx(96,19): error TS2708: Cannot use namespace 'jest' as a value.
+src/components/tasks/TagInput.test.tsx(104,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/TagInput.test.tsx(107,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/TagInput.test.tsx(108,26): error TS2708: Cannot use namespace 'jest' as a value.
+src/components/tasks/TagInput.test.tsx(123,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/TagInput.test.tsx(126,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/TagInput.test.tsx(127,26): error TS2708: Cannot use namespace 'jest' as a value.
+src/components/tasks/TagInput.test.tsx(141,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/TagInput.test.tsx(144,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/TagInput.test.tsx(145,26): error TS2708: Cannot use namespace 'jest' as a value.
+src/components/tasks/TagInput.test.tsx(157,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/TagInput.test.tsx(160,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/TagInput.test.tsx(164,19): error TS2708: Cannot use namespace 'jest' as a value.
+src/components/tasks/TagInput.test.tsx(171,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/TagInput.test.tsx(174,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/TagInput.test.tsx(175,26): error TS2708: Cannot use namespace 'jest' as a value.
+src/components/tasks/TagInput.test.tsx(182,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/TaskForm.test.tsx(11,1): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/TaskForm.test.tsx(12,24): error TS2708: Cannot use namespace 'jest' as a value.
+src/components/tasks/TaskForm.test.tsx(14,3): error TS2304: Cannot find name 'beforeEach'.
+src/components/tasks/TaskForm.test.tsx(18,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/TaskForm.test.tsx(22,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/TaskForm.test.tsx(25,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/TaskForm.test.tsx(26,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/TaskForm.test.tsx(27,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/TaskForm.test.tsx(28,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/TaskForm.test.tsx(31,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/TaskForm.test.tsx(35,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/TaskForm.test.tsx(38,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/TaskForm.test.tsx(44,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/TaskForm.test.tsx(47,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/TaskForm.test.tsx(50,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/TaskForm.test.tsx(62,7): error TS2304: Cannot find name 'expect'.
+src/components/tasks/TaskForm.test.tsx(70,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/TaskForm.test.tsx(76,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/TaskForm.test.tsx(79,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/TaskForm.test.tsx(90,7): error TS2304: Cannot find name 'expect'.
+src/components/tasks/TaskForm.test.tsx(98,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/components/tasks/TaskForm.test.tsx(110,5): error TS2304: Cannot find name 'expect'.
+src/components/tasks/TaskForm.test.tsx(111,5): error TS2304: Cannot find name 'expect'.
+src/components/ui/resizable.tsx(5,17): error TS2724: '"react-resizable-panels"' has no exported member named 'PanelGroup'. Did you mean 'PanelProps'?
+src/components/ui/resizable.tsx(5,29): error TS2305: Module '"react-resizable-panels"' has no exported member 'PanelResizeHandle'.
+src/hooks/useDebounce.test.ts(10,1): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/hooks/useDebounce.test.ts(11,3): error TS2304: Cannot find name 'beforeEach'.
+src/hooks/useDebounce.test.ts(12,5): error TS2708: Cannot use namespace 'jest' as a value.
+src/hooks/useDebounce.test.ts(15,3): error TS2304: Cannot find name 'afterEach'.
+src/hooks/useDebounce.test.ts(16,5): error TS2708: Cannot use namespace 'jest' as a value.
+src/hooks/useDebounce.test.ts(19,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/hooks/useDebounce.test.ts(22,5): error TS2304: Cannot find name 'expect'.
+src/hooks/useDebounce.test.ts(25,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/hooks/useDebounce.test.ts(29,7): error TS2708: Cannot use namespace 'jest' as a value.
+src/hooks/useDebounce.test.ts(32,5): error TS2304: Cannot find name 'expect'.
+src/hooks/useDebounce.test.ts(35,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/hooks/useDebounce.test.ts(45,5): error TS2304: Cannot find name 'expect'.
+src/hooks/useDebounce.test.ts(49,7): error TS2708: Cannot use namespace 'jest' as a value.
+src/hooks/useDebounce.test.ts(51,5): error TS2304: Cannot find name 'expect'.
+src/hooks/useDebounce.test.ts(55,7): error TS2708: Cannot use namespace 'jest' as a value.
+src/hooks/useDebounce.test.ts(57,5): error TS2304: Cannot find name 'expect'.
+src/hooks/useDebounce.test.ts(60,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/hooks/useDebounce.test.ts(72,7): error TS2708: Cannot use namespace 'jest' as a value.
+src/hooks/useDebounce.test.ts(74,5): error TS2304: Cannot find name 'expect'.
+src/hooks/useDebounce.test.ts(78,7): error TS2708: Cannot use namespace 'jest' as a value.
+src/hooks/useDebounce.test.ts(80,5): error TS2304: Cannot find name 'expect'.
+src/hooks/useDebounce.test.ts(83,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/hooks/useDebounce.test.ts(93,5): error TS2304: Cannot find name 'expect'.
+src/hooks/useDebounce.test.ts(97,7): error TS2708: Cannot use namespace 'jest' as a value.
+src/hooks/useDebounce.test.ts(103,7): error TS2708: Cannot use namespace 'jest' as a value.
+src/hooks/useDebounce.test.ts(107,5): error TS2304: Cannot find name 'expect'.
+src/hooks/useTaskFilters.test.ts(12,12): error TS2708: Cannot use namespace 'jest' as a value.
+src/hooks/useTaskFilters.test.ts(13,12): error TS2708: Cannot use namespace 'jest' as a value.
+src/hooks/useTaskFilters.test.ts(14,15): error TS2708: Cannot use namespace 'jest' as a value.
+src/hooks/useTaskFilters.test.ts(15,10): error TS2708: Cannot use namespace 'jest' as a value.
+src/hooks/useTaskFilters.test.ts(21,1): error TS2582: Cannot find name 'describe'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/hooks/useTaskFilters.test.ts(22,3): error TS2304: Cannot find name 'beforeEach'.
+src/hooks/useTaskFilters.test.ts(27,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/hooks/useTaskFilters.test.ts(30,5): error TS2304: Cannot find name 'expect'.
+src/hooks/useTaskFilters.test.ts(36,5): error TS2304: Cannot find name 'expect'.
+src/hooks/useTaskFilters.test.ts(37,5): error TS2304: Cannot find name 'expect'.
+src/hooks/useTaskFilters.test.ts(38,5): error TS2304: Cannot find name 'expect'.
+src/hooks/useTaskFilters.test.ts(41,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/hooks/useTaskFilters.test.ts(53,5): error TS2304: Cannot find name 'expect'.
+src/hooks/useTaskFilters.test.ts(54,5): error TS2304: Cannot find name 'expect'.
+src/hooks/useTaskFilters.test.ts(55,5): error TS2304: Cannot find name 'expect'.
+src/hooks/useTaskFilters.test.ts(58,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/hooks/useTaskFilters.test.ts(65,5): error TS2304: Cannot find name 'expect'.
+src/hooks/useTaskFilters.test.ts(68,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/hooks/useTaskFilters.test.ts(75,5): error TS2304: Cannot find name 'expect'.
+src/hooks/useTaskFilters.test.ts(78,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/hooks/useTaskFilters.test.ts(85,5): error TS2304: Cannot find name 'expect'.
+src/hooks/useTaskFilters.test.ts(88,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/hooks/useTaskFilters.test.ts(93,5): error TS2304: Cannot find name 'expect'.
+src/hooks/useTaskFilters.test.ts(96,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/hooks/useTaskFilters.test.ts(101,5): error TS2304: Cannot find name 'expect'.
+src/hooks/useTaskFilters.test.ts(104,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/hooks/useTaskFilters.test.ts(108,5): error TS2304: Cannot find name 'expect'.
+src/hooks/useTaskFilters.test.ts(114,5): error TS2304: Cannot find name 'expect'.
+src/hooks/useTaskFilters.test.ts(124,5): error TS2304: Cannot find name 'expect'.
+src/hooks/useTaskFilters.test.ts(135,5): error TS2304: Cannot find name 'expect'.
+src/hooks/useTaskFilters.test.ts(138,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/hooks/useTaskFilters.test.ts(153,5): error TS2304: Cannot find name 'expect'.
+src/hooks/useTaskFilters.test.ts(161,5): error TS2304: Cannot find name 'expect'.
+src/hooks/useTaskFilters.test.ts(167,5): error TS2304: Cannot find name 'expect'.
+src/hooks/useTaskFilters.test.ts(168,5): error TS2304: Cannot find name 'expect'.
+src/hooks/useTaskFilters.test.ts(171,3): error TS2582: Cannot find name 'it'. Do you need to install type definitions for a test runner? Try `npm i --save-dev @types/jest` or `npm i --save-dev @types/mocha`.
+src/hooks/useTaskFilters.test.ts(191,5): error TS2304: Cannot find name 'expect'.
+src/hooks/useTasks.ts(65,38): error TS2304: Cannot find name 'TaskListResponse'.
+src/tests/setup.ts(6,1): error TS2304: Cannot find name 'beforeAll'.
+src/tests/setup.ts(14,1): error TS2304: Cannot find name 'afterEach'.
+src/tests/setup.ts(19,1): error TS2304: Cannot find name 'afterAll'.
+src/tests/setup.ts(24,1): error TS2708: Cannot use namespace 'jest' as a value.
+src/tests/setup.ts(27,13): error TS2708: Cannot use namespace 'jest' as a value.
+src/tests/setup.ts(28,16): error TS2708: Cannot use namespace 'jest' as a value.
+src/tests/setup.ts(29,17): error TS2708: Cannot use namespace 'jest' as a value.
+src/tests/setup.ts(30,13): error TS2708: Cannot use namespace 'jest' as a value.
+src/tests/setup.ts(45,1): error TS2708: Cannot use namespace 'jest' as a value.
+src/tests/setup.ts(47,17): error TS2708: Cannot use namespace 'jest' as a value.
+src/tests/setup.ts(53,13): error TS2708: Cannot use namespace 'jest' as a value.
+src/tests/setup.ts(54,14): error TS2708: Cannot use namespace 'jest' as a value.
+src/tests/setup.ts(55,13): error TS2708: Cannot use namespace 'jest' as a value.

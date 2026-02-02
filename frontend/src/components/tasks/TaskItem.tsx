@@ -117,7 +117,7 @@ export function TaskItem({ task, onToggle, onEdit, onDelete }: TaskItemProps) {
             Edit
           </Button>
           <Button
-            variant="danger"
+            variant="destructive"
             size="sm"
             onClick={handleDelete}
             disabled={isDeleting}

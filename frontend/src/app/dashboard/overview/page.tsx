@@ -29,7 +29,7 @@ export default function OverviewPage() {
           Dashboard Overview
         </h1>
         <p className="text-slate-600 dark:text-slate-400 mt-2">
-          Welcome back! Here's your task summary for today.
+          Welcome back! Here&apos;s your task summary for today.
         </p>
       </div>
 

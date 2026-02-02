@@ -22,7 +22,7 @@ export default function SignInPage() {
           </div>
           <div className="relative flex justify-center text-sm">
             <span className="px-2 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400">
-              Don't have an account?
+              Don&apos;t have an account?
             </span>
           </div>
         </div>
