@@ -35,6 +35,7 @@ function DialogOverlay({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Overlay>) {
   return (
+    // T039: Opaque background for modal (already implemented with bg-black/50)
     <DialogPrimitive.Overlay
       data-slot="dialog-overlay"
       className={cn(
@@ -57,6 +58,7 @@ function DialogContent({
   return (
     <DialogPortal data-slot="dialog-portal">
       <DialogOverlay />
+      {/* T040: Use opaque background with theme variable for modal */}
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(

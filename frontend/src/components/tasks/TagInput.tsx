@@ -121,6 +121,7 @@ export function TagInput({ value, onChange, suggestions, placeholder = "Add tags
       </div>
 
       <div className="relative">
+        {/* T045: Update tag input styling with theme variables */}
         <input
           ref={inputRef}
           type="text"
@@ -131,22 +132,42 @@ export function TagInput({ value, onChange, suggestions, placeholder = "Add tags
           onFocus={() => inputValue && setShowSuggestions(true)}
           placeholder={value.length === 0 ? placeholder : ""}
           disabled={disabled}
-          className={`w-full rounded-md border ${
-            error ? "border-red-500" : "border-gray-300"
-          } px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed`}
+          className="w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-1 disabled:cursor-not-allowed transition"
+          style={{
+            borderColor: error ? "var(--error-border)" : "var(--input-border)",
+            backgroundColor: "var(--input-bg)",
+            color: "var(--input-text)",
+          }}
+          onFocus={(e) => {
+            e.currentTarget.style.borderColor = error ? "var(--error-border)" : "var(--primary)";
+            e.currentTarget.style.boxShadow = `0 0 0 1px ${error ? "var(--error-border)" : "var(--primary)"}`;
+          }}
+          onBlur={(e) => {
+            e.currentTarget.style.borderColor = error ? "var(--error-border)" : "var(--input-border)";
+            e.currentTarget.style.boxShadow = "none";
+          }}
         />
 
         {error && (
-          <p className="mt-1 text-sm text-red-600">{error}</p>
+          <p className="mt-1 text-sm" style={{ color: "var(--error-text)" }}>
+            {error}
+          </p>
         )}
 
         {showSuggestions && filteredSuggestions.length > 0 && (
-          <div className="absolute z-10 mt-1 w-full rounded-md bg-white shadow-lg border border-gray-200 max-h-60 overflow-auto">
+          <div
+            className="absolute z-10 mt-1 w-full rounded-md shadow-lg border max-h-60 overflow-auto transition"
+            style={{
+              backgroundColor: "var(--card)",
+              borderColor: "var(--border)",
+            }}
+          >
             <div className="py-1">
               {filteredSuggestions.map((suggestion, index) => (
                 <div
                   key={suggestion}
-                  className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                  className="px-4 py-2 text-sm cursor-pointer transition hover:opacity-80"
+                  style={{ color: "var(--foreground)" }}
                   onClick={() => handleSuggestionClick(suggestion)}
                 >
                   {suggestion}

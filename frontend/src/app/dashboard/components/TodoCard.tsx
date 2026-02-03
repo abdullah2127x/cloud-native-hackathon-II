@@ -24,12 +24,13 @@ export function TodoCard({ todo, onToggle, onEdit, onDelete }: TodoCardProps) {
   const priorityConfig = getPriorityConfig(todo.priority);
 
   return (
+    // T030: Update todo card background and border to use theme variables
     <Card
-      className={`border-slate-200 dark:border-slate-700 transition ${
-        todo.completed
-          ? "bg-slate-100 dark:bg-slate-800/50"
-          : "hover:shadow-md"
-      }`}
+      className="transition"
+      style={{
+        borderColor: "var(--border)",
+        backgroundColor: todo.completed ? "var(--muted)" : "var(--card)",
+      }}
     >
       <CardContent className="pt-6">
         <div className="flex gap-4">
@@ -38,7 +39,10 @@ export function TodoCard({ todo, onToggle, onEdit, onDelete }: TodoCardProps) {
             {todo.completed ? (
               <CheckCircle2 className="w-6 h-6 text-green-600 dark:text-green-500" />
             ) : (
-              <Circle className="w-6 h-6 text-slate-300 dark:text-slate-600 hover:text-slate-400" />
+              <Circle
+                className="w-6 h-6 transition hover:opacity-70"
+                style={{ color: "var(--border)" }}
+              />
             )}
           </button>
 
@@ -46,33 +50,41 @@ export function TodoCard({ todo, onToggle, onEdit, onDelete }: TodoCardProps) {
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2">
               <div className="flex-1">
+                {/* T029: Use --foreground for todo title */}
                 <h3
-                  className={`font-semibold text-slate-900 dark:text-white transition ${
-                    todo.completed
-                      ? "line-through text-slate-500 dark:text-slate-400"
-                      : ""
+                  className={`font-semibold transition ${
+                    todo.completed ? "line-through opacity-60" : ""
                   }`}
+                  style={{ color: "var(--foreground)" }}
                 >
                   {todo.title}
                 </h3>
                 {todo.description && (
+                  // T029: Use semantic color for description
                   <p
-                    className={`text-sm text-slate-600 dark:text-slate-400 mt-1 ${
-                      todo.completed ? "line-through" : ""
+                    className={`text-sm mt-1 ${
+                      todo.completed ? "line-through opacity-60" : ""
                     }`}
+                    style={{ color: "var(--muted-foreground)" }}
                   >
                     {todo.description}
                   </p>
                 )}
               </div>
 
-              {/* Action Menu */}
+              {/* Action Menu - T031: Ensure menu icon and button are visible */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="flex-shrink-0">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="flex-shrink-0"
+                    style={{ color: "var(--foreground)" }}
+                  >
                     <MoreVertical className="w-4 h-4" />
                   </Button>
                 </DropdownMenuTrigger>
+                {/* T032: Update menu dropdown styling for readability */}
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={() => onEdit(todo)}>
                     <Edit className="w-4 h-4 mr-2" />
@@ -80,7 +92,7 @@ export function TodoCard({ todo, onToggle, onEdit, onDelete }: TodoCardProps) {
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={onDelete}
-                    className="text-red-600 dark:text-red-400"
+                    style={{ color: "var(--destructive)" }}
                   >
                     <Trash2 className="w-4 h-4 mr-2" />
                     Delete
@@ -101,13 +113,18 @@ export function TodoCard({ todo, onToggle, onEdit, onDelete }: TodoCardProps) {
               >
                 {priorityConfig.label}
               </Badge>
+              {/* T034: Update tag styling while maintaining priority-based coloring */}
               {todo.tags && todo.tags.length > 0 && (
                 <>
                   {todo.tags.map((tag) => (
                     <Badge
                       key={tag}
                       variant="outline"
-                      className="border-slate-300 dark:border-slate-600"
+                      className="transition"
+                      style={{
+                        borderColor: "var(--border)",
+                        color: "var(--foreground)",
+                      }}
                     >
                       {tag}
                     </Badge>

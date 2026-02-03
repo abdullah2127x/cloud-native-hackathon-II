@@ -21,8 +21,14 @@ export function PriorityBadge({ priority, size = "md" }: PriorityBadgeProps){
   };
 
   return (
+    // T060: Use semantic priority variables for badge colors
     <span
-      className={`inline-flex items-center rounded-full border font-medium ${config.badgeClass} ${sizeClasses[size]}`}
+      className={`inline-flex items-center rounded-full border font-medium transition ${sizeClasses[size]}`}
+      style={{
+        backgroundColor: config.bgVar,
+        color: config.textVar,
+        borderColor: config.bgVar,
+      }}
       aria-label={`Priority: ${config.label}`}
     >
       {config.label}
