@@ -95,6 +95,8 @@ export function SignUpForm() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <Input
         // label="Name"
+        placeholder="Your full name"
+        type="text"
         {...register("name")}
         // error={errors.name?.message}
         disabled={isLoading}
@@ -102,6 +104,7 @@ export function SignUpForm() {
 
       <Input
         // label="Email"
+        placeholder="abdullah2127x@gmail.com"
         type="email"
         {...register("email")}
         // error={errors.email?.message}
@@ -131,7 +134,7 @@ export function SignUpForm() {
         </div>
       )}
 
-      <Button type="submit" className="w-full" disabled={isLoading}>
+      <Button type="submit" className="w-full cursor-pointer" disabled={isLoading}>
         {isLoading ? "Creating account..." : "Create account"}
       </Button>
 

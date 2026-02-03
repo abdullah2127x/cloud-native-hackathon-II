@@ -87,7 +87,7 @@ export default function OverviewPage() {
             Create your first task to get started
           </p>
           <Link href="/dashboard/todos">
-            <Button className="bg-purple-600 hover:bg-purple-700">
+            <Button className="bg-primary hover:bg-primary/80 text-primary-foreground cursor-pointer">
               Create Task
             </Button>
           </Link>

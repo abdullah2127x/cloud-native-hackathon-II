@@ -5,7 +5,10 @@ import { useSession, signOut } from "@/lib/auth-client";
 import { Button } from "@/components/ui/Button";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { navigationSections, getActiveSection } from "@/lib/dashboard-navigation";
+import {
+  navigationSections,
+  getActiveSection,
+} from "@/lib/dashboard-navigation";
 import { LogOut, CheckSquare } from "lucide-react";
 
 export function Sidebar() {
@@ -20,7 +23,11 @@ export function Sidebar() {
   };
 
   const userInitials = session?.user?.name
-    ? session.user.name.split(" ").map((n) => n[0]).join("").toUpperCase()
+    ? session.user.name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
     : session?.user?.email?.[0]?.toUpperCase() || "U";
 
   return (
@@ -36,7 +43,10 @@ export function Sidebar() {
         >
           <CheckSquare className="w-5 h-5" />
         </div>
-        <span className="font-bold text-lg hidden sm:block" style={{ color: "var(--foreground)" }}>
+        <span
+          className="font-bold text-lg hidden sm:block"
+          style={{ color: "var(--foreground)" }}
+        >
           TaskHub
         </span>
       </div>
@@ -95,7 +105,7 @@ export function Sidebar() {
                       color: "var(--muted-foreground)",
                     }
               }
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition hover:opacity-80`}
+              className={`w-full   flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition hover:opacity-80`}
               onMouseEnter={(e) => {
                 if (!isActive) {
                   (e.currentTarget as HTMLElement).style.backgroundColor =
@@ -122,10 +132,7 @@ export function Sidebar() {
       <Button
         onClick={handleSignOut}
         variant="outline"
-        style={{
-          borderColor: "var(--border)",
-          color: "var(--foreground)",
-        }}
+        className="bg-secondary text-secondary-foreground cursor-pointer hover:bg-primary/80"
       >
         <LogOut className="h-4 w-4 mr-2" />
         Sign Out

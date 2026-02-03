@@ -100,6 +100,7 @@ export function SignInForm() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <Input
         // label="Email"
+        placeholder="abdullah2127x@gmail.com"
         type="email"
         {...register("email")}
         // error={errors.email?.message}
@@ -108,6 +109,7 @@ export function SignInForm() {
 
       <Input
         // label="Password"
+        placeholder="Your password"
         type="password"
         {...register("password")}
         // error={errors.password?.message}
@@ -128,7 +130,7 @@ export function SignInForm() {
         </div>
       )}
 
-      <Button type="submit" className="w-full" disabled={isLoading}>
+      <Button type="submit" className="w-full cursor-pointer" disabled={isLoading}>
         {isLoading ? "Signing in..." : "Sign in"}
       </Button>
 
