@@ -27,31 +27,50 @@ export const prioritySchema = z.enum(priorityValues);
 
 /**
  * Priority display configuration
+ * Updated for T002: Uses semantic CSS theme variables instead of hardcoded Tailwind colors
+ * - Light mode: --priority-{level}-bg/text colors
+ * - Dark mode: Colors defined separately in globals.css .dark selector
  */
 export const PRIORITY_CONFIG = {
   none: {
     label: "None",
     color: "gray",
     sortOrder: 3,
-    badgeClass: "bg-gray-100 text-gray-600 border-gray-200",
+    badgeStyle: {
+      backgroundColor: "var(--priority-none-bg)",
+      color: "var(--priority-none-text)",
+      borderColor: "var(--priority-none-bg)",
+    },
   },
   low: {
     label: "Low",
     color: "blue",
     sortOrder: 2,
-    badgeClass: "bg-blue-100 text-blue-800 border-blue-200",
+    badgeStyle: {
+      backgroundColor: "var(--priority-low-bg)",
+      color: "var(--priority-low-text)",
+      borderColor: "var(--priority-low-bg)",
+    },
   },
   medium: {
     label: "Medium",
     color: "yellow",
     sortOrder: 1,
-    badgeClass: "bg-yellow-100 text-yellow-800 border-yellow-200",
+    badgeStyle: {
+      backgroundColor: "var(--priority-medium-bg)",
+      color: "var(--priority-medium-text)",
+      borderColor: "var(--priority-medium-bg)",
+    },
   },
   high: {
     label: "High",
     color: "red",
     sortOrder: 0,
-    badgeClass: "bg-red-100 text-red-800 border-red-200",
+    badgeStyle: {
+      backgroundColor: "var(--priority-high-bg)",
+      color: "var(--priority-high-text)",
+      borderColor: "var(--priority-high-bg)",
+    },
   },
 } as const;
 

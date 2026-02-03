@@ -58,50 +58,100 @@ export function TaskForm({
   };
 
   return (
+    // T039: Update modal styling with opaque background
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
       <div>
-        <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+        {/* T043: Update form label styling to use --foreground variable */}
+        <label htmlFor="title" className="block text-sm font-medium" style={{ color: "var(--foreground)" }}>
           Title
         </label>
+        {/* T041: Use semantic input field styling */}
         <input
           {...register("title")}
           id="title"
           type="text"
           disabled={isLoading}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+          className="mt-1 block w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-1 disabled:cursor-not-allowed transition"
+          style={{
+            backgroundColor: "var(--input-bg)",
+            borderColor: "var(--input-border)",
+            color: "var(--input-text)",
+          }}
+          onFocus={(e) => {
+            e.currentTarget.style.borderColor = "var(--primary)";
+            e.currentTarget.style.boxShadow = "0 0 0 1px var(--primary)";
+          }}
+          onBlur={(e) => {
+            e.currentTarget.style.borderColor = "var(--input-border)";
+            e.currentTarget.style.boxShadow = "none";
+          }}
           placeholder="Enter task title"
         />
         {errors.title && (
-          <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>
+          <p className="mt-1 text-sm" style={{ color: "var(--error-text)" }}>
+            {errors.title.message}
+          </p>
         )}
       </div>
 
       <div>
-        <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+        {/* T043: Form label styling */}
+        <label htmlFor="description" className="block text-sm font-medium" style={{ color: "var(--foreground)" }}>
           Description (Optional)
         </label>
+        {/* T041: Input field styling */}
         <textarea
           {...register("description")}
           id="description"
           rows={3}
           disabled={isLoading}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+          className="mt-1 block w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-1 disabled:cursor-not-allowed transition"
+          style={{
+            backgroundColor: "var(--input-bg)",
+            borderColor: "var(--input-border)",
+            color: "var(--input-text)",
+          }}
+          onFocus={(e) => {
+            e.currentTarget.style.borderColor = "var(--primary)";
+            e.currentTarget.style.boxShadow = "0 0 0 1px var(--primary)";
+          }}
+          onBlur={(e) => {
+            e.currentTarget.style.borderColor = "var(--input-border)";
+            e.currentTarget.style.boxShadow = "none";
+          }}
           placeholder="Enter task description"
         />
         {errors.description && (
-          <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
+          <p className="mt-1 text-sm" style={{ color: "var(--error-text)" }}>
+            {errors.description.message}
+          </p>
         )}
       </div>
 
       <div>
-        <label htmlFor="priority" className="block text-sm font-medium text-gray-700">
+        {/* T043: Form label styling */}
+        <label htmlFor="priority" className="block text-sm font-medium" style={{ color: "var(--foreground)" }}>
           Priority
         </label>
+        {/* T046: Replace priority selector styling with semantic variables */}
         <select
           {...register("priority")}
           id="priority"
           disabled={isLoading}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+          className="mt-1 block w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-1 disabled:cursor-not-allowed transition"
+          style={{
+            backgroundColor: "var(--input-bg)",
+            borderColor: "var(--input-border)",
+            color: "var(--input-text)",
+          }}
+          onFocus={(e) => {
+            e.currentTarget.style.borderColor = "var(--primary)";
+            e.currentTarget.style.boxShadow = "0 0 0 1px var(--primary)";
+          }}
+          onBlur={(e) => {
+            e.currentTarget.style.borderColor = "var(--input-border)";
+            e.currentTarget.style.boxShadow = "none";
+          }}
         >
           {priorityValues.map((priority) => (
             <option key={priority} value={priority}>
@@ -110,14 +160,18 @@ export function TaskForm({
           ))}
         </select>
         {errors.priority && (
-          <p className="mt-1 text-sm text-red-600">{errors.priority.message}</p>
+          <p className="mt-1 text-sm" style={{ color: "var(--error-text)" }}>
+            {errors.priority.message}
+          </p>
         )}
       </div>
 
       <div>
-        <label htmlFor="tags" className="block text-sm font-medium text-gray-700">
+        {/* T043: Form label styling */}
+        <label htmlFor="tags" className="block text-sm font-medium" style={{ color: "var(--foreground)" }}>
           Tags (Optional)
         </label>
+        {/* T045: Update tag input styling */}
         <TagInput
           value={watchedTags}
           onChange={(newTags) => setValue("tags", newTags, { shouldValidate: true })}
@@ -126,7 +180,9 @@ export function TaskForm({
           placeholder="Add tags (comma or enter to add)..."
         />
         {errors.tags && (
-          <p className="mt-1 text-sm text-red-600">{errors.tags.message}</p>
+          <p className="mt-1 text-sm" style={{ color: "var(--error-text)" }}>
+            {errors.tags.message}
+          </p>
         )}
       </div>
 

@@ -7,7 +7,10 @@ import type { Todo } from "@/types/task";
 interface PriorityTabsProps {
   todos: Todo[] | undefined;
   isLoading: boolean;
-  renderContent: (todos: Todo[], priority: "high" | "medium" | "low" | "none") => React.ReactNode;
+  renderContent: (
+    todos: Todo[],
+    priority: "high" | "medium" | "low" | "none"
+  ) => React.ReactNode;
 }
 
 export function PriorityTabs({
@@ -15,6 +18,7 @@ export function PriorityTabs({
   isLoading,
   renderContent,
 }: PriorityTabsProps) {
+  // T007: Ensure all 4 priority levels are displayed in correct sort order (high → medium → low → none)
   const priorities = ["high", "medium", "low", "none"] as const;
 
   const getCounts = () => {
