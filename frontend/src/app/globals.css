@@ -79,6 +79,32 @@
   --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
   --sidebar-border: oklch(0.92 0.004 286.32);
   --sidebar-ring: oklch(0.705 0.015 286.067);
+
+  /* Semantic theme variables for priority badges (T001, T003)
+     Updated per WCAG AA contrast verification - all ratios now meet 4.5:1 minimum */
+  --priority-high-bg: oklch(0.823 0.213 22.216);
+  --priority-high-text: oklch(0.141 0.005 285.823);
+  --priority-medium-bg: oklch(0.822 0.131 67.202);
+  --priority-medium-text: oklch(0.141 0.005 285.823);
+  --priority-low-bg: oklch(0.523 0.16 258.338);
+  --priority-low-text: oklch(0.985 0 0);
+  --priority-none-bg: oklch(0.898 0.01 0);
+  --priority-none-text: oklch(0.141 0.005 285.823);
+
+  /* Semantic theme variables for form states (T001) */
+  --error-bg: oklch(0.968 0.033 15.568);
+  --error-border: oklch(0.918 0.065 15.568);
+  --error-text: oklch(0.577 0.245 27.325);
+
+  /* Input field styling (T001) */
+  --input-bg: oklch(1 0 0);
+  --input-border: oklch(0.92 0.004 286.32);
+  --input-text: oklch(0.141 0.005 285.823);
+  --input-placeholder: oklch(0.7 0.02 286);
+
+  /* Link styling (T001) */
+  --link-text: oklch(0.21 0.006 285.885);
+  --link-text-hover: oklch(0.15 0.006 285.885);
 }
 
 .dark {
@@ -113,6 +139,31 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.552 0.016 285.938);
+
+  /* Semantic theme variables for priority badges - dark mode (T001) */
+  --priority-high-bg: oklch(0.504 0.234 22.216);
+  --priority-high-text: oklch(0.985 0 0);
+  --priority-medium-bg: oklch(0.548 0.157 72.216);
+  --priority-medium-text: oklch(0.141 0.005 285.823);
+  --priority-low-bg: oklch(0.404 0.168 258.338);
+  --priority-low-text: oklch(0.985 0 0);
+  --priority-none-bg: oklch(0.35 0.02 286);
+  --priority-none-text: oklch(0.8 0.02 286);
+
+  /* Semantic theme variables for form states - dark mode (T001) */
+  --error-bg: oklch(0.3 0.084 15.568);
+  --error-border: oklch(0.504 0.234 22.216);
+  --error-text: oklch(0.82 0.098 22.216);
+
+  /* Input field styling - dark mode (T001) */
+  --input-bg: oklch(0.21 0.006 285.885);
+  --input-border: oklch(1 0 0 / 15%);
+  --input-text: oklch(0.985 0 0);
+  --input-placeholder: oklch(0.6 0.02 286);
+
+  /* Link styling - dark mode (T001) */
+  --link-text: oklch(0.92 0.004 286.32);
+  --link-text-hover: oklch(1 0.004 286.32);
 }
 
 @layer base {
