@@ -14,7 +14,11 @@ export default function PriorityPage() {
     fetchTasks();
   }, [fetchTasks]);
 
-  const renderPriorityContent = (todos: Todo[]) => {
+  // T006: Fixed priority filtering logic to render all priority levels
+  const renderPriorityContent = (
+    todos: Todo[],
+    priority: "high" | "medium" | "low" | "none"
+  ) => {
     if (todos.length === 0) {
       return (
         <div className="text-center py-8 bg-slate-50 dark:bg-slate-900 rounded-lg">
