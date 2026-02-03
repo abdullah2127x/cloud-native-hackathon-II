@@ -33,10 +33,10 @@
 
 **⚠️ CRITICAL**: Theme variable system must be complete before ANY component styling task can begin
 
-- [ ] T004 Create comprehensive CSS variable reference document mapping semantic tokens to all affected components in `specs/004-fix-priority-theme/theme-variables.md`
-- [ ] T005 [P] Setup test utilities for theme color verification in `frontend/__tests__/utils/theme-colors.test.ts`
+- [x] T004 Create comprehensive CSS variable reference document mapping semantic tokens to all affected components in `specs/004-fix-priority-theme/theme-variables.md`
+- [x] T005 [P] Setup test utilities for theme color verification in `frontend/__tests__/utils/theme-colors.test.ts`
 
-**Checkpoint**: Theme system ready - component styling updates can now begin in parallel
+**Checkpoint**: Theme system ready - component styling updates can now begin in parallel ✅
 
 ---
 
