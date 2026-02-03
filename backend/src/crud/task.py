@@ -1,5 +1,6 @@
 """CRUD operations for Task model"""
 from sqlmodel import Session, select, case
+from sqlalchemy.orm import selectinload
 from src.models.task import Task
 from src.models.tag import Tag, TaskTag
 from src.models.priority import Priority, PRIORITY_SORT_ORDER
@@ -138,15 +139,15 @@ def get_task_with_tags(session: Session, task_id: str, user_id: str) -> Task:
     statement = select(Task).where(
         Task.id == task_id,
         Task.user_id == user_id
+    ).options(
+        selectinload(Task.tags)
     )
     task = session.exec(statement).first()
 
     if not task:
         raise TaskNotFoundError(task_id)
 
-    # Load the tags for the task
-    task.tags = _load_task_tags(session, task)
-
+    # Tags will be loaded through the SQLAlchemy relationship
     return task
 
 
@@ -178,8 +179,10 @@ def list_tasks(
     Returns:
         List of tasks with applied filters and sorting
     """
-    # Build query
-    statement = select(Task).where(Task.user_id == user_id)
+    # Build query with eager loading of tags
+    statement = select(Task).where(Task.user_id == user_id).options(
+        selectinload(Task.tags)
+    )
 
     # Apply search filter
     if search:
@@ -242,10 +245,8 @@ def list_tasks(
     tasks = session.exec(statement).all()
     task_list = list(tasks)
 
-    # Load tags for each task
-    for task in task_list:
-        task.tags = _load_task_tags(session, task)
-
+    # Tags will be loaded through the SQLAlchemy relationship
+    # and serialized by the TaskRead schema
     return task_list
 
 
