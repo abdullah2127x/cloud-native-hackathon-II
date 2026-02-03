@@ -54,7 +54,13 @@
 - [ ] T009 [US1] Test priority dashboard with mixed priority todos (some priorities empty, some full) to ensure all levels render correctly
 - [ ] T010 [US1] Verify new todo immediately appears in correct priority section on dashboard after creation
 
-**Checkpoint**: User Story 1 complete - priority dashboard shows all priority levels correctly
+**Checkpoint**: User Story 1 complete - priority dashboard shows all priority levels correctly ✅
+
+- [x] T006 [US1] Fix priority filtering logic in `frontend/src/app/dashboard/priority/page.tsx` to render all priority levels (high, medium, low, none)
+- [x] T007 [US1] Update PriorityTabs component in `frontend/src/app/dashboard/components/PriorityTabs.tsx` to include all 4 priority tabs with correct labels and sort order
+- [x] T008 [US1] Verify dashboard displays empty state for priority levels with no todos in `frontend/src/app/dashboard/priority/page.tsx`
+- [x] T009 [US1] Test priority dashboard with mixed priority todos (some priorities empty, some full) to ensure all levels render correctly
+- [x] T010 [US1] Verify new todo immediately appears in correct priority section on dashboard after creation
 
 ---
 

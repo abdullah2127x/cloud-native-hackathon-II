@@ -91,8 +91,13 @@ export function TodoCard({ todo, onToggle, onEdit, onDelete }: TodoCardProps) {
 
             {/* Badges */}
             <div className="flex flex-wrap gap-2 mt-3">
+              {/* T028: Use CSS variables for priority badge styling */}
               <Badge
-                className={`${priorityConfig.bgColor} ${priorityConfig.textColor} border-0`}
+                className="border-0"
+                style={{
+                  backgroundColor: priorityConfig.bgVar,
+                  color: priorityConfig.textVar,
+                }}
               >
                 {priorityConfig.label}
               </Badge>
