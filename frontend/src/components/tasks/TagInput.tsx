@@ -128,8 +128,16 @@ export function TagInput({ value, onChange, suggestions, placeholder = "Add tags
           value={inputValue}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-          onFocus={() => inputValue && setShowSuggestions(true)}
+          onBlur={(e) => {
+            e.currentTarget.style.borderColor = error ? "var(--error-border)" : "var(--input-border)";
+            e.currentTarget.style.boxShadow = "none";
+            setTimeout(() => setShowSuggestions(false), 200);
+          }}
+          onFocus={(e) => {
+            e.currentTarget.style.borderColor = error ? "var(--error-border)" : "var(--primary)";
+            e.currentTarget.style.boxShadow = `0 0 0 1px ${error ? "var(--error-border)" : "var(--primary)"}`;
+            inputValue && setShowSuggestions(true);
+          }}
           placeholder={value.length === 0 ? placeholder : ""}
           disabled={disabled}
           className="w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-1 disabled:cursor-not-allowed transition"
@@ -137,14 +145,6 @@ export function TagInput({ value, onChange, suggestions, placeholder = "Add tags
             borderColor: error ? "var(--error-border)" : "var(--input-border)",
             backgroundColor: "var(--input-bg)",
             color: "var(--input-text)",
-          }}
-          onFocus={(e) => {
-            e.currentTarget.style.borderColor = error ? "var(--error-border)" : "var(--primary)";
-            e.currentTarget.style.boxShadow = `0 0 0 1px ${error ? "var(--error-border)" : "var(--primary)"}`;
-          }}
-          onBlur={(e) => {
-            e.currentTarget.style.borderColor = error ? "var(--error-border)" : "var(--input-border)";
-            e.currentTarget.style.boxShadow = "none";
           }}
         />
 
