@@ -6,6 +6,11 @@ from sqlalchemy.pool import StaticPool
 from fastapi.testclient import TestClient
 from unittest.mock import AsyncMock, patch
 
+# Import all models to ensure they are registered with SQLModel before creating tables
+from src.models.user import User  # noqa: F401
+from src.models.task import Task  # noqa: F401
+from src.models.tag import Tag, TaskTag  # noqa: F401
+
 
 @pytest.fixture(name="engine")
 def engine_fixture():
@@ -57,7 +62,25 @@ def test_user_id_fixture() -> str:
     return "test-user-id"
 
 
+@pytest.fixture(name="mock_user_id")
+def mock_user_id_fixture() -> str:
+    """Provide a mock user ID for unit tests"""
+    return "test-user-id"
+
+
+@pytest.fixture(name="other_user_id")
+def other_user_id_fixture() -> str:
+    """Provide another user ID for isolation testing"""
+    return "other-user-id"
+
+
 @pytest.fixture(name="another_user_id")
 def another_user_id_fixture() -> str:
     """Provide another test user ID for isolation testing"""
     return "another-user-id"
+
+
+@pytest.fixture(name="auth_headers")
+def auth_headers_fixture(mock_auth) -> dict:
+    """Provide authentication headers for API tests"""
+    return {"Authorization": "Bearer mock-token"}

@@ -2,8 +2,11 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSession, signOut } from "@/lib/auth-client";
-import { Button } from "@/components/ui/Button";
+import { useSession } from "@/lib/auth-client";
+import { Sidebar } from "./components/Sidebar";
+import { DashboardNav } from "./components/DashboardNav";
+import { MobileMenu } from "./components/MobileMenu";
+import { useState } from "react";
 
 export default function DashboardLayout({
   children,
@@ -12,6 +15,7 @@ export default function DashboardLayout({
 }) {
   const router = useRouter();
   const { data: session, isPending } = useSession();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     if (!isPending && !session) {
@@ -19,15 +23,10 @@ export default function DashboardLayout({
     }
   }, [session, isPending, router]);
 
-  const handleSignOut = async () => {
-    await signOut();
-    router.push("/sign-in");
-  };
-
   if (isPending) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p>Loading...</p>
+        <div className="animate-pulse text-slate-600">Loading dashboard...</div>
       </div>
     );
   }
@@ -37,28 +36,25 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <h1 className="text-xl font-bold">Todo App</h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-700">
-                {session.user.name || session.user.email}
-              </span>
-              <Button variant="secondary" size="sm" onClick={handleSignOut}>
-                Sign out
-              </Button>
-            </div>
-          </div>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+      {/* Desktop Sidebar */}
+      <aside className="hidden md:block fixed left-0 top-0 h-screen w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800">
+        <Sidebar />
+      </aside>
 
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        {children}
-      </main>
+      {/* Mobile Menu */}
+      <MobileMenu open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} />
+
+      {/* Main Content */}
+      <div className="md:ml-64">
+        {/* Top Navigation */}
+        <DashboardNav onMenuToggle={() => setMobileMenuOpen(!mobileMenuOpen)} />
+
+        {/* Page Content */}
+        <main className="p-4 md:p-8">
+          {children}
+        </main>
+      </div>
     </div>
   );
 }

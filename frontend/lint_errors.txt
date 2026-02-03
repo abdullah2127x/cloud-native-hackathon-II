@@ -1,0 +1,102 @@
+
+> frontend@0.1.0 lint
+> eslint
+
+
+D:\AbdullahQureshi\workspace\Hackathon-2025\hackathon-2\todo-in-memory-console-app\frontend\src\app\(auth)\sign-in\page.tsx
+  25:18  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+D:\AbdullahQureshi\workspace\Hackathon-2025\hackathon-2\todo-in-memory-console-app\frontend\src\app\dashboard\components\MobileMenu.tsx
+  3:31  warning  'SheetTrigger' is defined but never used  @typescript-eslint/no-unused-vars
+
+D:\AbdullahQureshi\workspace\Hackathon-2025\hackathon-2\todo-in-memory-console-app\frontend\src\app\dashboard\components\TagsList.tsx
+  4:10  warning  'Badge' is defined but never used  @typescript-eslint/no-unused-vars
+
+D:\AbdullahQureshi\workspace\Hackathon-2025\hackathon-2\todo-in-memory-console-app\frontend\src\app\dashboard\overview\page.tsx
+  32:29  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+D:\AbdullahQureshi\workspace\Hackathon-2025\hackathon-2\todo-in-memory-console-app\frontend\src\app\dashboard\priority\page.tsx
+  36:22  warning  't' is defined but never used  @typescript-eslint/no-unused-vars
+
+D:\AbdullahQureshi\workspace\Hackathon-2025\hackathon-2\todo-in-memory-console-app\frontend\src\app\dashboard\tags\page.tsx
+   9:15  warning  'Todo' is defined but never used                 @typescript-eslint/no-unused-vars
+  12:41  warning  'updateTask' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  88:28  warning  't' is defined but never used                    @typescript-eslint/no-unused-vars
+
+D:\AbdullahQureshi\workspace\Hackathon-2025\hackathon-2\todo-in-memory-console-app\frontend\src\app\dashboard\todos\page.tsx
+    5:29  warning  'CardHeader' is defined but never used  @typescript-eslint/no-unused-vars
+    5:41  warning  'CardTitle' is defined but never used   @typescript-eslint/no-unused-vars
+   26:10  warning  'Separator' is defined but never used   @typescript-eslint/no-unused-vars
+   92:14  warning  'error' is defined but never used       @typescript-eslint/no-unused-vars
+  104:14  warning  'error' is defined but never used       @typescript-eslint/no-unused-vars
+  116:14  warning  'error' is defined but never used       @typescript-eslint/no-unused-vars
+  125:14  warning  'error' is defined but never used       @typescript-eslint/no-unused-vars
+
+D:\AbdullahQureshi\workspace\Hackathon-2025\hackathon-2\todo-in-memory-console-app\frontend\src\components\auth\SignInForm.tsx
+   22:18  warning  'errors' is assigned a value but never used                      @typescript-eslint/no-unused-vars
+   32:13  warning  'result' is assigned a value but never used                      @typescript-eslint/no-unused-vars
+   47:19  warning  'errorCode' is assigned a value but never used                   @typescript-eslint/no-unused-vars
+   47:45  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  128:12  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+D:\AbdullahQureshi\workspace\Hackathon-2025\hackathon-2\todo-in-memory-console-app\frontend\src\components\auth\SignUpForm.tsx
+  22:18  warning  'errors' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  33:13  warning  'result' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  49:45  error    Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+
+D:\AbdullahQureshi\workspace\Hackathon-2025\hackathon-2\todo-in-memory-console-app\frontend\src\components\tasks\FilterPanel.tsx
+  9:28  warning  'SortField' is defined but never used  @typescript-eslint/no-unused-vars
+  9:39  warning  'SortOrder' is defined but never used  @typescript-eslint/no-unused-vars
+
+D:\AbdullahQureshi\workspace\Hackathon-2025\hackathon-2\todo-in-memory-console-app\frontend\src\components\tasks\SearchBar.tsx
+  16:9  warning  'debouncedValue' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+D:\AbdullahQureshi\workspace\Hackathon-2025\hackathon-2\todo-in-memory-console-app\frontend\src\components\tasks\SortSelector.test.tsx
+  61:13  warning  'rerender' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+D:\AbdullahQureshi\workspace\Hackathon-2025\hackathon-2\todo-in-memory-console-app\frontend\src\components\tasks\TagInput.test.tsx
+  7:37  warning  'waitFor' is defined but never used  @typescript-eslint/no-unused-vars
+
+D:\AbdullahQureshi\workspace\Hackathon-2025\hackathon-2\todo-in-memory-console-app\frontend\src\components\tasks\TagInput.tsx
+    8:10  warning  'X' is defined but never used                         @typescript-eslint/no-unused-vars
+   88:9   warning  'addTagFromInput' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  146:53  warning  'index' is defined but never used                     @typescript-eslint/no-unused-vars
+
+D:\AbdullahQureshi\workspace\Hackathon-2025\hackathon-2\todo-in-memory-console-app\frontend\src\components\tasks\TaskForm.test.tsx
+  9:10  warning  'taskCreateSchema' is defined but never used  @typescript-eslint/no-unused-vars
+
+D:\AbdullahQureshi\workspace\Hackathon-2025\hackathon-2\todo-in-memory-console-app\frontend\src\components\tasks\TaskForm.tsx
+  36:5   warning  'reset' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-unused-vars
+  45:23  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+D:\AbdullahQureshi\workspace\Hackathon-2025\hackathon-2\todo-in-memory-console-app\frontend\src\components\tasks\TaskForm.tsx:45:23
+  43 |
+  44 |   const { tags, isLoading: tagsLoading, fetchTags } = useTags();
+> 45 |   const watchedTags = watch("tags", defaultValues?.tags || []);
+     |                       ^^^^^ React Hook Form's `useForm()` API returns a `watch()` function which cannot be memoized safely.
+  46 |
+  47 |   useEffect(() => {
+  48 |     fetchTags();  react-hooks/incompatible-library
+
+D:\AbdullahQureshi\workspace\Hackathon-2025\hackathon-2\todo-in-memory-console-app\frontend\src\components\ui\sidebar.tsx
+  611:26  error  Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+D:\AbdullahQureshi\workspace\Hackathon-2025\hackathon-2\todo-in-memory-console-app\frontend\src\components\ui\sidebar.tsx:611:26
+  609 |   // Random width between 50 to 90%.
+  610 |   const width = React.useMemo(() => {
+> 611 |     return `${Math.floor(Math.random() * 40) + 50}%`
+      |                          ^^^^^^^^^^^^^ Cannot call impure function
+  612 |   }, [])
+  613 |
+  614 |   return (  react-hooks/purity
+
+D:\AbdullahQureshi\workspace\Hackathon-2025\hackathon-2\todo-in-memory-console-app\frontend\src\hooks\useTaskFilters.ts
+  8:39  warning  'SortOrder' is defined but never used           @typescript-eslint/no-unused-vars
+  9:10  warning  'DEFAULT_SORT_ORDER' is defined but never used  @typescript-eslint/no-unused-vars
+
+Γ£û 37 problems (6 errors, 31 warnings)
+

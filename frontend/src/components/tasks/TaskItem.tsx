@@ -1,7 +1,7 @@
 /**
  * TaskItem - Individual task display with actions
- * Spec: 001-todo-web-crud
- * Task: T086, T087, T110, T130
+ * Spec: 001-todo-web-crud, 002-todo-organization-features
+ * Task: T086, T087, T110, T130, T038
  */
 
 "use client";
@@ -9,6 +9,8 @@
 import React, { useState } from "react";
 import type { Task } from "@/types/task";
 import { Button } from "@/components/ui/Button";
+import { PriorityBadge } from "./PriorityBadge";
+import { TagChip } from "./TagChip";
 
 interface TaskItemProps {
   task: Task;
@@ -63,15 +65,18 @@ export function TaskItem({ task, onToggle, onEdit, onDelete }: TaskItemProps) {
 
         {/* Task content */}
         <div className="flex-1 min-w-0">
-          <h4
-            className={`text-base font-medium ${
-              task.completed
-                ? "text-gray-500 line-through"
-                : "text-gray-900"
-            }`}
-          >
-            {task.title}
-          </h4>
+          <div className="flex items-center gap-2">
+            <h4
+              className={`text-base font-medium ${
+                task.completed
+                  ? "text-gray-500 line-through"
+                  : "text-gray-900"
+              }`}
+            >
+              {task.title}
+            </h4>
+            <PriorityBadge priority={task.priority} size="sm" />
+          </div>
           {task.description && (
             <p
               className={`mt-1 text-sm ${
@@ -81,6 +86,16 @@ export function TaskItem({ task, onToggle, onEdit, onDelete }: TaskItemProps) {
               {task.description}
             </p>
           )}
+
+          {/* Display tags */}
+          {task.tags && task.tags.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-1">
+              {task.tags.map((tag, index) => (
+                <TagChip key={`${task.id}-tag-${index}`} name={tag} />
+              ))}
+            </div>
+          )}
+
           <p className="mt-2 text-xs text-gray-500">
             Created: {new Date(task.created_at).toLocaleDateString()}
             {task.updated_at && (
@@ -102,7 +117,7 @@ export function TaskItem({ task, onToggle, onEdit, onDelete }: TaskItemProps) {
             Edit
           </Button>
           <Button
-            variant="danger"
+            variant="destructive"
             size="sm"
             onClick={handleDelete}
             disabled={isDeleting}

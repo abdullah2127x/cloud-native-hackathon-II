@@ -1,12 +1,13 @@
 """Task API endpoints"""
 from fastapi import APIRouter, Depends, status
-from sqlmodel import Session
+from sqlmodel import Session, select, func
 from typing import List
 
 from src.db.database import get_session
 from src.auth.dependencies import get_current_user
-from src.schemas.task import TaskCreate, TaskUpdate, TaskRead
+from src.schemas.task import TaskCreate, TaskUpdate, TaskRead, TaskListResponse
 from src.crud import task as task_crud
+from src.models.task import Task
 
 
 router = APIRouter(prefix="/api/todos", tags=["tasks"])
@@ -23,14 +24,74 @@ async def create_task(
     return task
 
 
-@router.get("/", response_model=List[TaskRead])
+@router.get("/", response_model=TaskListResponse)
 async def list_tasks(
+    search: str = None,
+    status: str = "all",
+    priority: str = "all",
+    tags: list[str] = None,
+    no_tags: bool = False,
+    sort: str = "priority",
+    order: str = None,
     user_id: str = Depends(get_current_user),
     session: Session = Depends(get_session),
 ):
-    """List all tasks for the authenticated user"""
-    tasks = task_crud.list_tasks(session, user_id)
-    return tasks
+    """List tasks for the authenticated user with filtering, searching, and sorting"""
+    # Count total tasks for the user (without filters for the total)
+    total_statement = select(func.count(Task.id)).where(Task.user_id == user_id)
+    total = session.exec(total_statement).one()
+
+    # Get filtered tasks for the user (with filters applied)
+    tasks = task_crud.list_tasks(
+        session=session,
+        user_id=user_id,
+        search=search,
+        status=status,
+        priority=priority,
+        tags=tags,
+        no_tags=no_tags,
+        sort_field=sort,
+        sort_order=order or ("desc" if sort == "created_at" else "asc")
+    )
+
+    # For filtered count, we need to calculate the count based on the same filters
+    # Build the same query but count instead of selecting
+    query = select(func.count(Task.id)).where(Task.user_id == user_id)
+
+    # Apply the same filters as in the main query
+    if search:
+        search_term = f"%{search}%"
+        query = query.where(
+            Task.title.ilike(search_term) |
+            Task.description.ilike(search_term)
+        )
+
+    if status and status != "all":
+        if status == "pending":
+            query = query.where(Task.completed == False)
+        elif status == "completed":
+            query = query.where(Task.completed == True)
+
+    if priority and priority != "all":
+        query = query.where(Task.priority == priority)
+
+    if tags:
+        from src.models.tag import TaskTag, Tag
+        query = query.join(TaskTag).join(Tag).where(
+            Tag.name.in_(tags)
+        )
+
+    if no_tags:
+        from src.models.tag import TaskTag
+        query = query.outerjoin(TaskTag).where(TaskTag.task_id.is_(None))
+
+    filtered = session.exec(query).one()
+
+    return TaskListResponse(
+        tasks=tasks,
+        total=total,
+        filtered=filtered
+    )
 
 
 @router.get("/{task_id}", response_model=TaskRead)
@@ -40,7 +101,7 @@ async def get_task(
     session: Session = Depends(get_session),
 ):
     """Get a specific task by ID"""
-    task = task_crud.get_task(session, task_id, user_id)
+    task = task_crud.get_task_with_tags(session, task_id, user_id)
     return task
 
 
@@ -52,7 +113,7 @@ async def update_task(
     session: Session = Depends(get_session),
 ):
     """Update a task"""
-    task = task_crud.update_task(session, task_id, user_id, task_data)
+    task = task_crud.update_task(session, task_id, task_data, user_id)
     return task
 
 

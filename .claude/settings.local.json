@@ -17,7 +17,15 @@
       "mcp__context7__query-docs",
       "Bash(uv run pytest:*)",
       "Bash(git add:*)",
-      "Bash(PYTHONPATH=. uv run pytest:*)"
+      "Bash(PYTHONPATH=. uv run pytest:*)",
+      "Bash(bash:*)"
     ]
-  }
+  },
+  "disabledMcpjsonServers": [
+    "better-auth-docs",
+    "better-auth",
+    "playwright",
+    "context7",
+    "github"
+  ]
 }

@@ -1,0 +1,467 @@
+openapi: 3.0.3
+info:
+  title: Todo API - Organization Features
+  description: |
+    Extended API endpoints for task organization features including
+    priorities, tags, search, filtering, and sorting.
+
+    Spec: 002-todo-organization-features
+  version: 2.0.0
+  contact:
+    name: Claude Code
+
+servers:
+  - url: http://localhost:8000
+    description: Development server
+  - url: https://api.example.com
+    description: Production server
+
+security:
+  - bearerAuth: []
+
+paths:
+  /api/todos:
+    get:
+      summary: List tasks with filtering and sorting
+      description: |
+        Retrieves all tasks for the authenticated user with optional
+        filtering by status, priority, tags, and search term.
+        Supports multiple sort options.
+      operationId: listTasks
+      tags:
+        - Tasks
+      parameters:
+        - name: search
+          in: query
+          description: Search term for title and description (case-insensitive, partial match)
+          required: false
+          schema:
+            type: string
+            maxLength: 200
+        - name: status
+          in: query
+          description: Filter by completion status
+          required: false
+          schema:
+            type: string
+            enum: [all, pending, completed]
+            default: all
+        - name: priority
+          in: query
+          description: Filter by priority level
+          required: false
+          schema:
+            type: string
+            enum: [all, high, medium, low, none]
+            default: all
+        - name: tags
+          in: query
+          description: Filter by tags (comma-separated, OR logic)
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: false
+        - name: no_tags
+          in: query
+          description: Filter to show only tasks without tags
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: sort
+          in: query
+          description: Sort field
+          required: false
+          schema:
+            type: string
+            enum: [priority, title, created_at]
+            default: priority
+        - name: order
+          in: query
+          description: Sort order (default varies by sort field)
+          required: false
+          schema:
+            type: string
+            enum: [asc, desc]
+      responses:
+        '200':
+          description: List of tasks with counts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+    post:
+      summary: Create a new task
+      description: Creates a new task with optional priority and tags
+      operationId: createTask
+      tags:
+        - Tasks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskCreate'
+      responses:
+        '201':
+          description: Task created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskRead'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /api/todos/{task_id}:
+    get:
+      summary: Get a task by ID
+      operationId: getTask
+      tags:
+        - Tasks
+      parameters:
+        - $ref: '#/components/parameters/TaskId'
+      responses:
+        '200':
+          description: Task details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskRead'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    patch:
+      summary: Update a task
+      description: Updates task fields including priority and tags
+      operationId: updateTask
+      tags:
+        - Tasks
+      parameters:
+        - $ref: '#/components/parameters/TaskId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskUpdate'
+      responses:
+        '200':
+          description: Task updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskRead'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+    delete:
+      summary: Delete a task
+      operationId: deleteTask
+      tags:
+        - Tasks
+      parameters:
+        - $ref: '#/components/parameters/TaskId'
+      responses:
+        '204':
+          description: Task deleted successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/todos/{task_id}/toggle:
+    post:
+      summary: Toggle task completion
+      operationId: toggleTask
+      tags:
+        - Tasks
+      parameters:
+        - $ref: '#/components/parameters/TaskId'
+      responses:
+        '200':
+          description: Task completion toggled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskRead'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/tags:
+    get:
+      summary: List user's tags
+      description: |
+        Retrieves all tags for the authenticated user with task counts.
+        Tags are sorted alphabetically.
+      operationId: listTags
+      tags:
+        - Tags
+      responses:
+        '200':
+          description: List of tags
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token from Better Auth
+
+  parameters:
+    TaskId:
+      name: task_id
+      in: path
+      required: true
+      description: Task UUID
+      schema:
+        type: string
+        format: uuid
+
+  schemas:
+    Priority:
+      type: string
+      enum: [none, low, medium, high]
+      description: Task priority level
+      default: none
+
+    TaskCreate:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+          description: Task title
+          example: "Complete project documentation"
+        description:
+          type: string
+          maxLength: 2000
+          nullable: true
+          description: Task description
+          example: "Write API documentation and update README"
+        priority:
+          $ref: '#/components/schemas/Priority'
+        tags:
+          type: array
+          items:
+            type: string
+            maxLength: 50
+            pattern: '^\S+$'
+          maxItems: 20
+          description: Tag names (single words, no spaces)
+          example: ["work", "documentation"]
+
+    TaskUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+          nullable: true
+        description:
+          type: string
+          maxLength: 2000
+          nullable: true
+        completed:
+          type: boolean
+          nullable: true
+        priority:
+          allOf:
+            - $ref: '#/components/schemas/Priority'
+          nullable: true
+        tags:
+          type: array
+          items:
+            type: string
+            maxLength: 50
+            pattern: '^\S+$'
+          maxItems: 20
+          nullable: true
+          description: Replaces existing tags when provided
+
+    TaskRead:
+      type: object
+      required:
+        - id
+        - user_id
+        - title
+        - completed
+        - priority
+        - tags
+        - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        completed:
+          type: boolean
+        priority:
+          $ref: '#/components/schemas/Priority'
+        tags:
+          type: array
+          items:
+            type: string
+          description: List of tag names
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    TaskListResponse:
+      type: object
+      required:
+        - tasks
+        - total
+        - filtered
+      properties:
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskRead'
+        total:
+          type: integer
+          description: Total number of tasks for the user
+          example: 65
+        filtered:
+          type: integer
+          description: Number of tasks matching current filters
+          example: 18
+
+    TagRead:
+      type: object
+      required:
+        - id
+        - name
+        - task_count
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          description: Tag name (lowercase)
+        task_count:
+          type: integer
+          description: Number of tasks with this tag
+          example: 5
+
+    TagListResponse:
+      type: object
+      required:
+        - tags
+      properties:
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/TagRead'
+
+    Error:
+      type: object
+      required:
+        - detail
+        - code
+      properties:
+        detail:
+          type: string
+          description: Human-readable error message
+        code:
+          type: string
+          description: Machine-readable error code
+          example: TASK_NOT_FOUND
+
+    ValidationError:
+      type: object
+      required:
+        - detail
+      properties:
+        detail:
+          type: array
+          items:
+            type: object
+            properties:
+              loc:
+                type: array
+                items:
+                  type: string
+              msg:
+                type: string
+              type:
+                type: string
+
+  responses:
+    Unauthorized:
+      description: Authentication required or invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            detail: "Invalid or expired token"
+            code: "UNAUTHORIZED"
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            detail: "Task not found"
+            code: "TASK_NOT_FOUND"
+
+    ValidationError:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+          example:
+            detail:
+              - loc: ["body", "tags", 0]
+                msg: "Tag 'my tag' cannot contain spaces"
+                type: "value_error"
+
+tags:
+  - name: Tasks
+    description: Task management endpoints
+  - name: Tags
+    description: Tag management endpoints

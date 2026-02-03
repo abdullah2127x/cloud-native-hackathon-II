@@ -24,3 +24,10 @@ class ValidationError(TodoAppException):
     def __init__(self, message: str, field: str | None = None):
         self.field = field
         super().__init__(message)
+
+
+class TagNotFoundError(TodoAppException):
+    """Raised when a tag is not found"""
+    def __init__(self, tag_id: str):
+        self.tag_id = tag_id
+        super().__init__(f"Tag with id '{tag_id}' not found")
