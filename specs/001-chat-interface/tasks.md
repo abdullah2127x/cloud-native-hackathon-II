@@ -23,19 +23,19 @@ Tasks are organized by **user story** to enable independent implementation and t
 
 Tasks in this phase establish the infrastructure needed for all user stories.
 
-- [ ] [T001] [P] Install frontend dependencies: `npm install react-virtuoso @openai/chatkit` (frontend/package.json)
-- [ ] [T002] [P] Install backend dependencies: `uv add sqlmodel pydantic` (backend/pyproject.toml)
-- [ ] [T003] Create Conversation SQLModel with id, user_id, created_at, updated_at fields and messages relationship (backend/app/models/conversation.py)
-- [ ] [T004] Create Message SQLModel with id, user_id, conversation_id FK CASCADE, role enum, content, created_at and conversation relationship (backend/app/models/message.py)
-- [ ] [T005] Generate database migration: `alembic revision --autogenerate -m "Add conversation and message tables"` (backend/migrations/versions/)
-- [ ] [T006] Verify migration includes CASCADE DELETE on message.conversation_id foreign key, all indexes created correctly (backend/migrations/versions/XXXX_add_conversation_message_tables.py)
-- [ ] [T007] Run migration: `alembic upgrade head` and verify tables exist with `\d conversation` and `\d message` (database)
-- [ ] [T008] Create Pydantic ChatRequest schema with conversation_id (optional UUID) and message (string 1-4000 chars) (backend/app/schemas/chat.py)
-- [ ] [T009] Create Pydantic ChatResponse schema with conversation_id UUID, message string, role "assistant", created_at datetime (backend/app/schemas/chat.py)
-- [ ] [T010] Create Pydantic ErrorResponse schema with error string and detail string (backend/app/schemas/chat.py)
-- [ ] [T011] [Story:Setup] Write unit tests for Conversation model: creation, relationships, timestamps (backend/tests/test_models_conversation.py)
-- [ ] [T012] [Story:Setup] Write unit tests for Message model: creation, foreign key, CASCADE delete, role validation (backend/tests/test_models_message.py)
-- [ ] [T013] [Story:Setup] Write unit tests for Pydantic schemas: validation, field types, required fields (backend/tests/test_schemas_chat.py)
+- [X] [T001] [P] Install frontend dependencies: `npm install react-virtuoso @openai/chatkit` (frontend/package.json)
+- [X] [T002] [P] Install backend dependencies: `uv add sqlmodel pydantic` (backend/pyproject.toml)
+- [X] [T003] Create Conversation SQLModel with id, user_id, created_at, updated_at fields and messages relationship (backend/app/models/conversation.py)
+- [X] [T004] Create Message SQLModel with id, user_id, conversation_id FK CASCADE, role enum, content, created_at and conversation relationship (backend/app/models/message.py)
+- [X] [T005] Generate database migration: `alembic revision --autogenerate -m "Add conversation and message tables"` (backend/migrations/versions/)
+- [X] [T006] Verify migration includes CASCADE DELETE on message.conversation_id foreign key, all indexes created correctly (backend/migrations/versions/XXXX_add_conversation_message_tables.py)
+- [X] [T007] Run migration: `alembic upgrade head` and verify tables exist with `\d conversation` and `\d message` (database)
+- [X] [T008] Create Pydantic ChatRequest schema with conversation_id (optional UUID) and message (string 1-4000 chars) (backend/app/schemas/chat.py)
+- [X] [T009] Create Pydantic ChatResponse schema with conversation_id UUID, message string, role "assistant", created_at datetime (backend/app/schemas/chat.py)
+- [X] [T010] Create Pydantic ErrorResponse schema with error string and detail string (backend/app/schemas/chat.py)
+- [X] [T011] [Story:Setup] Write unit tests for Conversation model: creation, relationships, timestamps (backend/tests/test_models_conversation.py)
+- [X] [T012] [Story:Setup] Write unit tests for Message model: creation, foreign key, CASCADE delete, role validation (backend/tests/test_models_message.py)
+- [X] [T013] [Story:Setup] Write unit tests for Pydantic schemas: validation, field types, required fields (backend/tests/test_schemas_chat.py)
 
 **Dependencies**: T003-T004 → T005, T005 → T006 → T007, T008-T010 → T013
 
@@ -49,18 +49,18 @@ Tasks in this phase establish the infrastructure needed for all user stories.
 
 #### Backend: Chat Endpoint
 
-- [ ] [T101] [Story:US1] Create POST `/api/{user_id}/chat` route with JWT dependency, verify user_id matches token or return 403 (backend/app/routes/chat.py)
-- [ ] [T102] [Story:US1] Implement stateless conversation history fetch: if conversation_id provided, fetch from database with user_id filter or return 404 (backend/app/routes/chat.py)
-- [ ] [T103] [Story:US1] Implement new conversation creation: if no conversation_id, create Conversation with user_id and commit (backend/app/routes/chat.py)
-- [ ] [T104] [Story:US1] Save user message to database BEFORE AI processing with user_id, conversation_id, role "user", content from request (backend/app/routes/chat.py)
-- [ ] [T105] [Story:US1] Add placeholder AI agent call (returns "I received: {message}" for now - actual AI logic in separate spec) (backend/app/routes/chat.py)
-- [ ] [T106] [Story:US1] Save AI response message to database with role "assistant", update conversation.updated_at, return ChatResponse (backend/app/routes/chat.py)
-- [ ] [T107] [Story:US1] Write endpoint test: 200 with conversation_id on successful request (backend/tests/test_routes_chat.py)
-- [ ] [T108] [Story:US1] Write endpoint test: 401 without valid JWT token (backend/tests/test_routes_chat.py)
-- [ ] [T109] [Story:US1] Write endpoint test: 403 if user_id doesn't match JWT user_id (backend/tests/test_routes_chat.py)
-- [ ] [T110] [Story:US1] Write endpoint test: 404 if conversation_id not found or not owned by user (backend/tests/test_routes_chat.py)
-- [ ] [T111] [Story:US1] Write endpoint test: verify user and assistant messages saved to database (backend/tests/test_routes_chat.py)
-- [ ] [T112] [Story:US1] Write endpoint test: verify stateless behavior (conversation history fetched from DB on each request) (backend/tests/test_routes_chat.py)
+- [X] [T101] [Story:US1] Create POST `/api/{user_id}/chat` route with JWT dependency, verify user_id matches token or return 403 (backend/app/routes/chat.py)
+- [X] [T102] [Story:US1] Implement stateless conversation history fetch: if conversation_id provided, fetch from database with user_id filter or return 404 (backend/app/routes/chat.py)
+- [X] [T103] [Story:US1] Implement new conversation creation: if no conversation_id, create Conversation with user_id and commit (backend/app/routes/chat.py)
+- [X] [T104] [Story:US1] Save user message to database BEFORE AI processing with user_id, conversation_id, role "user", content from request (backend/app/routes/chat.py)
+- [X] [T105] [Story:US1] Add placeholder AI agent call (returns "I received: {message}" for now - actual AI logic in separate spec) (backend/app/routes/chat.py)
+- [X] [T106] [Story:US1] Save AI response message to database with role "assistant", update conversation.updated_at, return ChatResponse (backend/app/routes/chat.py)
+- [X] [T107] [Story:US1] Write endpoint test: 200 with conversation_id on successful request (backend/tests/test_routes_chat.py)
+- [X] [T108] [Story:US1] Write endpoint test: 401 without valid JWT token (backend/tests/test_routes_chat.py)
+- [X] [T109] [Story:US1] Write endpoint test: 403 if user_id doesn't match JWT user_id (backend/tests/test_routes_chat.py)
+- [X] [T110] [Story:US1] Write endpoint test: 404 if conversation_id not found or not owned by user (backend/tests/test_routes_chat.py)
+- [X] [T111] [Story:US1] Write endpoint test: verify user and assistant messages saved to database (backend/tests/test_routes_chat.py)
+- [X] [T112] [Story:US1] Write endpoint test: verify stateless behavior (conversation history fetched from DB on each request) (backend/tests/test_routes_chat.py)
 
 **Dependencies**: T001-T013 → T101, T101 → T102-T103, T102-T103 → T104, T104 → T105 → T106, T101-T106 → T107-T112
 
