@@ -34,12 +34,12 @@ export const navigationSections: NavigationSection[] = [
     icon: Tag,
     href: "/dashboard/tags",
   },
-  {
-    id: "settings",
-    label: "Settings",
-    icon: Settings,
-    href: "/dashboard/settings",
-  },
+  // {
+  //   id: "settings",
+  //   label: "Settings",
+  //   icon: Settings,
+  //   href: "/dashboard/settings",
+  // },
 ];
 
 export function getActiveSection(pathname: string): string | null {

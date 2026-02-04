@@ -23,12 +23,12 @@ export default function OverviewPage() {
 
   return (
     <div className="space-y-8">
-      {/* Page Header */}
+      {/* Page Header - T063: Use semantic theme variables */}
       <div>
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
+        <h1 className="text-3xl font-bold" style={{ color: "var(--foreground)" }}>
           Dashboard Overview
         </h1>
-        <p className="text-slate-600 dark:text-slate-400 mt-2">
+        <p className="mt-2" style={{ color: "var(--muted-foreground)" }}>
           Welcome back! Here&apos;s your task summary for today.
         </p>
       </div>
@@ -87,7 +87,7 @@ export default function OverviewPage() {
             Create your first task to get started
           </p>
           <Link href="/dashboard/todos">
-            <Button className="bg-purple-600 hover:bg-purple-700">
+            <Button className="bg-primary hover:bg-primary/80 text-primary-foreground cursor-pointer">
               Create Task
             </Button>
           </Link>

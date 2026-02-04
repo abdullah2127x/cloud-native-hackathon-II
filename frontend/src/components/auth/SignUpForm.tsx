@@ -95,6 +95,8 @@ export function SignUpForm() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <Input
         // label="Name"
+        placeholder="Your full name"
+        type="text"
         {...register("name")}
         // error={errors.name?.message}
         disabled={isLoading}
@@ -102,6 +104,7 @@ export function SignUpForm() {
 
       <Input
         // label="Email"
+        placeholder="abdullah2127x@gmail.com"
         type="email"
         {...register("email")}
         // error={errors.email?.message}
@@ -118,18 +121,40 @@ export function SignUpForm() {
       />
 
       {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600">
+        // T012: Use semantic error color variables instead of hardcoded red
+        <div
+          className="rounded-lg border p-3 text-sm"
+          style={{
+            borderColor: "var(--error-border)",
+            backgroundColor: "var(--error-bg)",
+            color: "var(--error-text)",
+          }}
+        >
           {error}
         </div>
       )}
 
-      <Button type="submit" className="w-full" disabled={isLoading}>
+      <Button type="submit" className="w-full cursor-pointer" disabled={isLoading}>
         {isLoading ? "Creating account..." : "Create account"}
       </Button>
 
-      <p className="text-center text-sm text-gray-600">
+      <p className="text-center text-sm" style={{ color: "var(--foreground)" }}>
         Already have an account?{" "}
-        <Link href="/sign-in" className="font-medium text-blue-600 hover:text-blue-500">
+        {/* T013: Use semantic link color variables */}
+        <Link
+          href="/sign-in"
+          className="font-medium"
+          style={{
+            color: "var(--link-text)",
+            textDecoration: "none",
+          }}
+          onMouseEnter={(e) => {
+            (e.target as HTMLElement).style.color = "var(--link-text-hover)";
+          }}
+          onMouseLeave={(e) => {
+            (e.target as HTMLElement).style.color = "var(--link-text)";
+          }}
+        >
           Sign in
         </Link>
       </p>

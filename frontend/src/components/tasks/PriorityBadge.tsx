@@ -12,7 +12,7 @@ interface PriorityBadgeProps {
   size?: "sm" | "md";
 }
 
-export function PriorityBadge({ priority, size = "md" }: PriorityBadgeProps){
+export function PriorityBadge({ priority, size = "md" }: PriorityBadgeProps) {
   const config = PRIORITY_CONFIG[priority];
 
   const sizeClasses = {
@@ -20,9 +20,21 @@ export function PriorityBadge({ priority, size = "md" }: PriorityBadgeProps){
     md: "text-sm px-2.5 py-1",
   };
 
+  const priorityClasses = {
+    bg: config.badgeStyle?.backgroundColor,
+    text: config.badgeStyle?.color,
+    border: config.badgeStyle?.borderColor,
+  };
+
   return (
+    // T060: Use semantic priority variables for badge colors
     <span
-      className={`inline-flex items-center rounded-full border font-medium ${config.badgeClass} ${sizeClasses[size]}`}
+      className={`inline-flex items-center rounded-full border font-medium transition ${sizeClasses[size]}`}
+      style={{
+        backgroundColor: priorityClasses.bg,
+        color: priorityClasses.text,
+        borderColor: priorityClasses.border,
+      }}
       aria-label={`Priority: ${config.label}`}
     >
       {config.label}

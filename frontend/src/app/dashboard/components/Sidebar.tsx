@@ -5,7 +5,10 @@ import { useSession, signOut } from "@/lib/auth-client";
 import { Button } from "@/components/ui/Button";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { navigationSections, getActiveSection } from "@/lib/dashboard-navigation";
+import {
+  navigationSections,
+  getActiveSection,
+} from "@/lib/dashboard-navigation";
 import { LogOut, CheckSquare } from "lucide-react";
 
 export function Sidebar() {
@@ -20,43 +23,69 @@ export function Sidebar() {
   };
 
   const userInitials = session?.user?.name
-    ? session.user.name.split(" ").map((n) => n[0]).join("").toUpperCase()
+    ? session.user.name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
     : session?.user?.email?.[0]?.toUpperCase() || "U";
 
   return (
     <div className="h-full flex flex-col overflow-y-auto p-4 space-y-6">
-      {/* Logo */}
+      {/* Logo - T021: Use primary color variable */}
       <div className="flex items-center gap-2 px-2">
-        <div className="bg-purple-600 p-2 rounded-lg">
-          <CheckSquare className="w-5 h-5 text-white" />
+        <div
+          className="p-2 rounded-lg"
+          style={{
+            backgroundColor: "var(--primary)",
+            color: "var(--primary-foreground)",
+          }}
+        >
+          <CheckSquare className="w-5 h-5" />
         </div>
-        <span className="font-bold text-lg hidden sm:block">TaskHub</span>
+        <span
+          className="font-bold text-lg hidden sm:block"
+          style={{ color: "var(--foreground)" }}
+        >
+          TaskHub
+        </span>
       </div>
 
-      <Separator className="bg-slate-200 dark:bg-slate-700" />
+      <Separator style={{ backgroundColor: "var(--border)" }} />
 
       {/* User Info */}
       <div className="px-2 space-y-3">
         <div className="flex items-center gap-3">
           <Avatar className="h-10 w-10">
-            <AvatarFallback className="bg-purple-600 text-white">
+            <AvatarFallback
+              style={{
+                backgroundColor: "var(--primary)",
+                color: "var(--primary-foreground)",
+              }}
+            >
               {userInitials}
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">
+            <p
+              className="text-sm font-semibold truncate"
+              style={{ color: "var(--foreground)" }}
+            >
               {session?.user?.name || "User"}
             </p>
-            <p className="text-xs text-slate-600 dark:text-slate-400 truncate">
+            <p
+              className="text-xs truncate"
+              style={{ color: "var(--muted-foreground)" }}
+            >
               {session?.user?.email}
             </p>
           </div>
         </div>
       </div>
 
-      <Separator className="bg-slate-200 dark:bg-slate-700" />
+      <Separator style={{ backgroundColor: "var(--border)" }} />
 
-      {/* Navigation */}
+      {/* Navigation - T023: Use semantic variables with proper states */}
       <nav className="flex-1 space-y-2">
         {navigationSections.map((section) => {
           const Icon = section.icon;
@@ -66,11 +95,29 @@ export function Sidebar() {
             <button
               key={section.id}
               onClick={() => router.push(section.href)}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition ${
+              style={
                 isActive
-                  ? "bg-purple-100 dark:bg-purple-900/30 text-purple-900 dark:text-purple-400"
-                  : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-              }`}
+                  ? {
+                      backgroundColor: "var(--primary)",
+                      color: "var(--primary-foreground)",
+                    }
+                  : {
+                      color: "var(--muted-foreground)",
+                    }
+              }
+              className={`w-full   flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition hover:opacity-80`}
+              onMouseEnter={(e) => {
+                if (!isActive) {
+                  (e.currentTarget as HTMLElement).style.backgroundColor =
+                    "var(--border)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isActive) {
+                  (e.currentTarget as HTMLElement).style.backgroundColor =
+                    "transparent";
+                }
+              }}
             >
               <Icon className="h-5 w-5 flex-shrink-0" />
               <span className="truncate">{section.label}</span>
@@ -79,13 +126,13 @@ export function Sidebar() {
         })}
       </nav>
 
-      <Separator className="bg-slate-200 dark:bg-slate-700" />
+      <Separator style={{ backgroundColor: "var(--border)" }} />
 
-      {/* Sign Out Button */}
+      {/* Sign Out Button - T054: Use semantic theme variables */}
       <Button
         onClick={handleSignOut}
         variant="outline"
-        className="w-full border-slate-300 dark:border-slate-600"
+        className="bg-secondary text-secondary-foreground cursor-pointer hover:bg-primary/80"
       >
         <LogOut className="h-4 w-4 mr-2" />
         Sign Out

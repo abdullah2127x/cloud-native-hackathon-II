@@ -4,6 +4,7 @@
  * Task: T054
  */
 
+import React from "react";
 import { X } from "lucide-react";
 
 interface TagChipProps {
@@ -13,6 +14,8 @@ interface TagChipProps {
 }
 
 export function TagChip({ name, onRemove, onClick }: TagChipProps) {
+  const [isHovered, setIsHovered] = React.useState(false);
+
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent event bubbling if used in a clickable container
     if (onClick) {
@@ -22,10 +25,17 @@ export function TagChip({ name, onRemove, onClick }: TagChipProps) {
 
   return (
     <span
-      className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200 cursor-pointer hover:bg-blue-200 transition-colors ${
+      className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border cursor-pointer transition-colors ${
         onClick ? "hover:underline" : ""
       }`}
+      style={{
+        backgroundColor: isHovered ? "var(--primary)" : "var(--accent)",
+        color: isHovered ? "var(--primary-foreground)" : "var(--foreground)",
+        borderColor: "var(--border)",
+      }}
       onClick={handleClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       aria-label={`Tag: ${name}${onRemove ? ", removable" : ""}`}
     >
       {name}
@@ -36,7 +46,8 @@ export function TagChip({ name, onRemove, onClick }: TagChipProps) {
             e.stopPropagation();
             onRemove();
           }}
-          className="ml-1 text-blue-600 hover:text-blue-800 focus:outline-none"
+          className="ml-1 focus:outline-none transition-colors hover:opacity-70"
+          style={{ color: isHovered ? "var(--primary-foreground)" : "var(--foreground)" }}
           aria-label={`Remove tag ${name}`}
         >
           <X size={12} />
