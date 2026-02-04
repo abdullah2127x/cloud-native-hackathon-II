@@ -1,6 +1,6 @@
 # Todo Web Application
 
-A full-stack task management application with authentication, built following Test-Driven Development principles and Spec-Driven Development methodology.
+A full-stack task management web app with user authentication, task CRUD operations, filtering, and search built with Next.js (frontend) and FastAPI (backend).
 
 ## Features
 
