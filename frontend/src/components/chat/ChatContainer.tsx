@@ -1,7 +1,7 @@
 /**
  * ChatContainer component with OpenAI ChatKit integration.
  *
- * Task IDs: T122, T123, T124, T225, T226, T227, T305, T306
+ * Task IDs: T122, T123, T124, T225, T226, T227, T305, T306, T422, T423, T424, T425, T426
  * Spec: specs/001-chat-interface/spec.md
  * Research: specs/001-chat-interface/research.md (Task 1 - Custom Fetch)
  */
@@ -9,14 +9,16 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
-import { useChatKit } from '@openai/chatkit';
-import { useSession } from '@/lib/auth-client';
+// import { useChatKit } from '@openai/chatkit';
+import { useSession, getJwtToken } from '@/lib/auth-client';
 import { getConversation, type Message } from '@/lib/api/chat';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { Menu, X } from 'lucide-react';
 import MessageList from './MessageList';
 import ChatInput from './ChatInput';
 import ConversationSidebar from './ConversationSidebar';
+import ErrorMessage from './ErrorMessage';
+import { classifyError, type ClassifiedError } from '@/lib/error-classifier';
 
 interface ChatContainerProps {
   userId: string;
@@ -28,7 +30,9 @@ export default function ChatContainer({ userId }: ChatContainerProps) {
   const [messages, setMessages] = useState<Array<{ role: string; content: string; id: string }>>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [classifiedError, setClassifiedError] = useState<ClassifiedError | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
+  const [lastMessage, setLastMessage] = useState<string | null>(null);
   // T306: Mobile sidebar state
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -43,13 +47,20 @@ export default function ChatContainer({ userId }: ChatContainerProps) {
   // T227: Load conversation history if conversation_id exists
   useEffect(() => {
     const loadConversationHistory = async () => {
-      if (!conversationId || !session?.token) return;
+      if (!conversationId) return;
+
+      const token = getJwtToken();
+      if (!token) {
+        setIsLoadingHistory(false);
+        return;
+      }
 
       setIsLoadingHistory(true);
-      setError(null);
+      setClassifiedError(null);
+      setRetryCount(0);
 
       try {
-        const conversation = await getConversation(userId, conversationId, session.token);
+        const conversation = await getConversation(userId, conversationId, token);
 
         // Convert API messages to component format
         const formattedMessages = conversation.messages.map((msg: Message) => ({
@@ -64,14 +75,15 @@ export default function ChatContainer({ userId }: ChatContainerProps) {
         // Clear invalid conversation ID
         setConversationId(null);
         localStorage.removeItem(`chat_conversation_${userId}`);
-        setError('Failed to load conversation history');
+        const error = classifyError(err);
+        setClassifiedError(error);
       } finally {
         setIsLoadingHistory(false);
       }
     };
 
     loadConversationHistory();
-  }, [conversationId, userId, session?.token]);
+  }, [conversationId, userId]);
 
   // T123: Custom fetch function with JWT injection
   const customFetch = useCallback(
@@ -93,32 +105,41 @@ export default function ChatContainer({ userId }: ChatContainerProps) {
   );
 
   // T122: Initialize ChatKit with custom fetch and domain key
-  const { control } = useChatKit({
-    api: {
-      url: `/api/${userId}/chat`,
-      domainKey: process.env.NEXT_PUBLIC_CHATKIT_DOMAIN_KEY || '',
-      fetch: customFetch,
-    },
-    // T124: Error handler
-    onError: ({ error: err }) => {
-      console.error('Chat error:', err);
-      setError(err.message || 'An error occurred. Please try again.');
-      setIsLoading(false);
-    },
-  });
+  // const { control } = useChatKit({
+  //   api: {
+  //     url: `/api/${userId}/chat`,
+  //     domainKey: process.env.NEXT_PUBLIC_CHATKIT_DOMAIN_KEY || '',
+  //     fetch: customFetch,
+  //   },
+  //   // T124: Error handler
+  //   onError: ({ error: err }) => {
+  //     console.error('Chat error:', err);
+  //     setError(err.message || 'An error occurred. Please try again.');
+  //     setIsLoading(false);
+  //   },
+  // });
 
-  // Handle message submission
+  // T422/T424: Handle message submission with error classification and retry logic
   const handleSendMessage = async (message: string) => {
     if (!message.trim() || isLoading) return;
 
+    const token = getJwtToken();
+    if (!token) {
+      const error = classifyError(new Error('No authentication token'));
+      setClassifiedError(error);
+      return;
+    }
+
     setIsLoading(true);
-    setError(null);
+    setClassifiedError(null);
+    setLastMessage(message);
 
     try {
-      const response = await fetch(`/api/${userId}/chat`, {
+      const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      const response = await fetch(`${apiBaseUrl}/api/${userId}/chat`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${session?.token}`,
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -140,6 +161,10 @@ export default function ChatContainer({ userId }: ChatContainerProps) {
         localStorage.setItem(`chat_conversation_${userId}`, data.conversation_id);
       }
 
+      // Clear error and retry count on success
+      setRetryCount(0);
+      setLastMessage(null);
+
       // Add user message and assistant response to messages
       setMessages((prev) => [
         ...prev,
@@ -151,12 +176,29 @@ export default function ChatContainer({ userId }: ChatContainerProps) {
         },
       ]);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'An error occurred';
-      setError(errorMessage);
+      // T423: Classify error for empathetic messaging
+      const error = classifyError(err);
+      setClassifiedError(error);
       console.error('Failed to send message:', err);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // T424: Handle retry with exponential backoff
+  const handleRetry = async () => {
+    if (!lastMessage) return;
+
+    // T424: Calculate exponential backoff delay (1s, 2s, 4s, 8s, ...)
+    const delay = 1000 * Math.pow(2, retryCount);
+
+    setRetryCount((prev) => prev + 1);
+
+    // Wait for exponential backoff before retrying
+    await new Promise((resolve) => setTimeout(resolve, delay));
+
+    // Retry sending the message
+    await handleSendMessage(lastMessage);
   };
 
   // T305: Handle conversation selection from sidebar
@@ -169,14 +211,17 @@ export default function ChatContainer({ userId }: ChatContainerProps) {
   // T305: Handle conversation load (set messages)
   const handleConversationLoad = (loadedMessages: Array<{ id: string; role: string; content: string }>) => {
     setMessages(loadedMessages);
-    setError(null);
+    setClassifiedError(null);
+    setRetryCount(0);
   };
 
   // T305: Handle new conversation
   const handleNewConversation = () => {
     setConversationId(null);
     setMessages([]);
-    setError(null);
+    setClassifiedError(null);
+    setRetryCount(0);
+    setLastMessage(null);
     localStorage.removeItem(`chat_conversation_${userId}`);
     setIsSidebarOpen(false); // Close mobile sidebar after action
   };
@@ -233,9 +278,14 @@ export default function ChatContainer({ userId }: ChatContainerProps) {
           <h1 className="ml-2 text-sm font-medium">Chat Assistant</h1>
         </div>
 
-        {error && (
-          <div className="border-b border-destructive bg-destructive/10 p-3 text-sm text-destructive">
-            {error}
+        {/* T422: Integrate ErrorMessage with retry capability */}
+        {classifiedError && (
+          <div className="border-b p-4">
+            <ErrorMessage
+              message={classifiedError.message}
+              onRetry={handleRetry}
+              isRetrying={isLoading}
+            />
           </div>
         )}
 
@@ -250,6 +300,7 @@ export default function ChatContainer({ userId }: ChatContainerProps) {
         </div>
 
         <div className="border-t p-4">
+          {/* T425: Keep input enabled during error state (FR-017) */}
           <ChatInput onSend={handleSendMessage} disabled={isLoading || isLoadingHistory} />
         </div>
       </div>

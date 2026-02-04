@@ -7,7 +7,7 @@
 
 import { useState, useCallback } from 'react';
 import { sendMessage } from '@/lib/api/chat';
-import { useSession } from '@/lib/auth-client';
+import { useSession, getJwtToken } from '@/lib/auth-client';
 
 interface UseChatResult {
   conversationId: string | null;
@@ -35,7 +35,8 @@ export function useChat(
 
   const sendChatMessage = useCallback(
     async (message: string): Promise<void> => {
-      if (!session?.token) {
+      const token = getJwtToken();
+      if (!token) {
         setError('No authentication token');
         return;
       }
@@ -53,7 +54,7 @@ export function useChat(
           userId,
           message,
           conversationId,
-          session.token
+          token
         );
 
         // Update conversation ID if this was a new conversation
@@ -73,7 +74,7 @@ export function useChat(
         setIsSubmitting(false);
       }
     },
-    [userId, conversationId, session?.token, onMessageSent]
+    [userId, conversationId, onMessageSent]
   );
 
   return {

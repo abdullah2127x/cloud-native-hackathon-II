@@ -7,7 +7,7 @@
 
 import { useState, useEffect } from 'react';
 import { listConversations, type ConversationSummary } from '@/lib/api/chat';
-import { useSession } from '@/lib/auth-client';
+import { useSession, getJwtToken } from '@/lib/auth-client';
 
 interface UseConversationHistoryResult {
   conversations: ConversationSummary[];
@@ -29,7 +29,8 @@ export function useConversationHistory(userId: string): UseConversationHistoryRe
   const { data: session } = useSession();
 
   const fetchConversations = async (): Promise<void> => {
-    if (!session?.token) {
+    const token = getJwtToken();
+    if (!token) {
       setError('No authentication token');
       setIsLoading(false);
       return;
@@ -38,7 +39,7 @@ export function useConversationHistory(userId: string): UseConversationHistoryRe
     try {
       setIsLoading(true);
       setError(null);
-      const result = await listConversations(userId, session.token);
+      const result = await listConversations(userId, token);
       setConversations(result.conversations);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch conversations');
@@ -50,7 +51,7 @@ export function useConversationHistory(userId: string): UseConversationHistoryRe
 
   useEffect(() => {
     fetchConversations();
-  }, [userId, session?.token]);
+  }, [userId]);
 
   return {
     conversations,

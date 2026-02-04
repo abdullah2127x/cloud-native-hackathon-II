@@ -6,18 +6,43 @@
  * User Story: US1 - Start a New Chat Conversation
  */
 
-import { redirect } from 'next/navigation';
-import { auth } from '@/lib/auth-client';
+'use client';
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useSession } from '@/lib/auth-client';
 import ChatContainer from '@/components/chat/ChatContainer';
 
-export default async function ChatPage() {
-  // Server component with Better Auth session check
-  const session = await auth();
+export default function ChatPage() {
+  const router = useRouter();
+  const { data: session, isPending } = useSession();
 
-  // Redirect to login if unauthenticated
-  if (!session?.user) {
-    redirect('/auth/signin');
+  useEffect(() => {
+    // Redirect to login if unauthenticated and session check is complete
+    if (!isPending && !session?.user) {
+      router.push('/sign-in');
+    }
+  }, [session, isPending, router]);
+
+  // Show loading state while checking session
+  if (isPending) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="mb-4 h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600" />
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
   }
+
+  // Redirect if no user (double-check)
+  if (!session?.user) {
+    return null;
+  }
+
+  // Debug: Log session data
+  console.log('Session data:', { userId: session.user.id, userName: session.user.name, userEmail: session.user.email });
 
   return (
     <div className="container mx-auto h-[calc(100vh-4rem)] p-4">

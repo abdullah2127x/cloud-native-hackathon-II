@@ -10,7 +10,7 @@
 import { useConversationHistory } from '@/hooks/useConversationHistory';
 import { getConversation, type ConversationSummary } from '@/lib/api/chat';
 import { useSession } from '@/lib/auth-client';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { PlusCircle, MessageSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
 

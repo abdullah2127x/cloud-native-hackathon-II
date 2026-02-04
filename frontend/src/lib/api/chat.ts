@@ -5,6 +5,8 @@
  * Spec: specs/001-chat-interface/spec.md
  */
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
 interface ChatRequest {
   conversation_id?: string;
   message: string;
@@ -66,7 +68,7 @@ export async function sendMessage(
     requestBody.conversation_id = conversationId;
   }
 
-  const response = await fetch(`/api/${userId}/chat`, {
+  const response = await fetch(`${API_BASE_URL}/api/${userId}/chat`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -104,7 +106,7 @@ export async function listConversations(
     offset: offset.toString(),
   });
 
-  const response = await fetch(`/api/${userId}/conversations?${params}`, {
+  const response = await fetch(`${API_BASE_URL}/api/${userId}/conversations?${params}`, {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -134,7 +136,7 @@ export async function getConversation(
   conversationId: string,
   token: string
 ): Promise<ConversationDetail> {
-  const response = await fetch(`/api/${userId}/conversations/${conversationId}`, {
+  const response = await fetch(`${API_BASE_URL}/api/${userId}/conversations/${conversationId}`, {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${token}`,

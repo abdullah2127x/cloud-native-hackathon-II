@@ -8,7 +8,7 @@
 'use client';
 
 import { useState, KeyboardEvent } from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { Textarea } from '@/components/ui/textarea';
 import { Send } from 'lucide-react';
 
