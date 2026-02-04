@@ -66,19 +66,19 @@ Tasks in this phase establish the infrastructure needed for all user stories.
 
 #### Frontend: Chat Page & ChatKit Component
 
-- [ ] [T121] [Story:US1] Create `/app/chat/page.tsx` route with Server Component wrapper and Better Auth session check, redirect to login if unauthenticated (frontend/app/chat/page.tsx)
-- [ ] [T122] [Story:US1] Create ChatContainer client component with useChatKit hook, custom fetch injecting JWT Bearer token, domainKey from env var (frontend/app/components/chat/ChatContainer.tsx)
-- [ ] [T123] [Story:US1] Implement custom fetch function: extract session token via Better Auth, inject Authorization header, call `/api/{user_id}/chat` (frontend/app/components/chat/ChatContainer.tsx)
-- [ ] [T124] [Story:US1] Add onError handler to useChatKit capturing errors to console (will enhance in US4) (frontend/app/components/chat/ChatContainer.tsx)
-- [ ] [T125] [Story:US1] Create MessageList component with React Virtuoso, configure initialTopMostItemIndex to messages.length-1, followOutput "smooth" (frontend/app/components/chat/MessageList.tsx)
-- [ ] [T126] [Story:US1] Implement message rendering in MessageList: user messages right-aligned, assistant left-aligned, display content and timestamp (frontend/app/components/chat/MessageList.tsx)
-- [ ] [T127] [Story:US1] Create ChatInput component with text input field, send button, Enter key submission (frontend/app/components/chat/ChatInput.tsx)
-- [ ] [T128] [Story:US1] Update NavBar to include "Chat" link routing to `/chat` (frontend/app/components/navigation/NavBar.tsx)
-- [ ] [T129] [Story:US1] Create API client function `sendMessage(user_id, message, conversation_id?, token)` calling POST endpoint (frontend/app/lib/api/chat.ts)
-- [ ] [T130] [Story:US1] Write component test: ChatContainer initializes useChatKit with correct config (frontend/__tests__/chat/ChatContainer.test.tsx)
-- [ ] [T131] [Story:US1] Write component test: MessageList renders messages in correct order, scrolls to bottom (frontend/__tests__/chat/MessageList.test.tsx)
-- [ ] [T132] [Story:US1] Write component test: ChatInput accepts text, submits on Enter/button click, clears after submit (frontend/__tests__/chat/ChatInput.test.tsx)
-- [ ] [T133] [Story:US1] Integration test: user sends message → saved to DB → AI responds → response saved → UI updates (frontend/__tests__/integration/chat-flow.test.tsx)
+- [X] [T121] [Story:US1] Create `/app/chat/page.tsx` route with Server Component wrapper and Better Auth session check, redirect to login if unauthenticated (frontend/app/chat/page.tsx)
+- [X] [T122] [Story:US1] Create ChatContainer client component with useChatKit hook, custom fetch injecting JWT Bearer token, domainKey from env var (frontend/app/components/chat/ChatContainer.tsx)
+- [X] [T123] [Story:US1] Implement custom fetch function: extract session token via Better Auth, inject Authorization header, call `/api/{user_id}/chat` (frontend/app/components/chat/ChatContainer.tsx)
+- [X] [T124] [Story:US1] Add onError handler to useChatKit capturing errors to console (will enhance in US4) (frontend/app/components/chat/ChatContainer.tsx)
+- [X] [T125] [Story:US1] Create MessageList component with React Virtuoso, configure initialTopMostItemIndex to messages.length-1, followOutput "smooth" (frontend/app/components/chat/MessageList.tsx)
+- [X] [T126] [Story:US1] Implement message rendering in MessageList: user messages right-aligned, assistant left-aligned, display content and timestamp (frontend/app/components/chat/MessageList.tsx)
+- [X] [T127] [Story:US1] Create ChatInput component with text input field, send button, Enter key submission (frontend/app/components/chat/ChatInput.tsx)
+- [X] [T128] [Story:US1] Update NavBar to include "Chat" link routing to `/chat` (frontend/app/components/navigation/NavBar.tsx)
+- [X] [T129] [Story:US1] Create API client function `sendMessage(user_id, message, conversation_id?, token)` calling POST endpoint (frontend/app/lib/api/chat.ts)
+- [X] [T130] [Story:US1] Write component test: ChatContainer initializes useChatKit with correct config (frontend/__tests__/chat/ChatContainer.test.tsx)
+- [X] [T131] [Story:US1] Write component test: MessageList renders messages in correct order, scrolls to bottom (frontend/__tests__/chat/MessageList.test.tsx)
+- [X] [T132] [Story:US1] Write component test: ChatInput accepts text, submits on Enter/button click, clears after submit (frontend/__tests__/chat/ChatInput.test.tsx)
+- [X] [T133] [Story:US1] Integration test: user sends message → saved to DB → AI responds → response saved → UI updates (frontend/__tests__/integration/chat-flow.test.tsx)
 
 **Dependencies**: T101-T106 (backend ready) → T121, T121 → T122, T122 → T123-T124, T001 → T125, T125 → T126, T127 parallel to T125-T126, T128 parallel to T121-T127, T123 → T129, T122-T129 → T130-T133
 
