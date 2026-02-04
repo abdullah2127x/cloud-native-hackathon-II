@@ -92,16 +92,16 @@ Tasks in this phase establish the infrastructure needed for all user stories.
 
 #### Backend: Conversation List & Detail Endpoints
 
-- [ ] [T201] [Story:US2] Create GET `/api/{user_id}/conversations` route with JWT dependency, pagination (limit, offset) query params (backend/app/routes/chat.py)
-- [ ] [T202] [Story:US2] Implement conversation list query: fetch conversations WHERE user_id = authenticated user, ORDER BY updated_at DESC, no messages loaded (backend/app/routes/chat.py)
-- [ ] [T203] [Story:US2] Return ConversationList schema with conversations array, total count, limit, offset (backend/app/routes/chat.py)
-- [ ] [T204] [Story:US2] Create GET `/api/{user_id}/conversations/{conversation_id}` route with JWT dependency (backend/app/routes/chat.py)
-- [ ] [T205] [Story:US2] Implement conversation detail query: fetch conversation with selectinload(messages), filter by user_id for security, return 404 if not found (backend/app/routes/chat.py)
-- [ ] [T206] [Story:US2] Return ConversationDetail schema with id, timestamps, messages array ordered by created_at (backend/app/routes/chat.py)
-- [ ] [T207] [Story:US2] Write endpoint test: GET /conversations returns user's conversations only, excludes other users (backend/tests/test_routes_chat.py)
-- [ ] [T208] [Story:US2] Write endpoint test: GET /conversations/{id} returns conversation with messages, 404 if not owned by user (backend/tests/test_routes_chat.py)
-- [ ] [T209] [Story:US2] Write endpoint test: pagination works correctly (limit, offset) (backend/tests/test_routes_chat.py)
-- [ ] [T210] [Story:US2] Write endpoint test: verify user isolation (User A cannot access User B's conversations) (backend/tests/test_routes_chat.py)
+- [x] [T201] [Story:US2] Create GET `/api/{user_id}/conversations` route with JWT dependency, pagination (limit, offset) query params (backend/app/routes/chat.py)
+- [x] [T202] [Story:US2] Implement conversation list query: fetch conversations WHERE user_id = authenticated user, ORDER BY updated_at DESC, no messages loaded (backend/app/routes/chat.py)
+- [x] [T203] [Story:US2] Return ConversationList schema with conversations array, total count, limit, offset (backend/app/routes/chat.py)
+- [x] [T204] [Story:US2] Create GET `/api/{user_id}/conversations/{conversation_id}` route with JWT dependency (backend/app/routes/chat.py)
+- [x] [T205] [Story:US2] Implement conversation detail query: fetch conversation with selectinload(messages), filter by user_id for security, return 404 if not found (backend/app/routes/chat.py)
+- [x] [T206] [Story:US2] Return ConversationDetail schema with id, timestamps, messages array ordered by created_at (backend/app/routes/chat.py)
+- [x] [T207] [Story:US2] Write endpoint test: GET /conversations returns user's conversations only, excludes other users (backend/tests/test_routes_chat.py)
+- [x] [T208] [Story:US2] Write endpoint test: GET /conversations/{id} returns conversation with messages, 404 if not owned by user (backend/tests/test_routes_chat.py)
+- [x] [T209] [Story:US2] Write endpoint test: pagination works correctly (limit, offset) (backend/tests/test_routes_chat.py)
+- [x] [T210] [Story:US2] Write endpoint test: verify user isolation (User A cannot access User B's conversations) (backend/tests/test_routes_chat.py)
 
 **Dependencies**: T101-T112 → T201, T201 → T202 → T203, T204 → T205 → T206, T201-T206 → T207-T210
 
