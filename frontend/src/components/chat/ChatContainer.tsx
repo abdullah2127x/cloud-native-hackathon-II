@@ -1,7 +1,7 @@
 /**
  * ChatContainer component with OpenAI ChatKit integration.
  *
- * Task IDs: T122, T123, T124, T225, T226, T227
+ * Task IDs: T122, T123, T124, T225, T226, T227, T305, T306
  * Spec: specs/001-chat-interface/spec.md
  * Research: specs/001-chat-interface/research.md (Task 1 - Custom Fetch)
  */
@@ -12,8 +12,11 @@ import { useState, useCallback, useEffect } from 'react';
 import { useChatKit } from '@openai/chatkit';
 import { useSession } from '@/lib/auth-client';
 import { getConversation, type Message } from '@/lib/api/chat';
+import { Button } from '@/components/ui/button';
+import { Menu, X } from 'lucide-react';
 import MessageList from './MessageList';
 import ChatInput from './ChatInput';
+import ConversationSidebar from './ConversationSidebar';
 
 interface ChatContainerProps {
   userId: string;
@@ -26,6 +29,8 @@ export default function ChatContainer({ userId }: ChatContainerProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // T306: Mobile sidebar state
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // T226: Load conversation_id from localStorage on mount
   useEffect(() => {
@@ -154,26 +159,99 @@ export default function ChatContainer({ userId }: ChatContainerProps) {
     }
   };
 
+  // T305: Handle conversation selection from sidebar
+  const handleConversationSelect = (selectedConversationId: string) => {
+    setConversationId(selectedConversationId);
+    localStorage.setItem(`chat_conversation_${userId}`, selectedConversationId);
+    setIsSidebarOpen(false); // Close mobile sidebar after selection
+  };
+
+  // T305: Handle conversation load (set messages)
+  const handleConversationLoad = (loadedMessages: Array<{ id: string; role: string; content: string }>) => {
+    setMessages(loadedMessages);
+    setError(null);
+  };
+
+  // T305: Handle new conversation
+  const handleNewConversation = () => {
+    setConversationId(null);
+    setMessages([]);
+    setError(null);
+    localStorage.removeItem(`chat_conversation_${userId}`);
+    setIsSidebarOpen(false); // Close mobile sidebar after action
+  };
+
   return (
-    <div className="flex h-full flex-col">
-      {error && (
-        <div className="border-b border-destructive bg-destructive/10 p-3 text-sm text-destructive">
-          {error}
-        </div>
-      )}
-
-      {isLoadingHistory && (
-        <div className="flex items-center justify-center p-4 text-sm text-muted-foreground">
-          Loading conversation history...
-        </div>
-      )}
-
-      <div className="flex-1 overflow-hidden">
-        <MessageList messages={messages} />
+    <div className="flex h-full">
+      {/* T305/T306: Sidebar - Desktop: always visible, Mobile: collapsible */}
+      <div className="hidden md:block md:w-80">
+        <ConversationSidebar
+          userId={userId}
+          currentConversationId={conversationId}
+          onConversationSelect={handleConversationSelect}
+          onNewConversation={handleNewConversation}
+          onConversationLoad={handleConversationLoad}
+        />
       </div>
 
-      <div className="border-t p-4">
-        <ChatInput onSend={handleSendMessage} disabled={isLoading || isLoadingHistory} />
+      {/* T306: Mobile sidebar overlay */}
+      {isSidebarOpen && (
+        <>
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 z-40 bg-black/50 md:hidden"
+            onClick={() => setIsSidebarOpen(false)}
+          />
+          {/* Sidebar */}
+          <div className="fixed inset-y-0 left-0 z-50 w-80 bg-background md:hidden">
+            <ConversationSidebar
+              userId={userId}
+              currentConversationId={conversationId}
+              onConversationSelect={handleConversationSelect}
+              onNewConversation={handleNewConversation}
+              onConversationLoad={handleConversationLoad}
+            />
+          </div>
+        </>
+      )}
+
+      {/* Main chat area */}
+      <div className="flex flex-1 flex-col">
+        {/* T306: Mobile hamburger menu */}
+        <div className="flex items-center border-b p-3 md:hidden">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          >
+            {isSidebarOpen ? (
+              <X className="h-5 w-5" />
+            ) : (
+              <Menu className="h-5 w-5" />
+            )}
+          </Button>
+          <h1 className="ml-2 text-sm font-medium">Chat Assistant</h1>
+        </div>
+
+        {error && (
+          <div className="border-b border-destructive bg-destructive/10 p-3 text-sm text-destructive">
+            {error}
+          </div>
+        )}
+
+        {isLoadingHistory && (
+          <div className="flex items-center justify-center p-4 text-sm text-muted-foreground">
+            Loading conversation history...
+          </div>
+        )}
+
+        <div className="flex-1 overflow-hidden">
+          <MessageList messages={messages} />
+        </div>
+
+        <div className="border-t p-4">
+          <ChatInput onSend={handleSendMessage} disabled={isLoading || isLoadingHistory} />
+        </div>
       </div>
     </div>
   );

@@ -130,16 +130,16 @@ Tasks in this phase establish the infrastructure needed for all user stories.
 
 #### Frontend: Conversation Sidebar Component
 
-- [ ] [T301] [Story:US3] Create ConversationSidebar component displaying list of conversations from useConversationHistory (frontend/app/components/chat/ConversationSidebar.tsx)
-- [ ] [T302] [Story:US3] Implement conversation item rendering: display created_at timestamp, first message preview (if available), active state for current conversation (frontend/app/components/chat/ConversationSidebar.tsx)
-- [ ] [T303] [Story:US3] Add click handler: onClick loads selected conversation via getConversation API call (frontend/app/components/chat/ConversationSidebar.tsx)
-- [ ] [T304] [Story:US3] Add "New Conversation" button at top of sidebar, onClick clears conversation_id and resets state (frontend/app/components/chat/ConversationSidebar.tsx)
-- [ ] [T305] [Story:US3] Integrate ConversationSidebar into ChatContainer layout: sidebar on left (desktop) or collapsible menu (mobile) (frontend/app/components/chat/ChatContainer.tsx)
-- [ ] [T306] [Story:US3] Implement responsive design: sidebar visible on desktop (≥768px), hidden behind hamburger menu on mobile (<768px) (frontend/app/components/chat/ChatContainer.tsx)
-- [ ] [T307] [Story:US3] Write component test: ConversationSidebar renders conversation list correctly (frontend/__tests__/chat/ConversationSidebar.test.tsx)
-- [ ] [T308] [Story:US3] Write component test: clicking conversation loads that conversation (frontend/__tests__/chat/ConversationSidebar.test.tsx)
-- [ ] [T309] [Story:US3] Write component test: "New Conversation" button creates fresh state (frontend/__tests__/chat/ConversationSidebar.test.tsx)
-- [ ] [T310] [Story:US3] Integration test: create multiple conversations, verify list displays, verify clicking switches between them (frontend/__tests__/integration/conversation-list.test.tsx)
+- [x] [T301] [Story:US3] Create ConversationSidebar component displaying list of conversations from useConversationHistory (frontend/app/components/chat/ConversationSidebar.tsx)
+- [x] [T302] [Story:US3] Implement conversation item rendering: display created_at timestamp, first message preview (if available), active state for current conversation (frontend/app/components/chat/ConversationSidebar.tsx)
+- [x] [T303] [Story:US3] Add click handler: onClick loads selected conversation via getConversation API call (frontend/app/components/chat/ConversationSidebar.tsx)
+- [x] [T304] [Story:US3] Add "New Conversation" button at top of sidebar, onClick clears conversation_id and resets state (frontend/app/components/chat/ConversationSidebar.tsx)
+- [x] [T305] [Story:US3] Integrate ConversationSidebar into ChatContainer layout: sidebar on left (desktop) or collapsible menu (mobile) (frontend/app/components/chat/ChatContainer.tsx)
+- [x] [T306] [Story:US3] Implement responsive design: sidebar visible on desktop (≥768px), hidden behind hamburger menu on mobile (<768px) (frontend/app/components/chat/ChatContainer.tsx)
+- [x] [T307] [Story:US3] Write component test: ConversationSidebar renders conversation list correctly (frontend/__tests__/chat/ConversationSidebar.test.tsx)
+- [x] [T308] [Story:US3] Write component test: clicking conversation loads that conversation (frontend/__tests__/chat/ConversationSidebar.test.tsx)
+- [x] [T309] [Story:US3] Write component test: "New Conversation" button creates fresh state (frontend/__tests__/chat/ConversationSidebar.test.tsx)
+- [x] [T310] [Story:US3] Integration test: create multiple conversations, verify list displays, verify clicking switches between them (frontend/__tests__/integration/conversation-list.test.tsx)
 
 **Dependencies**: T221-T230 (US2 backend + frontend) → T301, T301 → T302 → T303 → T304 → T305 → T306, T301-T306 → T307-T310
 
