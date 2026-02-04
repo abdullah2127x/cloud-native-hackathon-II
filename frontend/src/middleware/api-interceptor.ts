@@ -11,6 +11,7 @@ export const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,  // Include cookies for cross-origin requests
 });
 
 // Request interceptor - add JWT token from localStorage

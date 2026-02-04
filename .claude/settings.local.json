@@ -18,7 +18,8 @@
       "Bash(uv run pytest:*)",
       "Bash(git add:*)",
       "Bash(PYTHONPATH=. uv run pytest:*)",
-      "Bash(bash:*)"
+      "Bash(bash:*)",
+      "Bash(python3:*)"
     ]
   },
   "disabledMcpjsonServers": [

@@ -2,6 +2,7 @@
 from fastapi import APIRouter, Depends, status
 from sqlmodel import Session, select, func
 from typing import List
+import logging
 
 from src.db.database import get_session
 from src.auth.dependencies import get_current_user
@@ -10,6 +11,7 @@ from src.crud import task as task_crud
 from src.models.task import Task
 
 
+logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/todos", tags=["tasks"])
 
 
@@ -37,9 +39,12 @@ async def list_tasks(
     session: Session = Depends(get_session),
 ):
     """List tasks for the authenticated user with filtering, searching, and sorting"""
+    logger.info(f"Fetching tasks for user_id: {user_id}")
+
     # Count total tasks for the user (without filters for the total)
     total_statement = select(func.count(Task.id)).where(Task.user_id == user_id)
     total = session.exec(total_statement).one()
+    logger.info(f"Total tasks for user {user_id}: {total}")
 
     # Get filtered tasks for the user (with filters applied)
     tasks = task_crud.list_tasks(
@@ -53,6 +58,7 @@ async def list_tasks(
         sort_field=sort,
         sort_order=order or ("desc" if sort == "created_at" else "asc")
     )
+    logger.info(f"Returning {len(tasks)} filtered tasks for user {user_id}")
 
     # For filtered count, we need to calculate the count based on the same filters
     # Build the same query but count instead of selecting

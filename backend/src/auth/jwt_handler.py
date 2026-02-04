@@ -40,6 +40,7 @@ def verify_jwt(token: str) -> Dict[str, any]:
             audience=settings.jwt_audience,
         )
 
+        logger.debug(f"JWT verified successfully for user: {payload.get('sub')}")
         return payload
 
     except jwt.ExpiredSignatureError:
@@ -50,6 +51,8 @@ def verify_jwt(token: str) -> Dict[str, any]:
         raise
     except Exception as e:
         logger.error(f"Unexpected error verifying JWT: {e}", exc_info=True)
+        logger.error(f"JWKS URL: {jwks_url}")
+        logger.error(f"Better Auth URL: {settings.better_auth_url}")
         raise jwt.InvalidTokenError(f"Token verification failed: {e}")
 
 
