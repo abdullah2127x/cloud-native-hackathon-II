@@ -95,7 +95,7 @@ When the backend API is unavailable, times out, or returns an error, the user se
 ### Edge Cases
 
 - What happens when a user is not authenticated and tries to access `/chat`? (Should redirect to login)
-- How does the system handle very long conversations (100+ messages)? (Should paginate or virtualize for performance)
+- How does the system handle very long conversations (100+ messages)? (CLARIFIED: Use virtual scrolling to render only visible messages; load full history on demand)
 - What happens if a message is sent while offline? (Should show offline indicator or queue the message)
 - How does the system handle concurrent messages sent very quickly? (Should queue and process sequentially)
 - What happens if a user's session expires while they're in the chat? (Should prompt to re-authenticate)
@@ -123,6 +123,7 @@ When the backend API is unavailable, times out, or returns an error, the user se
 - **FR-012**: System MUST enforce JWT authentication on all chat endpoints and validate user_id from token
 - **FR-013**: System MUST return 401 Unauthorized if JWT token is missing or invalid
 - **FR-014**: System MUST display error messages to user if API call fails, times out, or returns error status
+- **FR-014a**: Error messages MUST be empathetic and actionable (acknowledge the problem + suggest next action). Examples: "Connection lost. Check your internet or try again." or "Request timed out. Please try again."
 - **FR-015**: System MUST support responsive design and work on mobile, tablet, and desktop viewports
 - **FR-016**: System MUST scroll to latest message automatically as conversation grows
 - **FR-017**: System MUST maintain input field state (user's typed message) during API calls so they can retry if needed
@@ -153,6 +154,7 @@ When the backend API is unavailable, times out, or returns an error, the user se
 - **SC-008**: All error states (network, timeout, auth) display user-friendly messages; no cryptic error codes shown
 - **SC-009**: Typing indicator appears within 500ms of message submission; AI response appears within 5 seconds of typing indicator
 - **SC-010**: Chat input field remains functional and responsive during API call (loading state doesn't disable interactions)
+- **SC-011**: Chat interface using virtual scrolling renders 100+ message conversations with smooth scrolling performance (no jank or lag)
 
 ---
 
@@ -165,6 +167,15 @@ When the backend API is unavailable, times out, or returns an error, the user se
 - Neon PostgreSQL is available and configured for storing conversations and messages
 - Users are familiar with chat interfaces (no tutorial or onboarding needed for initial version)
 - Mobile users have good internet connectivity; offline support is future enhancement
+
+---
+
+## Clarifications
+
+### Session 2026-02-04
+
+- Q1: Long conversation handling strategy (100+ messages) → A: Virtual scrolling - render only visible messages; load full history on demand
+- Q2: Error message format & tone → A: Empathetic & actionable - acknowledge problem + suggest next action (e.g., "Connection lost. Check your internet or try again.")
 
 ---
 
