@@ -107,16 +107,16 @@ Tasks in this phase establish the infrastructure needed for all user stories.
 
 #### Frontend: History Loading & State Management
 
-- [ ] [T221] [Story:US2] Create useConversationHistory hook: fetch conversation list on mount, return conversations state (frontend/app/hooks/useConversationHistory.ts)
-- [ ] [T222] [Story:US2] Create API client function `listConversations(user_id, token, limit?, offset?)` calling GET endpoint (frontend/app/lib/api/chat.ts)
-- [ ] [T223] [Story:US2] Create API client function `getConversation(user_id, conversation_id, token)` calling GET endpoint (frontend/app/lib/api/chat.ts)
-- [ ] [T224] [Story:US2] Create useChat hook: manage conversation_id state, handle message submission, update conversation list on new message (frontend/app/hooks/useChat.ts)
-- [ ] [T225] [Story:US2] Integrate useConversationHistory into ChatContainer: load conversation on page mount, pass to MessageList (frontend/app/components/chat/ChatContainer.tsx)
-- [ ] [T226] [Story:US2] Add conversation_id persistence: store in localStorage or URL parameter for session recovery (frontend/app/components/chat/ChatContainer.tsx)
-- [ ] [T227] [Story:US2] Implement history restoration: on page load, if conversation_id exists, fetch conversation with messages and display (frontend/app/components/chat/ChatContainer.tsx)
-- [ ] [T228] [Story:US2] Write hook test: useConversationHistory fetches conversations on mount (frontend/__tests__/hooks/useConversationHistory.test.ts)
-- [ ] [T229] [Story:US2] Write hook test: useChat manages conversation_id state correctly (frontend/__tests__/hooks/useChat.test.ts)
-- [ ] [T230] [Story:US2] Integration test: create conversation, refresh page, verify history restored (frontend/__tests__/integration/conversation-persistence.test.tsx)
+- [x] [T221] [Story:US2] Create useConversationHistory hook: fetch conversation list on mount, return conversations state (frontend/app/hooks/useConversationHistory.ts)
+- [x] [T222] [Story:US2] Create API client function `listConversations(user_id, token, limit?, offset?)` calling GET endpoint (frontend/app/lib/api/chat.ts)
+- [x] [T223] [Story:US2] Create API client function `getConversation(user_id, conversation_id, token)` calling GET endpoint (frontend/app/lib/api/chat.ts)
+- [x] [T224] [Story:US2] Create useChat hook: manage conversation_id state, handle message submission, update conversation list on new message (frontend/app/hooks/useChat.ts)
+- [x] [T225] [Story:US2] Integrate useConversationHistory into ChatContainer: load conversation on page mount, pass to MessageList (frontend/app/components/chat/ChatContainer.tsx)
+- [x] [T226] [Story:US2] Add conversation_id persistence: store in localStorage or URL parameter for session recovery (frontend/app/components/chat/ChatContainer.tsx)
+- [x] [T227] [Story:US2] Implement history restoration: on page load, if conversation_id exists, fetch conversation with messages and display (frontend/app/components/chat/ChatContainer.tsx)
+- [x] [T228] [Story:US2] Write hook test: useConversationHistory fetches conversations on mount (frontend/__tests__/hooks/useConversationHistory.test.ts)
+- [x] [T229] [Story:US2] Write hook test: useChat manages conversation_id state correctly (frontend/__tests__/hooks/useChat.test.ts)
+- [x] [T230] [Story:US2] Integration test: create conversation, refresh page, verify history restored (frontend/__tests__/integration/conversation-persistence.test.tsx)
 
 **Dependencies**: T201-T210 (backend ready) → T221, T221 → T222-T223, T222-T223 → T224, T224-T225 → T226-T227, T221-T227 → T228-T230
 

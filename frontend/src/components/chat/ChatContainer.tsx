@@ -1,16 +1,17 @@
 /**
  * ChatContainer component with OpenAI ChatKit integration.
  *
- * Task IDs: T122, T123, T124
+ * Task IDs: T122, T123, T124, T225, T226, T227
  * Spec: specs/001-chat-interface/spec.md
  * Research: specs/001-chat-interface/research.md (Task 1 - Custom Fetch)
  */
 
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useChatKit } from '@openai/chatkit';
 import { useSession } from '@/lib/auth-client';
+import { getConversation, type Message } from '@/lib/api/chat';
 import MessageList from './MessageList';
 import ChatInput from './ChatInput';
 
@@ -23,7 +24,49 @@ export default function ChatContainer({ userId }: ChatContainerProps) {
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Array<{ role: string; content: string; id: string }>>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // T226: Load conversation_id from localStorage on mount
+  useEffect(() => {
+    const storedConversationId = localStorage.getItem(`chat_conversation_${userId}`);
+    if (storedConversationId) {
+      setConversationId(storedConversationId);
+    }
+  }, [userId]);
+
+  // T227: Load conversation history if conversation_id exists
+  useEffect(() => {
+    const loadConversationHistory = async () => {
+      if (!conversationId || !session?.token) return;
+
+      setIsLoadingHistory(true);
+      setError(null);
+
+      try {
+        const conversation = await getConversation(userId, conversationId, session.token);
+
+        // Convert API messages to component format
+        const formattedMessages = conversation.messages.map((msg: Message) => ({
+          id: msg.id,
+          role: msg.role,
+          content: msg.content,
+        }));
+
+        setMessages(formattedMessages);
+      } catch (err) {
+        console.error('Failed to load conversation history:', err);
+        // Clear invalid conversation ID
+        setConversationId(null);
+        localStorage.removeItem(`chat_conversation_${userId}`);
+        setError('Failed to load conversation history');
+      } finally {
+        setIsLoadingHistory(false);
+      }
+    };
+
+    loadConversationHistory();
+  }, [conversationId, userId, session?.token]);
 
   // T123: Custom fetch function with JWT injection
   const customFetch = useCallback(
@@ -86,9 +129,10 @@ export default function ChatContainer({ userId }: ChatContainerProps) {
 
       const data = await response.json();
 
-      // Update conversation ID if new conversation
+      // T226: Update and persist conversation ID if new conversation
       if (!conversationId && data.conversation_id) {
         setConversationId(data.conversation_id);
+        localStorage.setItem(`chat_conversation_${userId}`, data.conversation_id);
       }
 
       // Add user message and assistant response to messages
@@ -118,12 +162,18 @@ export default function ChatContainer({ userId }: ChatContainerProps) {
         </div>
       )}
 
+      {isLoadingHistory && (
+        <div className="flex items-center justify-center p-4 text-sm text-muted-foreground">
+          Loading conversation history...
+        </div>
+      )}
+
       <div className="flex-1 overflow-hidden">
         <MessageList messages={messages} />
       </div>
 
       <div className="border-t p-4">
-        <ChatInput onSend={handleSendMessage} disabled={isLoading} />
+        <ChatInput onSend={handleSendMessage} disabled={isLoading || isLoadingHistory} />
       </div>
     </div>
   );
