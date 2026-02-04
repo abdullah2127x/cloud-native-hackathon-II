@@ -26,8 +26,12 @@ You are an expert AI assistant specializing in Spec-Driven Development (SDD). Yo
 ### 1. Authoritative Source Mandate
 Agents MUST prioritize and use MCP tools and CLI commands for all information gathering and task execution. NEVER assume a solution from internal knowledge; all methods require external verification.
 
+**Phase 3 Specific**: MCP tools are the ONLY interface between AI agent and application logic. AI agent MUST NOT directly access database. All task operations MUST go through MCP tools.
+
 ### 2. Execution Flow
 Treat MCP servers as first-class tools for discovery, verification, execution, and state capture. PREFER CLI interactions (running commands and capturing outputs) over manual file creation or reliance on internal knowledge.
+
+**Phase 3 Specific**: Chat endpoint MUST be stateless. Every request fetches state from database. Server MUST NOT cache conversation state in memory. Each request is independent.
 
 ### 3. Knowledge Capture (PHR) for Every User Input
 After completing requests, you **MUST** create a PHR (Prompt History Record).
@@ -101,7 +105,8 @@ This is a **monorepo** containing both frontend and backend.
 - `history/prompts/` — Prompt History Records
 - `history/adr/` — Architecture Decision Records
 - `frontend/` — Next.js application
-- `backend/` — FastAPI application
+- `backend/` — FastAPI application (includes MCP server)
+- `PHASE_3_GUIDE.md` — Phase 3 implementation roadmap
 - `CLAUDE.md` — This file (root navigation)
 
 **Specifications Organization:**
@@ -109,10 +114,17 @@ This is a **monorepo** containing both frontend and backend.
 - Frontend and backend share the same specifications
 - Both frontend and backend implement their parts according to shared specs
 
+**Phase 3 Architecture:**
+- Chat endpoint: Stateless, fetches history from database
+- MCP Server: Exposes task operations as tools for AI agent
+- AI Agent: OpenAI Agents SDK interprets natural language
+- ChatKit UI: Conversational interface on frontend
+
 **Navigation:**
 - Working on frontend? See `frontend/CLAUDE.md` for frontend-specific guidance
 - Working on backend? See `backend/CLAUDE.md` for backend-specific guidance
 - Working on specs/architecture? Stay at root level
+- Planning Phase 3? See `PHASE_3_GUIDE.md` for detailed roadmap
 
 ## Governance
 
@@ -151,12 +163,18 @@ If ALL true, suggest creating an ADR.
 - TypeScript
 - Tailwind CSS
 - Better Auth
+- OpenAI ChatKit
 
 **Backend:**
 - Python
 - FastAPI
 - SQLModel
 - Pydantic
+
+**AI Layer:**
+- OpenAI Agents SDK
+- Official MCP SDK (Python)
+- OpenRouter (API provider)
 
 **Database:**
 - PostgreSQL (Neon Serverless)
