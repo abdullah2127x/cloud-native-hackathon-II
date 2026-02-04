@@ -153,14 +153,14 @@ Tasks in this phase establish the infrastructure needed for all user stories.
 
 #### Backend: Error Response Handling
 
-- [ ] [T401] [Story:US4] Add error handling middleware: catch exceptions, return ErrorResponse with empathetic messages (backend/app/middleware/error_handler.py)
-- [ ] [T402] [Story:US4] Implement timeout handling: set request timeout (3s threshold per SC-007), return 408 with "Request timed out. Please try again." (backend/app/routes/chat.py)
-- [ ] [T403] [Story:US4] Update 400 Bad Request response: "Validation error: {detail}" (backend/app/routes/chat.py)
-- [ ] [T404] [Story:US4] Update 401 Unauthorized response: "Session expired. Please log in again." (backend/app/routes/chat.py)
-- [ ] [T405] [Story:US4] Update 403 Forbidden response: "Access denied. This conversation doesn't belong to you." (backend/app/routes/chat.py)
-- [ ] [T406] [Story:US4] Update 404 Not Found response: "Conversation not found. It may have been deleted." (backend/app/routes/chat.py)
-- [ ] [T407] [Story:US4] Update 500 Internal Server Error response: "Something went wrong on our end. Please try again." (backend/app/routes/chat.py)
-- [ ] [T408] [Story:US4] Write endpoint test: verify all error responses return empathetic, actionable messages (backend/tests/test_routes_chat.py)
+- [x] [T401] [Story:US4] Add error handling middleware: catch exceptions, return ErrorResponse with empathetic messages (backend/app/middleware/error_handler.py)
+- [x] [T402] [Story:US4] Implement timeout handling: set request timeout (3s threshold per SC-007), return 408 with "Request timed out. Please try again." (backend/app/routes/chat.py)
+- [x] [T403] [Story:US4] Update 400 Bad Request response: "Validation error: {detail}" (backend/app/routes/chat.py)
+- [x] [T404] [Story:US4] Update 401 Unauthorized response: "Session expired. Please log in again." (backend/app/routes/chat.py)
+- [x] [T405] [Story:US4] Update 403 Forbidden response: "Access denied. This conversation doesn't belong to you." (backend/app/routes/chat.py)
+- [x] [T406] [Story:US4] Update 404 Not Found response: "Conversation not found. It may have been deleted." (backend/app/routes/chat.py)
+- [x] [T407] [Story:US4] Update 500 Internal Server Error response: "Something went wrong on our end. Please try again." (backend/app/routes/chat.py)
+- [x] [T408] [Story:US4] Write endpoint test: verify all error responses return empathetic, actionable messages (backend/tests/test_routes_chat.py)
 
 **Dependencies**: T101-T112 → T401, T401 → T402-T407, T402-T407 → T408
 

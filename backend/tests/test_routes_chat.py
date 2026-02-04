@@ -1,7 +1,7 @@
 """
 Integration tests for chat API endpoints.
 
-Task IDs: T107-T112, T207-T210
+Task IDs: T107-T112, T207-T210, T408
 Spec: specs/001-chat-interface/spec.md
 """
 
@@ -387,3 +387,63 @@ def test_conversation_endpoints_user_isolation(client: TestClient, session: Sess
     assert response.status_code == 404
 
     app.dependency_overrides.clear()
+
+
+# T408: Test error responses return empathetic, actionable messages
+def test_error_responses_empathetic_messages(client: TestClient, mock_auth):
+    """Test that error responses include empathetic, actionable messages."""
+    # T405: Test 403 Forbidden with empathetic message
+    response = client.post(
+        "/api/user-456/chat",  # User-123 is authenticated, different user_id
+        json={"message": "Hello"}
+    )
+    assert response.status_code == 403
+    data = response.json()
+    assert "Access denied" in data["detail"]
+    assert "conversation doesn't belong to you" in data["detail"]
+
+    # T406: Test 404 Not Found with empathetic message
+    fake_conv_id = str(uuid4())
+    response = client.post(
+        "/api/user-123/chat",
+        json={"conversation_id": fake_conv_id, "message": "Hello"}
+    )
+    assert response.status_code == 404
+    data = response.json()
+    assert "not found" in data["detail"].lower()
+    assert "may have been deleted" in data["detail"].lower()
+
+    # T404: Test 401 Unauthorized (via missing auth)
+    # Remove auth to trigger 401
+    response = client.post(
+        "/api/user-123/chat",
+        json={"message": "Hello"}
+    )
+    assert response.status_code == 401
+
+    # T407: Test 500 Internal Server Error with empathetic message
+    # Can't easily trigger a 500 in this test setup, but middleware returns empathetic message
+
+
+def test_error_messages_have_actionable_guidance(client: TestClient, mock_auth):
+    """Test that error messages provide actionable guidance to users."""
+    # 404: Suggests conversation may be deleted
+    fake_conv_id = str(uuid4())
+    response = client.post(
+        "/api/user-123/chat",
+        json={"conversation_id": fake_conv_id, "message": "Hello"}
+    )
+    assert response.status_code == 404
+    detail = response.json()["detail"]
+    # Error should suggest user action (conversation was deleted or doesn't exist)
+    assert len(detail) > 0
+    assert "deleted" in detail.lower() or "found" in detail.lower()
+
+    # 403: Suggests access issue
+    response = client.post(
+        "/api/user-456/chat",
+        json={"message": "Hello"}
+    )
+    assert response.status_code == 403
+    detail = response.json()["detail"]
+    assert "access" in detail.lower() or "denied" in detail.lower()

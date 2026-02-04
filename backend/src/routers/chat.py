@@ -1,7 +1,7 @@
 """
 Chat API endpoints for conversational task management.
 
-Task IDs: T101-T106, T201-T210
+Task IDs: T101-T106, T201-T210, T401-T407
 Spec: specs/001-chat-interface/spec.md
 Research: specs/001-chat-interface/research.md (Task 4 - Stateless pattern)
 """
@@ -11,6 +11,7 @@ from sqlmodel import Session, select, func
 from sqlalchemy.orm import selectinload
 from datetime import datetime
 import logging
+import asyncio
 
 from src.db.database import get_session
 from src.auth.dependencies import get_current_user
@@ -51,12 +52,31 @@ async def send_chat_message(
     6. Save AI response to database and return (T106)
     """
 
+    # T402: Handle timeout errors with empathetic message
+    try:
+        return await asyncio.wait_for(_process_chat_message(user_id, request, authenticated_user_id, session), timeout=3.0)
+    except asyncio.TimeoutError:
+        logger.warning(f"Request timeout for user {user_id}")
+        raise HTTPException(
+            status_code=status.HTTP_408_REQUEST_TIMEOUT,
+            detail="Request timed out. Please try again."
+        )
+
+
+async def _process_chat_message(
+    user_id: str,
+    request: ChatRequest,
+    authenticated_user_id: str,
+    session: Session,
+) -> ChatResponse:
+    """Process chat message with timeout protection (T402)"""
     # T101: Verify user_id matches JWT token
     if authenticated_user_id != user_id:
         logger.warning(f"User ID mismatch: JWT={authenticated_user_id}, path={user_id}")
+        # T405: Empathetic 403 message
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="User ID in path does not match authenticated user"
+            detail="Access denied. This conversation doesn't belong to you."
         )
 
     # T102: Implement stateless conversation history fetch
@@ -66,9 +86,10 @@ async def send_chat_message(
 
         if not conversation or conversation.user_id != user_id:
             logger.warning(f"Conversation not found or access denied: {request.conversation_id}")
+            # T406: Empathetic 404 message
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Conversation not found or access denied"
+                detail="Conversation not found. It may have been deleted."
             )
 
         logger.info(f"Continuing conversation {conversation.id} for user {user_id}")
@@ -147,9 +168,10 @@ async def list_conversations(
     # T201: Verify user_id matches JWT token
     if authenticated_user_id != user_id:
         logger.warning(f"User ID mismatch: JWT={authenticated_user_id}, path={user_id}")
+        # T405: Empathetic 403 message
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="User ID in path does not match authenticated user"
+            detail="Access denied. This conversation doesn't belong to you."
         )
 
     # T202: Fetch conversations WHERE user_id = authenticated user, ORDER BY updated_at DESC
@@ -209,9 +231,10 @@ async def get_conversation_detail(
     # T204: Verify user_id matches JWT token
     if authenticated_user_id != user_id:
         logger.warning(f"User ID mismatch: JWT={authenticated_user_id}, path={user_id}")
+        # T405: Empathetic 403 message
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="User ID in path does not match authenticated user"
+            detail="Access denied. This conversation doesn't belong to you."
         )
 
     # Convert string conversation_id to UUID
@@ -219,9 +242,10 @@ async def get_conversation_detail(
         conv_id_uuid = UUID(conversation_id)
     except ValueError:
         logger.warning(f"Invalid conversation ID format: {conversation_id}")
+        # T406: Empathetic 404 message
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Conversation not found or access denied"
+            detail="Conversation not found. It may have been deleted."
         )
 
     # T205: Fetch conversation with selectinload(messages), filter by user_id
@@ -234,9 +258,10 @@ async def get_conversation_detail(
 
     if not conversation:
         logger.warning(f"Conversation not found or access denied: {conversation_id}")
+        # T406: Empathetic 404 message
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Conversation not found or access denied"
+            detail="Conversation not found. It may have been deleted."
         )
 
     logger.info(f"Fetched conversation {conversation_id} with {len(conversation.messages)} messages")
