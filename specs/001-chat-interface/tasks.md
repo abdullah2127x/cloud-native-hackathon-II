@@ -166,16 +166,16 @@ Tasks in this phase establish the infrastructure needed for all user stories.
 
 #### Frontend: Error UI & Retry Logic
 
-- [ ] [T421] [Story:US4] Create ErrorMessage component: display error with icon, empathetic message, retry button (frontend/app/components/chat/ErrorMessage.tsx)
-- [ ] [T422] [Story:US4] Update ChatContainer onError handler: parse error response, display ErrorMessage with appropriate message (frontend/app/components/chat/ChatContainer.tsx)
-- [ ] [T423] [Story:US4] Implement error classification: network errors ("Connection lost. Check your internet or try again."), timeouts ("Request timed out. Please try again."), auth errors ("Session expired. Please log in again.") (frontend/app/components/chat/ChatContainer.tsx)
-- [ ] [T424] [Story:US4] Add retry functionality: onRetry re-submits last message with exponential backoff (frontend/app/components/chat/ChatContainer.tsx)
-- [ ] [T425] [Story:US4] Ensure input field remains enabled during errors (FR-017): user can type different message or edit previous (frontend/app/components/chat/ChatInput.tsx)
-- [ ] [T426] [Story:US4] Add loading state management: disable send button during API call, show typing indicator, re-enable on response or error (frontend/app/components/chat/ChatInput.tsx)
-- [ ] [T427] [Story:US4] Write component test: ErrorMessage displays correct message and retry button (frontend/__tests__/chat/ErrorMessage.test.tsx)
-- [ ] [T428] [Story:US4] Write component test: onError handler correctly classifies errors (frontend/__tests__/chat/ChatContainer.test.tsx)
-- [ ] [T429] [Story:US4] Write component test: retry button re-submits message (frontend/__tests__/chat/ErrorMessage.test.tsx)
-- [ ] [T430] [Story:US4] Integration test: simulate API failure, verify error message appears, verify retry works (frontend/__tests__/integration/error-handling.test.tsx)
+- [X] [T421] [Story:US4] Create ErrorMessage component: display error with icon, empathetic message, retry button (frontend/app/components/chat/ErrorMessage.tsx)
+- [X] [T422] [Story:US4] Update ChatContainer onError handler: parse error response, display ErrorMessage with appropriate message (frontend/app/components/chat/ChatContainer.tsx)
+- [X] [T423] [Story:US4] Implement error classification: network errors ("Connection lost. Check your internet or try again."), timeouts ("Request timed out. Please try again."), auth errors ("Session expired. Please log in again.") (frontend/app/components/chat/ChatContainer.tsx)
+- [X] [T424] [Story:US4] Add retry functionality: onRetry re-submits last message with exponential backoff (frontend/app/components/chat/ChatContainer.tsx)
+- [X] [T425] [Story:US4] Ensure input field remains enabled during errors (FR-017): user can type different message or edit previous (frontend/app/components/chat/ChatInput.tsx)
+- [X] [T426] [Story:US4] Add loading state management: disable send button during API call, show typing indicator, re-enable on response or error (frontend/app/components/chat/ChatInput.tsx)
+- [X] [T427] [Story:US4] Write component test: ErrorMessage displays correct message and retry button (frontend/__tests__/chat/ErrorMessage.test.tsx)
+- [X] [T428] [Story:US4] Write component test: onError handler correctly classifies errors (frontend/__tests__/chat/ChatContainer.test.tsx)
+- [X] [T429] [Story:US4] Write component test: retry button re-submits message (frontend/__tests__/chat/ErrorMessage.test.tsx)
+- [X] [T430] [Story:US4] Integration test: simulate API failure, verify error message appears, verify retry works (frontend/__tests__/integration/error-handling.test.tsx)
 
 **Dependencies**: T401-T408 (backend errors ready) → T421, T421 → T422, T422 → T423 → T424, T425-T426 parallel to T421-T424, T421-T426 → T427-T430
 
