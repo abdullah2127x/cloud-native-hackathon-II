@@ -20,7 +20,7 @@ class Settings(BaseSettings):
 
     # JWT - Better Auth uses EdDSA (Ed25519) by default, audience is BASE_URL
     jwt_algorithm: str = "EdDSA"
-    jwt_audience: str = "http://localhost:3000"
+    jwt_audience: str = None  # Will be set from env or default to better_auth_url
 
     # Application
     app_name: str = "Todo Backend"
@@ -35,6 +35,14 @@ class Settings(BaseSettings):
                 return json.loads(v)
             except json.JSONDecodeError:
                 return [v]
+        return v
+
+    @field_validator("jwt_audience", mode="before")
+    @classmethod
+    def set_jwt_audience(cls, v, info):
+        """Set JWT audience to better_auth_url if not explicitly set"""
+        if v is None:
+            return info.data.get("better_auth_url", "http://localhost:3000")
         return v
 
     class Config:
