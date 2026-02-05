@@ -1,11 +1,15 @@
 <!--
 SYNC IMPACT REPORT:
-Version change: 2.1.0 → 2.2.0
+Version change: 2.2.1 → 3.0.0
 Modified principles:
-- Scope Boundaries (refined from feature list to constitutional principles)
-- Removed specific feature enumeration (belongs in specifications)
-Added sections: None
-Removed sections: Required Features, Prohibited Features (replaced with Scope Boundaries)
+- Scope Boundaries (Phase 2 → Phase 3: AI-Powered Chatbot)
+- API Architecture (added stateless principle and MCP tools)
+- Architecture (added AI architecture constraints and MCP governance)
+- Performance Requirements (added AI agent response time)
+Added sections:
+- MCP Tools Governance (Section XIII)
+Modified sections:
+- Technology Stack (added AI Layer: OpenAI Agents SDK, MCP SDK, ChatKit)
 Templates requiring updates:
 - ✅ .specify/templates/plan-template.md (no changes needed)
 - ✅ .specify/templates/spec-template.md (no changes needed)
@@ -67,15 +71,16 @@ This constitution governs all development; Amendments require version bump; Comp
 
 ### VI. Scope Boundaries
 
-Phase 2 scope is LIMITED to multi-user web application with basic task management; Features beyond specification are PROHIBITED; All features MUST be documented in specification before implementation.
+Phase 3 scope is LIMITED to AI-powered conversational task management; Features beyond specification are PROHIBITED; All features MUST be documented in specification before implementation.
 
-**Current Phase**: Phase 2 - Full-Stack Web Application
+**Current Phase**: Phase 3 - AI-Powered Todo Chatbot
 
 **Scope Constraints**:
 - MUST implement only features defined in active specifications
 - MUST NOT add features without specification approval
-- MUST maintain focus on core task management operations
-- MUST NOT implement AI, advanced scheduling, or distributed systems features
+- MUST maintain focus on conversational task management operations
+- MUST use stateless architecture for all AI interactions
+- MUST implement proper tool boundaries through MCP
 
 **Rationale**: Constitutional scope boundaries prevent feature creep while allowing specifications to evolve within defined limits.
 
@@ -89,11 +94,13 @@ Database storage is REQUIRED; In-memory storage is PROHIBITED; Data MUST persist
 
 **Rationale**: Multi-user applications require persistence.
 
-### IX. RESTful API Architecture
+### IX. API Architecture
 
-Backend MUST expose RESTful API; Frontend MUST communicate via HTTP/HTTPS; JSON format required.
+Backend MUST expose RESTful API for traditional operations; Chat endpoint MUST be stateless; MCP tools MUST provide structured interface for AI agent; Frontend MUST communicate via HTTP/HTTPS; JSON format required for all API communication.
 
-**Rationale**: Standard contract between frontend and backend.
+**Stateless Principle**: Every request MUST fetch all required state from database; Server MUST NOT cache conversation state in memory; Each request MUST be independent and complete.
+
+**Rationale**: Standard contract between frontend and backend; Stateless design enables horizontal scaling.
 
 ### X. Security & User Isolation
 
@@ -109,23 +116,45 @@ JWT-based authentication is REQUIRED; Shared secret MUST secure frontend and bac
 
 ### XII. Architecture
 
-Monorepo structure is REQUIRED; Frontend and backend MUST be separated; Specifications MUST be shared between both; Backend exposes REST API only; All database queries through SQLModel ORM; Environment variables for all secrets.
+Monorepo structure is REQUIRED; Frontend and backend MUST be separated; Specifications MUST be shared between both; Backend exposes REST API and chat endpoint; All database queries through SQLModel ORM; Environment variables for all secrets.
 
-**Rationale**: Single repository enables full context visibility and simplifies specification management.
+**AI Architecture Constraints**:
+- MCP Server MUST be the only interface between AI agent and application logic
+- AI agent MUST NOT directly access database
+- All task operations MUST be exposed as MCP tools
+- Chat endpoint MUST manage conversation persistence
+- Conversation state MUST be stored in database (stateless server)
+- Each MCP tool MUST be atomic and independently testable
 
-### XIII. Performance Requirements
+**Rationale**: Single repository enables full context visibility; MCP boundary ensures clean separation of concerns; Stateless design enables horizontal scaling.
 
-API response time MUST be < 200ms; Database queries MUST be optimized with indexes; Frontend initial load MUST be < 2s.
+### XIII. MCP Tools Governance
 
-**Rationale**: Performance requirements ensure responsive user experience.
+All MCP tools MUST be stateless functions; Each tool MUST enforce user isolation via user_id; Tool parameters MUST be validated before execution; Tool responses MUST follow consistent format; Tools MUST return structured error messages.
+
+**Tool Design Principles**:
+- Atomicity: Each tool does exactly one operation
+- Isolation: Every tool receives and validates user_id
+- Idempotency: Repeated calls with same parameters produce same result (where applicable)
+- Error transparency: Clear error messages for debugging
+
+**Rationale**: Consistent tool design ensures AI agent reliability and system security.
+
+### XIV. Performance Requirements
+
+API response time MUST be < 200ms; Database queries MUST be optimized with indexes; Frontend initial load MUST be < 2s; AI agent response time MUST be < 5s.
+
+**Rationale**: Performance requirements ensure responsive user experience including AI interactions.
 
 ---
 
 ## Technology Stack
 
-**Frontend**: Next.js 16 App Router, TypeScript, Tailwind CSS, Better Auth
+**Frontend**: Next.js 16 App Router, TypeScript, Tailwind CSS, Better Auth, OpenAI ChatKit
 
 **Backend**: Python FastAPI with SQLModel, Pydantic (using uv as the required package manager)
+
+**AI Layer**: OpenAI Agents SDK, Official MCP SDK (Python)
 
 **Database**: Neon Serverless PostgreSQL
 
@@ -135,13 +164,15 @@ API response time MUST be < 200ms; Database queries MUST be optimized with index
 
 **Development**: Claude Code, Spec-Kit Plus
 
+**AI Provider**: OpenAI API (via OpenRouter for cost optimization)
+
 **Rationale**: Technology stack is fixed and MUST be followed as specified.
 
 ---
 
-**Version**: 2.2.1
+**Version**: 3.0.0
 **Ratified**: 2026-01-05
-**Last Amended**: 2026-01-16
+**Last Amended**: 2026-02-04
 
 ---
 

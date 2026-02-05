@@ -1,4 +1,8 @@
-"""Centralized error handling middleware"""
+"""Centralized error handling middleware with empathetic error messages.
+
+Task IDs: T401, T407
+Spec: specs/001-chat-interface/spec.md
+"""
 import logging
 from fastapi import Request, status
 from fastapi.responses import JSONResponse
@@ -9,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 async def error_handler_middleware(request: Request, call_next):
-    """Catch and handle exceptions globally"""
+    """T401: Catch and handle exceptions globally with empathetic messages"""
     try:
         return await call_next(request)
     except TaskNotFoundError as e:
@@ -30,9 +34,9 @@ async def error_handler_middleware(request: Request, call_next):
             content={"detail": str(e), "code": "BAD_REQUEST"}
         )
     except Exception as e:
-        # Unexpected error - log details, return generic message
+        # T407: Unexpected error - log details, return empathetic message
         logger.error(f"Unhandled error: {e}", exc_info=True)
         return JSONResponse(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            content={"detail": "Internal server error", "code": "INTERNAL_ERROR"}
+            content={"detail": "Something went wrong on our end. Please try again.", "code": "INTERNAL_ERROR"}
         )

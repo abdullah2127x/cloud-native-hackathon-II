@@ -19,7 +19,12 @@
       "Bash(git add:*)",
       "Bash(PYTHONPATH=. uv run pytest:*)",
       "Bash(bash:*)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(git config:*)",
+      "Bash(git --version)",
+      "Bash(.specify/scripts/bash/create-phr.sh:*)",
+      "mcp__playwright__browser_fill_form",
+      "mcp__playwright__browser_snapshot"
     ]
   },
   "disabledMcpjsonServers": [
