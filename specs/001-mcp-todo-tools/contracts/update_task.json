@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "update_task",
+  "description": "Modify the title or description of an existing task",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "Authenticated user ID",
+      "minLength": 1
+    },
+    "task_id": {
+      "type": "integer",
+      "description": "ID of the task to update",
+      "minimum": 1
+    },
+    "title": {
+      "type": ["string", "null"],
+      "description": "New task title (optional)",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "description": {
+      "type": ["string", "null"],
+      "description": "New task description (optional)",
+      "maxLength": 1000
+    }
+  },
+  "required": ["user_id", "task_id"],
+  "oneOf": [
+    { "required": ["title"] },
+    { "required": ["description"] }
+  ],
+  "examples": [
+    {
+      "user_id": "auth0|abc123",
+      "task_id": 123,
+      "title": "Buy organic groceries"
+    },
+    {
+      "user_id": "auth0|abc123",
+      "task_id": 123,
+      "description": "Milk, eggs, bread, cheese"
+    },
+    {
+      "user_id": "auth0|abc123",
+      "task_id": 123,
+      "title": "Buy organic groceries",
+      "description": "Milk, eggs, bread, cheese"
+    }
+  ],
+  "response": {
+    "type": "object",
+    "properties": {
+      "task_id": {
+        "type": "integer",
+        "description": "ID of the updated task"
+      },
+      "status": {
+        "type": "string",
+        "const": "updated",
+        "description": "Always 'updated' for successful update"
+      },
+      "title": {
+        "type": "string",
+        "description": "Current title of the task after update"
+      },
+      "message": {
+        "type": "string",
+        "const": "Task updated successfully",
+        "description": "Success message"
+      }
+    },
+    "required": ["task_id", "status", "title", "message"]
+  }
+}

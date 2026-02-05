@@ -12,8 +12,8 @@ from mcp.server import Server
 from mcp.types import Tool
 
 from .logging_config import configure_logging
-from .tools import add_task
-from .schemas import AddTaskParams
+from .tools import add_task, list_tasks, complete_task, update_task, delete_task
+from .schemas import AddTaskParams, ListTasksParams, CompleteTaskParams, UpdateTaskParams, DeleteTaskParams
 
 logger = logging.getLogger(__name__)
 
@@ -52,6 +52,38 @@ class TodoMCPServer:
             description="Create a new task for the authenticated user",
             input_schema=AddTaskParams.model_json_schema(),
             handler=add_task,
+        )
+
+        # Register list_tasks tool
+        self.register_tool(
+            name="list_tasks",
+            description="Retrieve user's tasks with optional status filtering (all, pending, completed)",
+            input_schema=ListTasksParams.model_json_schema(),
+            handler=list_tasks,
+        )
+
+        # Register complete_task tool
+        self.register_tool(
+            name="complete_task",
+            description="Toggle task completion status between completed and pending",
+            input_schema=CompleteTaskParams.model_json_schema(),
+            handler=complete_task,
+        )
+
+        # Register update_task tool
+        self.register_tool(
+            name="update_task",
+            description="Update task title and/or description",
+            input_schema=UpdateTaskParams.model_json_schema(),
+            handler=update_task,
+        )
+
+        # Register delete_task tool
+        self.register_tool(
+            name="delete_task",
+            description="Delete task permanently (hard delete)",
+            input_schema=DeleteTaskParams.model_json_schema(),
+            handler=delete_task,
         )
 
     async def initialize_lifespan(self) -> AsyncGenerator[None, None]:

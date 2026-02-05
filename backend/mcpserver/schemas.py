@@ -5,7 +5,7 @@ Defines request parameters and response models for all 5 CRUD tools.
 
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 # ==================== add_task ====================
@@ -70,7 +70,7 @@ class CompleteTaskParams(BaseModel):
     """Parameters for complete_task tool"""
 
     user_id: str = Field(..., min_length=1, description="Authenticated user ID")
-    task_id: int = Field(..., ge=1, description="ID of task to toggle")
+    task_id: str | int = Field(..., description="ID of task to toggle")
 
 
 class CompleteTaskResponse(BaseModel):
@@ -89,13 +89,20 @@ class UpdateTaskParams(BaseModel):
     """Parameters for update_task tool"""
 
     user_id: str = Field(..., min_length=1, description="Authenticated user ID")
-    task_id: int = Field(..., ge=1, description="ID of task to update")
+    task_id: str | int = Field(..., description="ID of task to update")
     title: Optional[str] = Field(
         None, min_length=1, max_length=200, description="New title (optional)"
     )
     description: Optional[str] = Field(
         None, max_length=1000, description="New description (optional)"
     )
+
+    @model_validator(mode='after')
+    def check_at_least_one_field(self):
+        """Ensure at least one of title or description is provided"""
+        if self.title is None and self.description is None:
+            raise ValueError("At least one of 'title' or 'description' must be provided")
+        return self
 
 
 class UpdateTaskResponse(BaseModel):
@@ -114,7 +121,7 @@ class DeleteTaskParams(BaseModel):
     """Parameters for delete_task tool"""
 
     user_id: str = Field(..., min_length=1, description="Authenticated user ID")
-    task_id: int = Field(..., ge=1, description="ID of task to delete")
+    task_id: str | int = Field(..., description="ID of task to delete")
 
 
 class DeleteTaskResponse(BaseModel):
