@@ -109,13 +109,14 @@ class TodoMCPServer:
             session: Optional database session
 
         Returns:
-            Tool response
-
-        Raises:
-            ValueError: If tool not found
+            Tool response (never raises exceptions)
         """
         if name not in self.tool_handlers:
-            raise ValueError(f"Tool '{name}' not found")
+            logger.warning(f"Tool not found: {name}")
+            return {
+                "content": [{"type": "text", "text": f"Tool '{name}' not found"}],
+                "isError": True,
+            }
 
         logger.info(f"Calling tool: {name} with arguments: {arguments}")
 
