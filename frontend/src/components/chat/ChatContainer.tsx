@@ -85,39 +85,9 @@ export default function ChatContainer({ userId }: ChatContainerProps) {
     loadConversationHistory();
   }, [conversationId, userId]);
 
-  // T123: Custom fetch function with JWT injection
-  const customFetch = useCallback(
-    async (input: RequestInfo | URL, init?: RequestInit) => {
-      if (!session?.token) {
-        throw new Error('No authentication token available');
-      }
-
-      return fetch(input, {
-        ...init,
-        headers: {
-          ...init?.headers,
-          'Authorization': `Bearer ${session.token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-    },
-    [session]
-  );
-
-  // T122: Initialize ChatKit with custom fetch and domain key
-  // const { control } = useChatKit({
-  //   api: {
-  //     url: `/api/${userId}/chat`,
-  //     domainKey: process.env.NEXT_PUBLIC_CHATKIT_DOMAIN_KEY || '',
-  //     fetch: customFetch,
-  //   },
-  //   // T124: Error handler
-  //   onError: ({ error: err }) => {
-  //     console.error('Chat error:', err);
-  //     setError(err.message || 'An error occurred. Please try again.');
-  //     setIsLoading(false);
-  //   },
-  // });
+  // T122-T124: ChatKit integration commented out
+  // Using custom fetch and manual state management instead for full control
+  // See: handleSendMessage() for stateless API implementation
 
   // T422/T424: Handle message submission with error classification and retry logic
   const handleSendMessage = async (message: string) => {
