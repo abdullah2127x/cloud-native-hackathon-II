@@ -140,30 +140,37 @@ T007 (JWT utils) while T008 (middleware) while T011 (exports)
   - [x] Add field constraints (length limits, required fields)
   - [x] `AddTaskResponse` with task_id, status, title, message fields
 - [x] T014 [US1] Create `backend/tests/mcpserver/test_add_task.py` - Unit tests for add_task tool:
-  - Test successful creation with title and description
-  - Test successful creation with title only (description omitted)
-  - Test validation error for missing title
-  - Test validation error for missing user_id
-  - Test validation error for title exceeding 200 characters
-  - Test validation error for description exceeding 1000 characters
-  - Test 403 error for mismatched user_id (unauthorized)
-  - Test database error handling with retry
-- [ ] T015 [US1] Create `backend/mcpserver/tools/add_task.py` - Tool implementation:
-  - Implement `add_task()` function decorated with `@mcp.tool()`
-  - Accept parameters: user_id, title, description (optional)
-  - Extract and validate user_id from JWT token
-  - Validate all parameters with Pydantic schemas
-  - Query database to create new Task record
-  - Auto-generate created_at and updated_at timestamps
-  - Set completed=False by default
-  - Return AddTaskResponse with created task_id
-  - Handle database errors with structured error response
-  - Log operation with structured logger
-- [ ] T016 [US1] Update `backend/mcpserver/mcp_server.py` to register add_task tool
-- [ ] T017 [US1] [P] Create `backend/tests/mcpserver/test_integration.py` - Integration test for add_task:
-  - Test add_task via actual MCP protocol
-  - Verify JSON-RPC response format
-  - Verify MCP server accepts tool invocation with JWT header
+  - [x] Test successful creation with title and description
+  - [x] Test successful creation with title only (description omitted)
+  - [x] Test validation error for missing title
+  - [x] Test validation error for missing user_id
+  - [x] Test validation error for title exceeding 200 characters
+  - [x] Test validation error for description exceeding 1000 characters
+  - [x] Test 403 error for mismatched user_id (unauthorized)
+  - [x] Test database error handling with retry
+- [x] T015 [US1] Create `backend/mcpserver/tools/add_task.py` - Tool implementation:
+  - [x] Implement `add_task()` function with async support
+  - [x] Accept parameters: user_id, title, description (optional)
+  - [x] Extract and validate user_id from JWT token
+  - [x] Validate all parameters with Pydantic schemas
+  - [x] Query database to create new Task record
+  - [x] Auto-generate created_at and updated_at timestamps
+  - [x] Set completed=False by default
+  - [x] Return AddTaskResponse with created task_id
+  - [x] Handle database errors with structured error response
+  - [x] Log operation with structured logger
+- [x] T016 [US1] Update `backend/mcpserver/mcp_server.py` to register add_task tool:
+  - [x] Added _register_tools() method
+  - [x] Added tool_handlers dictionary
+  - [x] Updated register_tool() to store handlers
+  - [x] Updated call_tool() to invoke actual handlers
+- [x] T017 [US1] [P] Create `backend/tests/mcpserver/test_integration.py` - Integration test for add_task:
+  - [x] Test add_task via actual MCP protocol
+  - [x] Verify JSON-RPC response format
+  - [x] Verify MCP server accepts tool invocation
+  - [x] Test error handling in MCP responses
+  - [x] Test tool discovery
+  - [x] Test JSON serialization
 
 **Parallel Execution Example - Within US1**:
 ```bash
@@ -411,7 +418,7 @@ T014 (write failing tests) while T013 (create schemas)
 
 | US | Title | Priority | Tasks | Status |
 |----|-------|----------|-------|--------|
-| US1 | Create Task | P1 | T013-T017 | 2/5 DONE (T013-T014) |
+| US1 | Create Task | P1 | T013-T017 | 5/5 COMPLETE |
 | US2 | List Tasks | P1 | T018-T022 | 0/5 TODO |
 | US3 | Complete Task | P2 | T023-T027 | 0/5 TODO |
 | US4 | Update Task | P3 | T028-T032 | 0/5 TODO |
@@ -419,7 +426,7 @@ T014 (write failing tests) while T013 (create schemas)
 
 **Setup & Foundation**: T001-T012 (11/12 DONE, 1 deferred: T010)
 **Polish & Integration**: T038-T051 (2/14 DONE: T038-T039)
-**Total**: 51 tasks | **Progress: 15 DONE**
+**Total**: 51 tasks | **Progress: 21 DONE (41%)**
 
 ## Completed Tasks Summary
 
@@ -429,8 +436,12 @@ T014 (write failing tests) while T013 (create schemas)
 **Phase 2 - Foundation (11/12 tasks, 1 deferred)**:
 - T007-T009, T011-T012: Auth, middleware, server, fixtures (T010 deferred)
 
-**Phase 3 - US1: Add Task (2/5 tasks)**:
-- T013-T014: Schemas and comprehensive unit tests (15 tests passing)
+**Phase 3 - US1: Add Task (Complete - 5/5 tasks)**:
+- T013: Schemas with Pydantic models and field constraints
+- T014: Unit tests (15 tests: parameter validation, response structure, integration)
+- T015: Tool implementation with async support, validation, error handling
+- T016: Tool registration in MCP server with handler routing
+- T017: Integration tests (6 tests: MCP protocol, JSON-RPC, tool discovery)
 
 **Phase 8 - Tests (2/14 tasks)**:
 - T038-T039: JWT auth and error handling tests (25 tests passing)
