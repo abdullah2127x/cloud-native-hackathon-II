@@ -61,30 +61,31 @@ export default function MessageList({ messages, isLoading = false }: MessageList
 
   // T125: Configure React Virtuoso with initialTopMostItemIndex and followOutput
   return (
-    <Virtuoso
-      ref={virtuosoRef}
-      data={messages}
-      initialTopMostItemIndex={messages.length - 1}
-      followOutput="smooth"
-      className="h-full"
-      itemContent={(index, message) => (
-        <MessageBubble key={message.id} message={message} />
-      )}
-      footer={() =>
-        isLoading ? (
-          <div className="flex w-full px-4 py-3">
-            <div className="flex items-center gap-1 rounded-lg bg-muted px-4 py-2">
-              <span className="text-sm text-muted-foreground">AI is typing</span>
-              <div className="flex gap-1">
-                <span className="inline-block h-2 w-2 animate-bounce rounded-full bg-gray-400" style={{ animationDelay: '0ms' }} />
-                <span className="inline-block h-2 w-2 animate-bounce rounded-full bg-gray-400" style={{ animationDelay: '150ms' }} />
-                <span className="inline-block h-2 w-2 animate-bounce rounded-full bg-gray-400" style={{ animationDelay: '300ms' }} />
-              </div>
+    <div className="flex h-full flex-col">
+      <Virtuoso
+        ref={virtuosoRef}
+        data={messages}
+        initialTopMostItemIndex={messages.length - 1}
+        followOutput="smooth"
+        className="flex-1"
+        itemContent={(index, message) => (
+          <MessageBubble key={message.id} message={message} />
+        )}
+      />
+      {/* Typing indicator shown outside Virtuoso */}
+      {isLoading && (
+        <div className="flex w-full px-4 py-3">
+          <div className="flex items-center gap-1 rounded-lg bg-muted px-4 py-2">
+            <span className="text-sm text-muted-foreground">AI is typing</span>
+            <div className="flex gap-1">
+              <span className="inline-block h-2 w-2 animate-bounce rounded-full bg-gray-400" style={{ animationDelay: '0ms' }} />
+              <span className="inline-block h-2 w-2 animate-bounce rounded-full bg-gray-400" style={{ animationDelay: '150ms' }} />
+              <span className="inline-block h-2 w-2 animate-bounce rounded-full bg-gray-400" style={{ animationDelay: '300ms' }} />
             </div>
           </div>
-        ) : null
-      }
-    />
+        </div>
+      )}
+    </div>
   );
 }
 

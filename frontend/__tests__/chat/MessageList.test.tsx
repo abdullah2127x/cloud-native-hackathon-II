@@ -10,12 +10,11 @@ import MessageList from '@/components/chat/MessageList';
 
 // Mock Virtuoso
 jest.mock('react-virtuoso', () => ({
-  Virtuoso: ({ data, itemContent, footer }: any) => (
+  Virtuoso: ({ data, itemContent }: any) => (
     <div data-testid="virtuoso-list">
       {data.map((item: any, index: number) => (
         <div key={item.id}>{itemContent(index, item)}</div>
       ))}
-      {footer && footer()}
     </div>
   ),
 }));
