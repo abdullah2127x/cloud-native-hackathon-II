@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "complete_task",
+  "description": "Mark a task as completed or toggle its completion status",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "Authenticated user ID",
+      "minLength": 1
+    },
+    "task_id": {
+      "type": "integer",
+      "description": "ID of the task to mark complete",
+      "minimum": 1
+    }
+  },
+  "required": ["user_id", "task_id"],
+  "examples": [
+    {
+      "user_id": "auth0|abc123",
+      "task_id": 123
+    }
+  ],
+  "response": {
+    "type": "object",
+    "properties": {
+      "task_id": {
+        "type": "integer",
+        "description": "ID of the completed/uncompleted task"
+      },
+      "status": {
+        "type": "string",
+        "enum": ["completed", "uncompleted"],
+        "description": "New completion status after toggle"
+      },
+      "title": {
+        "type": "string",
+        "description": "Title of the task"
+      },
+      "message": {
+        "type": "string",
+        "description": "Success message"
+      }
+    },
+    "required": ["task_id", "status", "title", "message"]
+  }
+}

@@ -8,6 +8,7 @@ dependencies = [
     "aiosqlite>=0.22.1",
     "cryptography>=46.0.3",
     "fastapi>=0.128.0",
+    "mcp>=1.0.0",
     "passlib[bcrypt]>=1.7.4",
     "psycopg2>=2.9.11",
     "pydantic>=2.12.5",
@@ -16,6 +17,7 @@ dependencies = [
     "python-jose[cryptography]>=3.5.0",
     "python-multipart>=0.0.21",
     "sqlmodel>=0.0.31",
+    "structlog>=24.1.0",
     "uvicorn>=0.40.0",
 ]
 
@@ -33,7 +35,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["src*"]
+include = ["src*", "mcpserver*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

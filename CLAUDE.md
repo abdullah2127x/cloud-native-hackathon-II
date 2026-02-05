@@ -189,3 +189,6 @@ If ALL true, suggest creating an ADR.
 
 *For frontend-specific guidance, see `frontend/CLAUDE.md`*
 *For backend-specific guidance, see `backend/CLAUDE.md`*
+
+## Recent Changes
+- 001-mcp-todo-tools: Added Python 3.11+ + Official MCP SDK (Python), FastAPI, SQLModel, Pydantic, Better Auth (JWT validation), existing database session management

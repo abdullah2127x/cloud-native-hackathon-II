@@ -1,0 +1,85 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "list_tasks",
+  "description": "Retrieve tasks for the authenticated user with optional filtering",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "Authenticated user ID",
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": ["all", "pending", "completed"],
+      "description": "Filter by completion status",
+      "default": "all"
+    }
+  },
+  "required": ["user_id"],
+  "examples": [
+    {
+      "user_id": "auth0|abc123",
+      "status": "all"
+    },
+    {
+      "user_id": "auth0|abc123",
+      "status": "pending"
+    },
+    {
+      "user_id": "auth0|abc123",
+      "status": "completed"
+    }
+  ],
+  "response": {
+    "type": "object",
+    "properties": {
+      "tasks": {
+        "type": "array",
+        "description": "Array of tasks matching filter",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "Task ID"
+            },
+            "title": {
+              "type": "string",
+              "description": "Task title"
+            },
+            "description": {
+              "type": ["string", "null"],
+              "description": "Task description"
+            },
+            "completed": {
+              "type": "boolean",
+              "description": "Completion status"
+            },
+            "created_at": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Creation timestamp (ISO 8601)"
+            },
+            "updated_at": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Last update timestamp (ISO 8601)"
+            }
+          },
+          "required": ["id", "title", "completed", "created_at", "updated_at"]
+        }
+      },
+      "count": {
+        "type": "integer",
+        "description": "Number of tasks returned"
+      },
+      "status": {
+        "type": "string",
+        "const": "success",
+        "description": "Always 'success' for successful query"
+      }
+    },
+    "required": ["tasks", "count", "status"]
+  }
+}

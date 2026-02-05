@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "delete_task",
+  "description": "Permanently delete a task from the user's list",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "Authenticated user ID",
+      "minLength": 1
+    },
+    "task_id": {
+      "type": "integer",
+      "description": "ID of the task to delete",
+      "minimum": 1
+    }
+  },
+  "required": ["user_id", "task_id"],
+  "examples": [
+    {
+      "user_id": "auth0|abc123",
+      "task_id": 123
+    }
+  ],
+  "response": {
+    "type": "object",
+    "properties": {
+      "task_id": {
+        "type": "integer",
+        "description": "ID of the deleted task"
+      },
+      "status": {
+        "type": "string",
+        "const": "deleted",
+        "description": "Always 'deleted' for successful deletion"
+      },
+      "title": {
+        "type": "string",
+        "description": "Title of the deleted task"
+      },
+      "message": {
+        "type": "string",
+        "const": "Task deleted successfully",
+        "description": "Success message"
+      }
+    },
+    "required": ["task_id", "status", "title", "message"]
+  }
+}
