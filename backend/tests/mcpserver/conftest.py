@@ -60,7 +60,7 @@ def mock_jwt_token_fixture() -> str:
 
     token = encode(
         payload,
-        settings.BETTER_AUTH_SECRET,
+        settings.better_auth_secret,
         algorithm="HS256",
     )
 

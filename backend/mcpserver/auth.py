@@ -35,7 +35,7 @@ def verify_jwt_token(token: str) -> Optional[dict[str, Any]]:
         # For RS256 (asymmetric), would need JWT_PUBLIC_KEY from settings
         payload = jwt.decode(
             token,
-            settings.BETTER_AUTH_SECRET,
+            settings.better_auth_secret,
             algorithms=["HS256"],
         )
         return payload
