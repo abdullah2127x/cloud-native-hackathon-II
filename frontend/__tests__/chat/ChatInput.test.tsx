@@ -64,18 +64,21 @@ describe('ChatInput', () => {
     expect(input).toHaveValue('');
   });
 
-  it('disables submission when disabled prop is true', async () => {
+  it('disables send button but keeps input enabled when isLoading is true', async () => {
     const user = userEvent.setup();
     const mockOnSend = jest.fn();
 
-    render(<ChatInput onSend={mockOnSend} disabled={true} />);
+    render(<ChatInput onSend={mockOnSend} isLoading={true} />);
 
-    const input = screen.getByPlaceholderText(/type your message/i);
-    const button = screen.getByRole('button', { name: /send/i });
+    const input = screen.getByPlaceholderText(/waiting for response/i);
+    const button = screen.getByRole('button');
 
-    expect(input).toBeDisabled();
+    // Input should NOT be disabled - user can still type (FR-017)
+    expect(input).not.toBeDisabled();
+    // But button should be disabled
     expect(button).toBeDisabled();
 
+    // User can type while loading
     await user.type(input, 'Test');
     expect(mockOnSend).not.toHaveBeenCalled();
   });

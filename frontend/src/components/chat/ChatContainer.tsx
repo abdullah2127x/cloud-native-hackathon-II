@@ -130,9 +130,16 @@ export default function ChatContainer({ userId }: ChatContainerProps) {
       return;
     }
 
+    // Optimistic update: Add user message immediately (FR-017)
+    const userMessageId = `user-${Date.now()}`;
+    setMessages((prev) => [
+      ...prev,
+      { role: 'user', content: message, id: userMessageId },
+    ]);
+
+    setLastMessage(message);
     setIsLoading(true);
     setClassifiedError(null);
-    setLastMessage(message);
 
     try {
       const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -165,10 +172,9 @@ export default function ChatContainer({ userId }: ChatContainerProps) {
       setRetryCount(0);
       setLastMessage(null);
 
-      // Add user message and assistant response to messages
+      // Add only assistant response (user message already added optimistically)
       setMessages((prev) => [
         ...prev,
-        { role: 'user', content: message, id: `user-${Date.now()}` },
         {
           role: 'assistant',
           content: data.message,
@@ -176,6 +182,9 @@ export default function ChatContainer({ userId }: ChatContainerProps) {
         },
       ]);
     } catch (err) {
+      // Remove optimistic user message on error
+      setMessages((prev) => prev.filter((msg) => msg.id !== userMessageId));
+
       // T423: Classify error for empathetic messaging
       const error = classifyError(err);
       setClassifiedError(error);
@@ -300,10 +309,12 @@ export default function ChatContainer({ userId }: ChatContainerProps) {
         </div>
 
         <div className="border-t p-4">
-          {/* T425: Keep input enabled during error state (FR-017) */}
-          <ChatInput onSend={handleSendMessage} disabled={isLoading || isLoadingHistory} />
+          {/* T425: Keep input enabled during error state (FR-017) - optimistic updates enabled */}
+          <ChatInput onSend={handleSendMessage} isLoading={isLoading || isLoadingHistory} />
         </div>
       </div>
     </div>
   );
 }
+
+

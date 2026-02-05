@@ -37,11 +37,11 @@ vi.mock('./MessageList', () => ({
 }));
 
 vi.mock('./ChatInput', () => ({
-  default: ({ onSend, disabled }: any) => (
+  default: ({ onSend, isLoading }: any) => (
     <div data-testid="chat-input">
       <button
         data-testid="send-button"
-        disabled={disabled}
+        disabled={isLoading}
         onClick={() => onSend('Test message')}
       >
         Send
@@ -393,5 +393,71 @@ describe('ChatContainer - Error Handling', () => {
     await waitFor(() => {
       expect(screen.getByTestId('send-button')).not.toBeDisabled();
     });
+  });
+
+  // Optimistic updates test
+  it('FR-017: User message appears immediately (optimistic update)', async () => {
+    const user = userEvent.setup({ delay: null });
+
+    let resolveRequest: any;
+    const requestPromise = new Promise((resolve) => {
+      resolveRequest = resolve;
+    });
+
+    mockFetch.mockReturnValueOnce(requestPromise);
+
+    render(<ChatContainer userId="user-123" />);
+
+    const sendButton = screen.getByTestId('send-button');
+
+    // Send message
+    await user.click(sendButton);
+
+    // User message should appear IMMEDIATELY (before server responds)
+    await waitFor(() => {
+      expect(screen.getByText('Test message')).toBeInTheDocument();
+    });
+
+    // Server responds
+    resolveRequest({
+      ok: true,
+      json: async () => ({
+        conversation_id: 'conv-123',
+        message: 'Server response',
+        role: 'assistant',
+        created_at: new Date().toISOString(),
+      }),
+    });
+
+    // Both messages should now be visible
+    await waitFor(() => {
+      expect(screen.getByText('Test message')).toBeInTheDocument();
+      expect(screen.getByText('Server response')).toBeInTheDocument();
+    });
+  });
+
+  // Optimistic update rollback on error
+  it('FR-017: Optimistic message is removed on error', async () => {
+    const user = userEvent.setup({ delay: null });
+
+    mockFetch.mockRejectedValueOnce(new TypeError('Failed to fetch'));
+
+    render(<ChatContainer userId="user-123" />);
+
+    const sendButton = screen.getByTestId('send-button');
+
+    // Send message
+    await user.click(sendButton);
+
+    // Message appears optimistically
+    expect(screen.getByText('Test message')).toBeInTheDocument();
+
+    // Error occurs
+    await waitFor(() => {
+      expect(screen.getByText(/connection lost/i)).toBeInTheDocument();
+    });
+
+    // Optimistic message is removed because the request failed
+    expect(screen.queryByText('Test message')).not.toBeInTheDocument();
   });
 });

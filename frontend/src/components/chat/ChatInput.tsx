@@ -14,14 +14,14 @@ import { Send } from 'lucide-react';
 
 interface ChatInputProps {
   onSend: (message: string) => void;
-  disabled?: boolean;
+  isLoading?: boolean;
 }
 
-export default function ChatInput({ onSend, disabled = false }: ChatInputProps) {
+export default function ChatInput({ onSend, isLoading = false }: ChatInputProps) {
   const [message, setMessage] = useState('');
 
   const handleSubmit = () => {
-    if (!message.trim() || disabled) return;
+    if (!message.trim() || isLoading) return;
 
     onSend(message);
     setMessage(''); // Clear input after submission
@@ -41,19 +41,25 @@ export default function ChatInput({ onSend, disabled = false }: ChatInputProps) 
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder="Type your message... (Press Enter to send, Shift+Enter for new line)"
-        disabled={disabled}
-        className="min-h-[60px] max-h-[200px] resize-none"
+        placeholder={isLoading ? "Waiting for response..." : "Type your message... (Press Enter to send, Shift+Enter for new line)"}
+        disabled={false}
+        className={`min-h-[60px] max-h-[200px] resize-none ${isLoading ? 'opacity-75' : ''}`}
         rows={2}
       />
       <Button
         onClick={handleSubmit}
-        disabled={disabled || !message.trim()}
+        disabled={isLoading || !message.trim()}
         size="icon"
         className="h-[60px] w-[60px] shrink-0"
       >
-        <Send className="h-5 w-5" />
-        <span className="sr-only">Send message</span>
+        {isLoading ? (
+          <div className="h-5 w-5 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600" />
+        ) : (
+          <>
+            <Send className="h-5 w-5" />
+            <span className="sr-only">Send message</span>
+          </>
+        )}
       </Button>
     </div>
   );
