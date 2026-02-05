@@ -9,7 +9,7 @@
 
 import { useConversationHistory } from '@/hooks/useConversationHistory';
 import { getConversation, type ConversationSummary } from '@/lib/api/chat';
-import { useSession } from '@/lib/auth-client';
+import { useSession, getJwtToken } from '@/lib/auth-client';
 import { Button } from '@/components/ui/Button';
 import { PlusCircle, MessageSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -30,19 +30,28 @@ export default function ConversationSidebar({
   onConversationLoad,
 }: ConversationSidebarProps) {
   const { conversations, isLoading, error, refetch } = useConversationHistory(userId);
-  const { data: session } = useSession();
 
   // T303: Click handler to load conversation
   const handleConversationClick = async (conversation: ConversationSummary) => {
-    if (!session?.token) return;
+    const token = getJwtToken();
+    if (!token) {
+      console.error('[ConversationSidebar] No auth token available');
+      return;
+    }
+
+    console.log('[ConversationSidebar] Clicked conversation:', conversation.id);
 
     try {
+      console.log('[ConversationSidebar] Fetching conversation with ID:', conversation.id, 'for user:', userId);
+
       // Fetch full conversation with messages
       const fullConversation = await getConversation(
         userId,
         conversation.id,
-        session.token
+        token
       );
+
+      console.log('[ConversationSidebar] Received conversation:', fullConversation);
 
       // Convert messages to component format
       const formattedMessages = fullConversation.messages.map((msg) => ({
@@ -51,13 +60,24 @@ export default function ConversationSidebar({
         content: msg.content,
       }));
 
+      console.log('[ConversationSidebar] Formatted messages:', formattedMessages);
+
       // Notify parent component
       onConversationSelect(conversation.id);
+      console.log('[ConversationSidebar] Called onConversationSelect with:', conversation.id);
+
       if (onConversationLoad) {
         onConversationLoad(formattedMessages);
+        console.log('[ConversationSidebar] Called onConversationLoad with', formattedMessages.length, 'messages');
+      } else {
+        console.warn('[ConversationSidebar] onConversationLoad callback not provided');
       }
     } catch (err) {
-      console.error('Failed to load conversation:', err);
+      console.error('[ConversationSidebar] Failed to load conversation:', err);
+      if (err instanceof Error) {
+        console.error('[ConversationSidebar] Error message:', err.message);
+        console.error('[ConversationSidebar] Error stack:', err.stack);
+      }
     }
   };
 
@@ -99,8 +119,9 @@ export default function ConversationSidebar({
       {/* T301: Conversation List */}
       <div className="flex-1 overflow-y-auto">
         {isLoading && (
-          <div className="p-4 text-center text-sm text-muted-foreground">
-            Loading conversations...
+          <div className="flex flex-col items-center justify-center gap-3 p-4">
+            <div className="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600" />
+            <p className="text-xs text-muted-foreground">Loading conversations...</p>
           </div>
         )}
 

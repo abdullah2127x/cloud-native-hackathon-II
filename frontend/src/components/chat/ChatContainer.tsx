@@ -212,16 +212,21 @@ export default function ChatContainer({ userId }: ChatContainerProps) {
 
   // T305: Handle conversation selection from sidebar
   const handleConversationSelect = (selectedConversationId: string) => {
+    console.log('[ChatContainer] handleConversationSelect called with:', selectedConversationId);
     setConversationId(selectedConversationId);
     localStorage.setItem(`chat_conversation_${userId}`, selectedConversationId);
     setIsSidebarOpen(false); // Close mobile sidebar after selection
+    console.log('[ChatContainer] Set conversation ID and saved to localStorage');
   };
 
   // T305: Handle conversation load (set messages)
   const handleConversationLoad = (loadedMessages: Array<{ id: string; role: string; content: string }>) => {
+    console.log('[ChatContainer] handleConversationLoad called with', loadedMessages.length, 'messages');
+    console.log('[ChatContainer] Messages:', loadedMessages);
     setMessages(loadedMessages);
     setClassifiedError(null);
     setRetryCount(0);
+    console.log('[ChatContainer] Updated state with', loadedMessages.length, 'messages');
   };
 
   // T305: Handle new conversation
@@ -299,13 +304,14 @@ export default function ChatContainer({ userId }: ChatContainerProps) {
         )}
 
         {isLoadingHistory && (
-          <div className="flex items-center justify-center p-4 text-sm text-muted-foreground">
-            Loading conversation history...
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-background/50 backdrop-blur-sm">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600" />
+            <p className="text-sm text-muted-foreground">Loading conversation history...</p>
           </div>
         )}
 
         <div className="flex-1 overflow-hidden">
-          <MessageList messages={messages} />
+          <MessageList messages={messages} isLoading={isLoading} />
         </div>
 
         <div className="border-t p-4">

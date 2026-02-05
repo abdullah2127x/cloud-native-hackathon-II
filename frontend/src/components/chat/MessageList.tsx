@@ -20,9 +20,10 @@ interface Message {
 
 interface MessageListProps {
   messages: Message[];
+  isLoading?: boolean;
 }
 
-export default function MessageList({ messages }: MessageListProps) {
+export default function MessageList({ messages, isLoading = false }: MessageListProps) {
   const virtuosoRef = useRef<VirtuosoHandle>(null);
 
   // Scroll to bottom when new messages arrive
@@ -34,6 +35,16 @@ export default function MessageList({ messages }: MessageListProps) {
       });
     }
   }, [messages]);
+
+  // Scroll to bottom when loading state changes
+  useEffect(() => {
+    if (isLoading && messages.length > 0) {
+      virtuosoRef.current?.scrollToIndex({
+        index: messages.length,
+        behavior: 'smooth',
+      });
+    }
+  }, [isLoading, messages.length]);
 
   if (messages.length === 0) {
     return (
@@ -59,6 +70,20 @@ export default function MessageList({ messages }: MessageListProps) {
       itemContent={(index, message) => (
         <MessageBubble key={message.id} message={message} />
       )}
+      footer={() =>
+        isLoading ? (
+          <div className="flex w-full px-4 py-3">
+            <div className="flex items-center gap-1 rounded-lg bg-muted px-4 py-2">
+              <span className="text-sm text-muted-foreground">AI is typing</span>
+              <div className="flex gap-1">
+                <span className="inline-block h-2 w-2 animate-bounce rounded-full bg-gray-400" style={{ animationDelay: '0ms' }} />
+                <span className="inline-block h-2 w-2 animate-bounce rounded-full bg-gray-400" style={{ animationDelay: '150ms' }} />
+                <span className="inline-block h-2 w-2 animate-bounce rounded-full bg-gray-400" style={{ animationDelay: '300ms' }} />
+              </div>
+            </div>
+          </div>
+        ) : null
+      }
     />
   );
 }

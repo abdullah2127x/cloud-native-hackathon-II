@@ -10,11 +10,12 @@ import MessageList from '@/components/chat/MessageList';
 
 // Mock Virtuoso
 jest.mock('react-virtuoso', () => ({
-  Virtuoso: ({ data, itemContent }: any) => (
+  Virtuoso: ({ data, itemContent, footer }: any) => (
     <div data-testid="virtuoso-list">
       {data.map((item: any, index: number) => (
         <div key={item.id}>{itemContent(index, item)}</div>
       ))}
+      {footer && footer()}
     </div>
   ),
 }));
@@ -54,5 +55,17 @@ describe('MessageList', () => {
 
     const messageContainer = screen.getByText('Hi there!').closest('div');
     expect(messageContainer?.parentElement).toHaveClass('justify-start');
+  });
+
+  it('displays typing indicator when isLoading is true', () => {
+    render(<MessageList messages={mockMessages} isLoading={true} />);
+
+    expect(screen.getByText(/ai is typing/i)).toBeInTheDocument();
+  });
+
+  it('hides typing indicator when isLoading is false', () => {
+    render(<MessageList messages={mockMessages} isLoading={false} />);
+
+    expect(screen.queryByText(/ai is typing/i)).not.toBeInTheDocument();
   });
 });
