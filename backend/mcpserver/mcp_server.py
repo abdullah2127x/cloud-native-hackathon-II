@@ -3,6 +3,7 @@
 Initializes FastMCP server with stateless HTTP configuration and registers tools.
 """
 
+import json
 import logging
 from contextlib import asynccontextmanager
 from typing import Any, AsyncGenerator
@@ -11,6 +12,8 @@ from mcp.server import Server
 from mcp.types import Tool
 
 from .logging_config import configure_logging
+from .tools import add_task
+from .schemas import AddTaskParams
 
 logger = logging.getLogger(__name__)
 
@@ -33,9 +36,23 @@ class TodoMCPServer:
 
         # Initialize MCP server
         self.server = Server("todo-mcp")
-        self.tools: dict[str, Tool] = {}
+        self.tools: dict[str, Any] = {}
+        self.tool_handlers: dict[str, Any] = {}
+
+        # Register all tools
+        self._register_tools()
 
         logger.info("MCP Server initialized")
+
+    def _register_tools(self) -> None:
+        """Register all available tools"""
+        # Register add_task tool
+        self.register_tool(
+            name="add_task",
+            description="Create a new task for the authenticated user",
+            input_schema=AddTaskParams.model_json_schema(),
+            handler=add_task,
+        )
 
     async def initialize_lifespan(self) -> AsyncGenerator[None, None]:
         """Lifespan context manager for server startup/shutdown
@@ -78,17 +95,18 @@ class TodoMCPServer:
             "inputSchema": input_schema,
         }
 
-        # Register handler - will be decorated with @server.call_tool
-        # Specific tool handlers will call this after implementation
+        # Store handler for invocation
+        self.tool_handlers[name] = handler
 
     async def call_tool(
-        self, name: str, arguments: dict[str, Any]
+        self, name: str, arguments: dict[str, Any], session: Any = None
     ) -> dict[str, Any]:
         """Call a registered tool
 
         Args:
             name: Tool name
             arguments: Tool parameters
+            session: Optional database session
 
         Returns:
             Tool response
@@ -96,14 +114,22 @@ class TodoMCPServer:
         Raises:
             ValueError: If tool not found
         """
-        if name not in self.tools:
+        if name not in self.tool_handlers:
             raise ValueError(f"Tool '{name}' not found")
 
         logger.info(f"Calling tool: {name} with arguments: {arguments}")
 
-        # Tool handlers will be registered here after implementation
-        # For now, return placeholder
-        return {"error": f"Tool '{name}' not yet implemented"}
+        try:
+            # Call tool handler with session
+            handler = self.tool_handlers[name]
+            response = await handler(**arguments, session=session)
+            return response
+        except Exception as e:
+            logger.error(f"Error calling tool {name}: {str(e)}", exc_info=True)
+            return {
+                "content": [{"type": "text", "text": f"Error calling tool: {str(e)}"}],
+                "isError": True,
+            }
 
     def get_tools_list(self) -> list[Tool]:
         """Get list of available tools
