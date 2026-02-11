@@ -1,6 +1,6 @@
 # Feature Specification: MCP Server for Todo Operations
 
-**Feature Branch**: `001-mcp-todo-tools`
+**Feature Branch**: `007-mcp-todo-tools`
 **Created**: 2026-02-05
 **Status**: Draft
 **Input**: User description: "Create a specification for implementing an MCP (Model Context Protocol) server that exposes todo CRUD operations as tools for AI agents to use."

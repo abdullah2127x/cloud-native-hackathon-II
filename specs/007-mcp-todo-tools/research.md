@@ -1,7 +1,7 @@
 # Research: MCP Server for Todo Operations
 
 **Date**: 2026-02-05
-**Feature**: 001-mcp-todo-tools
+**Feature**: 007-mcp-todo-tools
 **Purpose**: Research technical patterns for implementing MCP server with FastAPI, JWT authentication, and database integration
 
 ## Decision Log

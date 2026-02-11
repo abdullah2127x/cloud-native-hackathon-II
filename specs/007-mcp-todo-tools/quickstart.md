@@ -1,6 +1,6 @@
 # Quick Start: MCP Server for Todo Operations
 
-**Feature**: 001-mcp-todo-tools
+**Feature**: 007-mcp-todo-tools
 **Date**: 2026-02-05
 **Purpose**: Developer guide for setting up, testing, and using the MCP server
 

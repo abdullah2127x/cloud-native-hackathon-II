@@ -5,34 +5,34 @@ stage: plan
 date: 2026-02-05T00:00:00Z
 surface: project-level
 model: claude-sonnet-4-5
-feature: 001-mcp-todo-tools
-branch: 001-mcp-todo-tools
+feature: 007-mcp-todo-tools
+branch: 007-mcp-todo-tools
 user: abdullah
 command: /sp.plan
 labels: [planning, mcp-server, architecture, phase-0, phase-1]
 links:
-  spec: specs/001-mcp-todo-tools/spec.md
+  spec: specs/007-mcp-todo-tools/spec.md
   ticket: null
   adr: null
   pr: null
 files:
-  - path: specs/001-mcp-todo-tools/plan.md
+  - path: specs/007-mcp-todo-tools/plan.md
     action: created
-  - path: specs/001-mcp-todo-tools/research.md
+  - path: specs/007-mcp-todo-tools/research.md
     action: created
-  - path: specs/001-mcp-todo-tools/data-model.md
+  - path: specs/007-mcp-todo-tools/data-model.md
     action: created
-  - path: specs/001-mcp-todo-tools/quickstart.md
+  - path: specs/007-mcp-todo-tools/quickstart.md
     action: created
-  - path: specs/001-mcp-todo-tools/contracts/add_task.json
+  - path: specs/007-mcp-todo-tools/contracts/add_task.json
     action: created
-  - path: specs/001-mcp-todo-tools/contracts/list_tasks.json
+  - path: specs/007-mcp-todo-tools/contracts/list_tasks.json
     action: created
-  - path: specs/001-mcp-todo-tools/contracts/complete_task.json
+  - path: specs/007-mcp-todo-tools/contracts/complete_task.json
     action: created
-  - path: specs/001-mcp-todo-tools/contracts/delete_task.json
+  - path: specs/007-mcp-todo-tools/contracts/delete_task.json
     action: created
-  - path: specs/001-mcp-todo-tools/contracts/update_task.json
+  - path: specs/007-mcp-todo-tools/contracts/update_task.json
     action: created
   - path: CLAUDE.md
     action: updated
