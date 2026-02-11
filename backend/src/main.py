@@ -6,6 +6,7 @@ from src.middleware.cors import configure_cors
 from src.middleware.logging import logging_middleware
 from src.middleware.error_handler import error_handler_middleware
 from src.routers import health, tasks, tags
+from src.routers.chat import router as chat_router
 from src.exceptions.base import TaskNotFoundError, UnauthorizedError, ValidationError
 from src.exceptions.handlers import (
     task_not_found_handler,
@@ -48,6 +49,7 @@ app.add_exception_handler(ValidationError, validation_error_handler)
 app.include_router(health.router)
 app.include_router(tasks.router)
 app.include_router(tags.router)
+app.include_router(chat_router)
 
 
 @app.on_event("startup")

@@ -10,6 +10,8 @@ from unittest.mock import AsyncMock, patch
 from src.models.user import User  # noqa: F401
 from src.models.task import Task  # noqa: F401
 from src.models.tag import Tag, TaskTag  # noqa: F401
+from src.models.conversation import Conversation  # noqa: F401
+from src.models.message import Message  # noqa: F401
 
 
 @pytest.fixture(name="engine")
