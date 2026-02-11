@@ -1,8 +1,5 @@
 /**
  * Error classification utility for empathetic error messages.
- *
- * Task ID: T423
- * Spec: specs/001-chat-interface/spec.md
  */
 
 export type ErrorType = 'network' | 'timeout' | 'auth' | 'validation' | 'server' | 'unknown';

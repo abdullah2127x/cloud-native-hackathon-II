@@ -1,8 +1,5 @@
 /**
  * Tests for error-classifier utility.
- *
- * Task ID: T428
- * Spec: specs/001-chat-interface/spec.md
  */
 
 import { describe, it, expect } from 'vitest';
