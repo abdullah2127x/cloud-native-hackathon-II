@@ -50,10 +50,16 @@ def client_fixture(session: Session) -> Generator[TestClient, None, None]:
 
 @pytest.fixture(name="mock_auth")
 def mock_auth_fixture():
-    """Mock JWT authentication"""
-    with patch('src.auth.dependencies.verify_jwt') as mock:
-        mock.return_value = {"sub": "test-user-id"}
-        yield mock
+    """Mock JWT authentication by overriding the get_current_user dependency"""
+    from src.main import app
+    from src.auth.dependencies import get_current_user
+
+    async def mock_get_current_user() -> str:
+        return "test-user-id"
+
+    app.dependency_overrides[get_current_user] = mock_get_current_user
+    yield
+    app.dependency_overrides.pop(get_current_user, None)
 
 
 @pytest.fixture(name="test_user_id")

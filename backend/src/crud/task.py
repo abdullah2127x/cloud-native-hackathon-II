@@ -56,6 +56,7 @@ def create_task(session: Session, task_data: TaskCreate, user_id: str) -> Task:
         user_id=user_id,
         title=task_data.title,
         description=task_data.description,
+        completed=task_data.completed,
         priority=task_data.priority,
     )
     session.add(task)

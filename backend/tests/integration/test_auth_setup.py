@@ -5,181 +5,143 @@ Reference: specs/001-todo-web-crud/spec.md
 Task: T039 - Generate integration test for Better Auth migration
 
 These tests verify that:
-1. Better Auth has created the user table
-2. User table has correct schema
-3. Database connection is properly configured
+1. The user table exists with correct schema
+2. User table has correct columns and constraints
+3. Database operations work correctly
+
+Uses isolated in-memory SQLite engine to avoid polluting
+the production database and to be dialect-agnostic.
 """
 import pytest
-from sqlmodel import Session, select, text
-from src.models.user import User
-from src.db.database import engine, create_db_and_tables
+from datetime import datetime, UTC
+from sqlalchemy import inspect as sa_inspect, text
+from sqlalchemy.pool import StaticPool
+from sqlmodel import Session, SQLModel, select, create_engine
+
+from src.models.user import User  # noqa: F401 — registers model with SQLModel metadata
+
+
+@pytest.fixture(name="auth_engine", scope="class")
+def auth_engine_fixture():
+    """Isolated in-memory SQLite engine for auth schema tests"""
+    engine = create_engine(
+        "sqlite:///:memory:",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
+    SQLModel.metadata.create_all(engine)
+    return engine
+
+
+@pytest.fixture(name="auth_session")
+def auth_session_fixture(auth_engine):
+    """Session with rollback after each test for isolation"""
+    with Session(auth_engine) as session:
+        yield session
+        session.rollback()
 
 
 class TestBetterAuthMigration:
     """Test suite for Better Auth database migration"""
 
-    @pytest.fixture(autouse=True)
-    def setup_database(self):
-        """Setup database tables before each test"""
-        create_db_and_tables()
-        yield
+    def test_user_table_exists(self, auth_engine):
+        """Test that the user table was created"""
+        inspector = sa_inspect(auth_engine)
+        table_names = inspector.get_table_names()
+        assert "user" in table_names, "User table should exist"
 
-    def test_user_table_exists(self):
-        """Test that Better Auth created the user table"""
-        # Arrange & Act
-        with Session(engine) as session:
-            # Try to query the user table
-            result = session.exec(
-                text("SELECT name FROM sqlite_master WHERE type='table' AND name='user'")
-            )
-            table_exists = result.first() is not None
-
-        # Assert
-        assert table_exists, "User table should exist after Better Auth migration"
-
-    def test_user_table_has_required_columns(self):
+    def test_user_table_has_required_columns(self, auth_engine):
         """Test that user table has all required columns"""
-        # Arrange
-        required_columns = {
-            "id",
-            "email",
-            "name",
-            "emailVerified",
-            "createdAt",
-            "updatedAt",
-        }
-
-        # Act
-        with Session(engine) as session:
-            # Query table schema
-            result = session.exec(
-                text("PRAGMA table_info(user)")
-            )
-            columns = {row[1] for row in result}
-
-        # Assert
+        required_columns = {"id", "email", "name", "emailVerified", "createdAt", "updatedAt"}
+        inspector = sa_inspect(auth_engine)
+        columns = {col["name"] for col in inspector.get_columns("user")}
         assert required_columns.issubset(columns), \
             f"Missing columns: {required_columns - columns}"
 
-    def test_user_table_email_has_unique_constraint(self):
-        """Test that email column has unique constraint"""
-        # Arrange
-        with Session(engine) as session:
-            # Query index information
-            result = session.exec(
-                text("PRAGMA index_list(user)")
+    def test_user_table_email_has_unique_constraint(self, auth_engine):
+        """Test that email column has a unique constraint or index"""
+        inspector = sa_inspect(auth_engine)
+        unique_constraints = inspector.get_unique_constraints("user")
+        indexes = inspector.get_indexes("user")
+        email_unique = (
+            any("email" in uc.get("column_names", []) for uc in unique_constraints)
+            or any(
+                idx.get("unique") and "email" in idx.get("column_names", [])
+                for idx in indexes
             )
-            indices = list(result)
-
-        # Assert
-        # Should have at least one index (email unique constraint)
-        assert len(indices) > 0, "Email column should have unique index"
-
-    def test_can_insert_user_record(self):
-        """Test that user records can be inserted into the table"""
-        # Arrange
-        from datetime import datetime
-        user_data = User(
-            id="test-user-1",
-            email="test@example.com",
-            name="Test User",
-            emailVerified=False,
-            createdAt=datetime.utcnow(),
-            updatedAt=datetime.utcnow(),
         )
+        assert email_unique, "Email column should have a unique constraint or index"
 
-        # Act
-        with Session(engine) as session:
-            session.add(user_data)
-            session.commit()
-            session.refresh(user_data)
-
-            # Verify insertion
-            retrieved_user = session.get(User, "test-user-1")
-
-        # Assert
-        assert retrieved_user is not None
-        assert retrieved_user.email == "test@example.com"
-        assert retrieved_user.name == "Test User"
-
-    def test_duplicate_email_is_prevented(self):
-        """Test that duplicate emails are prevented by unique constraint"""
-        # Arrange
-        from datetime import datetime
-        user1 = User(
-            id="user-1",
-            email="duplicate@example.com",
-            name="User One",
-            createdAt=datetime.utcnow(),
-            updatedAt=datetime.utcnow(),
-        )
-        user2 = User(
-            id="user-2",
-            email="duplicate@example.com",  # Same email
-            name="User Two",
-            createdAt=datetime.utcnow(),
-            updatedAt=datetime.utcnow(),
-        )
-
-        # Act & Assert
-        with Session(engine) as session:
-            session.add(user1)
-            session.commit()
-
-            # Attempting to add user2 with duplicate email should fail
-            with pytest.raises(Exception):  # Database integrity error
-                session.add(user2)
-                session.commit()
-
-    def test_user_id_is_primary_key(self):
+    def test_user_id_is_primary_key(self, auth_engine):
         """Test that id column is the primary key"""
-        # Arrange & Act
-        with Session(engine) as session:
-            result = session.exec(
-                text("PRAGMA table_info(user)")
-            )
-            columns = list(result)
+        inspector = sa_inspect(auth_engine)
+        pk = inspector.get_pk_constraint("user")
+        assert "id" in pk.get("constrained_columns", []), \
+            "id column should be the primary key"
 
-        # Assert
-        # Find the id column and check if it's a primary key
-        id_column = next((col for col in columns if col[1] == "id"), None)
-        assert id_column is not None, "id column should exist"
-        assert id_column[5] == 1, "id column should be marked as primary key"
-
-    def test_database_connection_is_working(self):
-        """Test that database connection is properly configured"""
-        # Act
-        with Session(engine) as session:
-            # Simple query to test connection
-            result = session.exec(text("SELECT 1"))
-            value = result.first()
-
-        # Assert
+    def test_database_connection_is_working(self, auth_session):
+        """Test that database connection is working"""
+        result = auth_session.exec(text("SELECT 1"))
+        value = result.first()
         assert value is not None
         assert value[0] == 1
 
-    def test_can_query_users_by_email(self):
-        """Test that users can be queried by email (indexed column)"""
-        # Arrange
-        from datetime import datetime
+    def test_can_insert_user_record(self, auth_session):
+        """Test that user records can be inserted"""
+        user = User(
+            id="insert-test-user",
+            email="insert@example.com",
+            name="Insert Test",
+            emailVerified=False,
+            createdAt=datetime.now(UTC),
+            updatedAt=datetime.now(UTC),
+        )
+        auth_session.add(user)
+        auth_session.commit()
+        auth_session.refresh(user)
+
+        retrieved = auth_session.get(User, "insert-test-user")
+        assert retrieved is not None
+        assert retrieved.email == "insert@example.com"
+        assert retrieved.name == "Insert Test"
+
+    def test_duplicate_email_is_prevented(self, auth_session):
+        """Test that duplicate emails are prevented by unique constraint"""
+        user1 = User(
+            id="dup-user-1",
+            email="dup@example.com",
+            name="User One",
+            createdAt=datetime.now(UTC),
+            updatedAt=datetime.now(UTC),
+        )
+        user2 = User(
+            id="dup-user-2",
+            email="dup@example.com",  # Same email
+            name="User Two",
+            createdAt=datetime.now(UTC),
+            updatedAt=datetime.now(UTC),
+        )
+        auth_session.add(user1)
+        auth_session.commit()
+
+        with pytest.raises(Exception):
+            auth_session.add(user2)
+            auth_session.commit()
+
+    def test_can_query_users_by_email(self, auth_session):
+        """Test that users can be queried by email"""
         user = User(
             id="query-test-user",
             email="query@example.com",
             name="Query Test",
-            createdAt=datetime.utcnow(),
-            updatedAt=datetime.utcnow(),
+            createdAt=datetime.now(UTC),
+            updatedAt=datetime.now(UTC),
         )
+        auth_session.add(user)
+        auth_session.commit()
 
-        # Act
-        with Session(engine) as session:
-            session.add(user)
-            session.commit()
-
-            # Query by email
-            statement = select(User).where(User.email == "query@example.com")
-            retrieved_user = session.exec(statement).first()
-
-        # Assert
-        assert retrieved_user is not None
-        assert retrieved_user.id == "query-test-user"
-        assert retrieved_user.email == "query@example.com"
+        statement = select(User).where(User.email == "query@example.com")
+        retrieved = auth_session.exec(statement).first()
+        assert retrieved is not None
+        assert retrieved.id == "query-test-user"
+        assert retrieved.email == "query@example.com"

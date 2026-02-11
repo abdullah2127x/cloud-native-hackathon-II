@@ -41,6 +41,7 @@ class TaskCreate(BaseModel):
     """Schema for creating a new task"""
     title: str = Field(..., min_length=1, max_length=200)
     description: Optional[str] = Field(None, max_length=2000)
+    completed: bool = Field(default=False)
     priority: Priority = Field(default=Priority.NONE)
     tags: list[str] = Field(default_factory=list, max_length=20)
 
