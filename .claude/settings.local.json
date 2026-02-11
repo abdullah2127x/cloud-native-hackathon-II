@@ -27,7 +27,11 @@
       "mcp__playwright__browser_snapshot",
       "Bash(uv sync:*)",
       "Bash(uv run python:*)",
-      "Bash(python -m pytest:*)"
+      "Bash(python -m pytest:*)",
+      "Bash(pwsh:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:platform.openai.com)",
+      "WebFetch(domain:openai.github.io)"
     ]
   },
   "disabledMcpjsonServers": [

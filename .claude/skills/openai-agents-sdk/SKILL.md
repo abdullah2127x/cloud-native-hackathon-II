@@ -1,458 +1,431 @@
 ---
 name: openai-agents-sdk
-description: Build AI agents using OpenAI Agents SDK with MCP server integration. Supports Gemini directly via AsyncOpenAI or OpenRouter for non-OpenAI models. Covers agent creation, function tools, handoffs, MCP server connections, and conversation management.
+description: |
+  Builder and Guide for creating AI agents using the OpenAI Agents SDK (Python).
+  Covers the full progression from hello world agents to production-grade multi-agent systems
+  with tools, handoffs, guardrails, MCP integration, streaming, error handling, and observability.
+  This skill should be used when building any agent with the OpenAI Agents SDK — whether creating
+  a first agent, adding function tools, wiring multi-agent handoffs, implementing guardrails,
+  integrating MCP servers, or hardening agents for production.
+  Detects existing project structure and patterns before generating code.
+allowed-tools: Read, Glob, Grep, Bash, Write, Edit
 ---
 
-# OpenAI Agents SDK Skill
+# OpenAI Agents SDK
 
-Build AI agents using OpenAI Agents SDK with support for Gemini and other LLMs via direct integration or OpenRouter.
+**Builder + Guide** for AI agents using OpenAI Agents (Python). Based on official OpenAI documentation.
 
-## Architecture
+## What This Skill Does
 
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                        OpenAI Agents SDK                                │
-│  ┌─────────────────────────────────────────────────────────────────┐   │
-│  │                         Agent                                     │   │
-│  │  model: OpenAIChatCompletionsModel                               │   │
-│  │    (via AsyncOpenAI with Gemini base_url)                        │   │
-│  │  tools: [function_tool, ...]                                      │   │
-│  │  mcp_servers: [MCPServerStreamableHttp(...)]                      │   │
-│  │  handoffs: [specialized_agent, ...]                               │   │
-│  └──────────────────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────────────────┘
-                              │
-                              │ MCP Protocol
-                              ▼
-┌─────────────────────────────────────────────────────────────────────────┐
-│                    MCP Server (FastMCP)                                 │
-│              @mcp.tool() for task operations                            │
-└─────────────────────────────────────────────────────────────────────────┘
-```
+- Builds agents from hello world → multi-agent orchestration → production-grade systems
+- Generates `@function_tool` functions with automatic schema and validation
+- Creates multi-agent topologies: handoffs, orchestrators, agent-as-tool patterns
+- Implements input/output guardrails with tripwire validation
+- Integrates MCP servers (stdio, HTTP, SSE, custom)
+- Configures streaming (token-level, structured output, nested agents)
+- Sets up observability, tracing, error handling, sessions
+- Detects existing agents/tools/patterns before generating
 
-## Quick Start
+## What This Skill Does NOT Do
 
-### Installation
+- Build the frontend/UI (separate concern)
+- Manage OpenAI API billing or rate limits
+- Deploy to cloud platforms (generates runnable code only)
+- Create realtime voice agents (separate Agent type, use realtimeagent-sdk instead)
+
+---
+
+## Before Implementation
+
+Gather context to ensure successful implementation:
+
+| Source | Gather |
+|--------|--------|
+| **Codebase** | Existing agent definitions, tools, project structure, conventions |
+| **Conversation** | User's specific use case, build level, agent topology, features needed |
+| **Skill References** | Domain patterns from `references/` (official API, best practices, examples) |
+| **User Guidelines** | Project constraints, team standards, preferred approaches |
+
+Only ask user for THEIR specific requirements. All SDK knowledge is in this skill's references.
+
+---
+
+## Quick Start: 3 Steps
+
+### Step 1: Choose Your Provider & Model
+
+**ONE question**: Which LLM provider do you prefer?
+
+| Provider | Model | Cost | Speed | Best For |
+|----------|-------|------|-------|----------|
+| **OpenAI API** (default) | `gpt-4o-mini` | $$ | Very Fast | Production, best quality |
+| **Gemini** | `gemini-2.5-flash` | $ | Fast | Prototyping, cost-sensitive |
+| **OpenRouter** | Free models | Free + $$ | Varies | Model flexibility, fallbacks |
+| **LiteLLM** | 20+ providers | Varies | Varies | Multi-provider, enterprise |
+
+**Templates available**: Copy from `assets/` and customize agent for your use case.
+
+### Step 2: Install & Setup
 
 ```bash
-# Base installation
+# Install SDK
 pip install openai-agents
 
-# Or with uv
-uv add openai-agents
+# (Optional) MCP support
+pip install openai-agents[mcp]
+
+# Set API key
+export OPENAI_API_KEY=sk-proj-...
+# OR: export GEMINI_API_KEY=...
+# OR: export OPENROUTER_API_KEY=...
 ```
 
-### Environment Variables
+### Step 3: Create Agent
 
-```env
-# For Direct Gemini Integration (Recommended)
-GOOGLE_API_KEY=your-gemini-api-key
-
-# OR for OpenRouter (Alternative)
-OPENROUTER_API_KEY=your-openrouter-api-key
-
-# For OpenAI (optional, for tracing)
-OPENAI_API_KEY=your-openai-api-key
-```
-
-## Using Gemini via Direct Integration (Recommended)
-
-The recommended approach is to use AsyncOpenAI with Gemini's OpenAI-compatible endpoint. This avoids quota issues with LiteLLM.
+Copy template from `assets/` matching your provider choice, then customize:
 
 ```python
-import os
-from agents import AsyncOpenAI, OpenAIChatCompletionsModel, Agent, Runner
-from agents.run import RunConfig
-from dotenv import load_dotenv
+from agents import Agent, Runner, function_tool
 
-load_dotenv()
+@function_tool
+async def your_tool(param: str) -> str:
+    """Tool description (shown to LLM)."""
+    return f"Result: {param}"
 
-# Create custom OpenAI client pointing to Gemini
-gemini_api_key = os.getenv("GOOGLE_API_KEY")
-external_provider = AsyncOpenAI(
-    api_key=gemini_api_key,
-    base_url="https://generativelanguage.googleapis.com/v1beta/openai",
-)
-
-# Create model using the custom client
-model = OpenAIChatCompletionsModel(
-    openai_client=external_provider,
-    model="gemini-2.0-flash-exp",
-)
-
-# Configure agent with model
-config = RunConfig(
-    model=model,
-    model_provider=external_provider,
-    tracing_disabled=True
-)
-
-# Create agent
 agent = Agent(
-    name="Todo Assistant",
-    instructions="You are a helpful task management assistant.",
+    name="Your Agent Name",
+    instructions="What should the agent do?",
+    tools=[your_tool],
+    model="gpt-4o-mini",  # Or your chosen model
 )
 
-# Run the agent with config
-result = await Runner.run(agent, "Help me organize my tasks", config=config)
+# Run
+result = await Runner.run(agent, "User input here")
 print(result.final_output)
 ```
 
-## Alternative: Using OpenRouter
+---
 
-OpenRouter provides access to multiple models through a single API, including free options.
+## Build Levels
 
+Choose your complexity level:
+
+```
+Level 1 — Hello World (simplest)
+  └── Single Agent + basic execution
+  └── Plain text output
+  └── Time to working agent: 5 minutes
+
+Level 2 — Agent with Tools ← DEFAULT
+  └── @function_tool decorated functions
+  └── Structured output (Pydantic models)
+  └── Type-safe validation
+  └── Time to working agent: 15 minutes
+
+Level 3 — Multi-Agent Orchestration
+  └── Handoff patterns (peer-to-peer delegation)
+  └── Orchestrator patterns (centralized routing)
+  └── Agent-as-tool patterns (nested specialization)
+  └── Time to working agent: 30 minutes
+
+Level 4 — Production-Grade
+  └── Input/output guardrails + tripwires
+  └── Tool-level guardrails & error handling
+  └── MCP server integration
+  └── Sessions & persistent memory
+  └── Streaming (token, structured output, nested)
+  └── Tracing & observability
+  └── Time to working agent: 1-2 hours
+```
+
+**Decision**: No tools? → L1. Tools needed? → L2. Route between agents? → L3. Safety/observability needed? → L4.
+
+---
+
+## Workflow
+
+### Step 1: Understand the Scope
+
+| Question | Answer → Path |
+|----------|---|
+| "Which provider?" | Copy `assets/agent_[provider].py` template |
+| "What tools needed?" | Use `@function_tool` for each tool (see `references/tools.md`) |
+| "Multiple agents?" | Use handoffs or orchestrator pattern (see `references/multi-agent.md`) |
+| "Safety critical?" | Add guardrails (see `references/guardrails.md`) |
+| "Need streaming?" | Add streaming config (see `references/streaming.md`) |
+| "External APIs?" | Add MCP servers (see `references/mcp.md`) |
+| "Need observability?" | Enable tracing (see `references/tracing.md`) |
+
+### Step 2: Read Relevant References
+
+- **No tools?** → `references/agents.md`
+- **Adding tools?** → `references/tools.md`
+- **Multi-agent?** → `references/multi-agent.md`
+- **Safety/validation?** → `references/guardrails.md`
+- **Persistent state?** → `references/sessions.md`
+- **Structured outputs?** → `references/structured-output.md`
+- **Real-time responses?** → `references/streaming.md`
+- **External integrations?** → `references/mcp.md`
+- **Error handling?** → `references/error-handling.md`
+- **Observability?** → `references/tracing.md`
+- **Advanced patterns?** → `references/advanced-patterns.md`
+- **Provider setup?** → `references/providers.md`
+
+### Step 3: Copy Template & Customize
+
+**Minimal template:**
 ```python
-import os
-from agents import AsyncOpenAI, OpenAIChatCompletionsModel, Agent, Runner
-from agents.run import RunConfig
-from dotenv import load_dotenv
+from agents import Agent, Runner
 
-load_dotenv()
-
-# Create OpenRouter client
-openrouter_key = os.getenv("OPENROUTER_API_KEY")
-external_provider = AsyncOpenAI(
-    api_key=openrouter_key,
-    base_url="https://openrouter.ai/api/v1",
-)
-
-# Use a free model (powered by Gemini or other providers)
-model = OpenAIChatCompletionsModel(
-    openai_client=external_provider,
-    model="openai/gpt-oss-20b:free",
-)
-
-config = RunConfig(
-    model=model,
-    model_provider=external_provider,
-    tracing_disabled=True
-)
-
-# Create and run agent
 agent = Agent(
-    name="Todo Assistant",
-    instructions="You are a helpful task management assistant.",
+    name="MyAgent",
+    instructions="You are helpful.",
+    model="gpt-4o-mini",
 )
 
-result = await Runner.run(agent, "Help me organize my tasks", config=config)
+result = await Runner.run(agent, "Hi")
 print(result.final_output)
 ```
 
-## Reference
+**Add tools:**
+```python
+from agents import function_tool
 
-| Pattern | Guide |
-|---------|-------|
-| **Agent Creation** | [reference/agents.md](reference/agents.md) |
-| **Function Tools** | [reference/function-tools.md](reference/function-tools.md) |
-| **MCP Integration** | [reference/mcp-integration.md](reference/mcp-integration.md) |
-| **Handoffs** | [reference/handoffs.md](reference/handoffs.md) |
+@function_tool
+async def get_weather(city: str) -> str:
+    """Get weather for a city."""
+    return "sunny"
 
-## Examples
+agent = Agent(
+    name="Weather Agent",
+    instructions="Help users check weather.",
+    tools=[get_weather],
+    model="gpt-4o-mini",
+)
+```
 
-| Example | Description |
-|---------|-------------|
-| [examples/todo-agent.md](examples/todo-agent.md) | Complete todo agent with MCP tools |
+**Add guardrails:**
+```python
+from agents import guardrails
+
+@guardrails.input_guardrail
+def check_input(context, input_text):
+    if len(input_text) > 1000:
+        raise guardrails.GuardrailTriggered("Input too long")
+    return input_text
+
+agent = Agent(..., input_guardrails=[check_input])
+```
+
+See templates in `assets/` for complete examples.
+
+### Step 4: Run & Test
+
+```python
+# Synchronous
+result = Runner.run_sync(agent, "input")
+
+# Async (recommended)
+result = await Runner.run(agent, "input")
+
+# Streaming
+async for event in Runner.run_streamed(agent, "input"):
+    if event.type == "text":
+        print(event.text, end="", flush=True)
+```
+
+---
+
+## Core Concepts (Quick Reference)
+
+**Agent**: LLM equipped with instructions and tools. It follows a loop: receive input → decide actions → call tools → process results → respond.
+
+**Tools**: Functions agents can call. Five types:
+- Function tools (your Python functions via `@function_tool`)
+- Agents as tools (nested agents via `agent.as_tool()`)
+- Hosted tools (OpenAI's WebSearch, CodeInterpreter, etc.)
+- MCP servers (external via stdio/HTTP/SSE)
+- Custom tools (implement Tool interface)
+
+**Multi-Agent Patterns**:
+- **Handoffs**: Peer agents delegate to each other (agent1 → agent2)
+- **Orchestrator**: Central agent routes to specialists (router → [agent_a, agent_b, agent_c])
+- **Agent-as-Tool**: Specialize without handoff overhead
+
+**Guardrails**: Validation gates before/after agent execution. Tripwire when violated.
+
+**Streaming**: Real-time token output (token, text, structured results) for responsive UI.
+
+**MCP**: Model Context Protocol servers provide standardized tool interfaces (filesystem, git, custom APIs).
+
+**Sessions**: Persistent memory maintaining agent state across runs.
+
+**Tracing**: Built-in observability visualizing agent loops and tool calls.
+
+---
+
+## Common Patterns
+
+### Hello World (L1)
+```python
+from agents import Agent, Runner
+
+agent = Agent(name="Echo", instructions="Repeat what user says.", model="gpt-4o-mini")
+result = await Runner.run(agent, "Hello!")
+print(result.final_output)
+```
+
+### With Tools (L2)
+```python
+@function_tool
+async def add(a: int, b: int) -> int:
+    return a + b
+
+agent = Agent(
+    name="Calculator",
+    instructions="Use add tool for math.",
+    tools=[add],
+    model="gpt-4o-mini",
+)
+result = await Runner.run(agent, "What is 2 + 3?")
+```
+
+### Multi-Agent Handoff (L3)
+```python
+math_agent = Agent(name="Math", instructions="Answer math questions.", model="gpt-4o-mini")
+history_agent = Agent(name="History", instructions="Answer history questions.", model="gpt-4o-mini")
+triage = Agent(
+    name="Triage",
+    instructions="Route to specialist.",
+    handoffs=[math_agent, history_agent],
+    model="gpt-4o-mini",
+)
+result = await Runner.run(triage, "What is 2+2?")  # Routes to math_agent
+```
+
+### With Guardrails (L4)
+```python
+@guardrails.input_guardrail
+def check_length(context, input_text):
+    if len(input_text) > 500:
+        raise guardrails.GuardrailTriggered("Input exceeds 500 chars")
+    return input_text
+
+@guardrails.output_guardrail
+def check_safety(context, output):
+    if "unsafe" in output.lower():
+        return "I can't respond to that."
+    return output
+
+agent = Agent(
+    name="Safe",
+    instructions="Be helpful and safe.",
+    input_guardrails=[check_length],
+    output_guardrails=[check_safety],
+    model="gpt-4o-mini",
+)
+```
+
+---
+
+## Provider Support
+
+All providers use same Agent API. Only setup differs:
+
+| Provider | Env Var | Template | Model | Notes |
+|----------|---------|----------|-------|-------|
+| OpenAI | `OPENAI_API_KEY` | `assets/agent_openai.py` | `gpt-4o-mini` | Default, best quality |
+| Gemini | `GEMINI_API_KEY` | `assets/agent_gemini.py` | `gemini-2.5-flash` | Cheapest |
+| OpenRouter | `OPENROUTER_API_KEY` | `assets/agent_openrouter.py` | Free models | Most flexible |
+| LiteLLM | Various | `assets/agent_litellm.py` | Any (20+ providers) | Multi-provider support |
+
+See `references/providers.md` for complete setup guide.
+
+---
+
+## Anti-Patterns
+
+| Anti-Pattern | Why Problematic | Fix |
+|---|---|---|
+| No docstrings on tools | LLM doesn't know what tool does | Always add clear docstring |
+| `Runner.run_sync()` in async code | Blocks event loop | Use `await Runner.run()` instead |
+| Ignoring guardrail tripwires | Silent failures | Catch `GuardrailTriggered` exception |
+| Tools without error handling | Crashes stop agent | Use `failure_error_function` |
+| Hardcoding API keys | Security risk | Use environment variables |
+| No context typing | Type errors at runtime | Use `Agent[YourContextType]` |
+| Large tool outputs | Context overflow | Return structured data, not raw text |
+| Tools with side effects in prompts | LLM calls tools unnecessarily | Use `tool_choice="required"` to require explicit use |
+
+---
+
+## Observability
+
+Enable tracing to visualize agent behavior:
+
+```python
+from agents import Tracer
+
+tracer = Tracer()
+
+async def main():
+    result = await Runner.run(agent, "input", tracer=tracer)
+    print(tracer.get_trace())  # Visualize in OpenAI Dashboard
+```
+
+Tracing shows: agent loops, tool calls, LLM reasoning, timing.
+
+---
+
+## Reference Files
+
+| File | When to Read |
+|------|--------------|
+| `references/agents.md` | Agent basics, configuration, lifecycle, hooks |
+| `references/tools.md` | Tool creation, validation, error handling, function_tool decorator |
+| `references/multi-agent.md` | Handoffs, orchestrators, agent-as-tool patterns, routing logic |
+| `references/guardrails.md` | Input/output validation, tripwires, custom checks |
+| `references/streaming.md` | Token streaming, structured output streaming, event handling |
+| `references/structured-output.md` | Pydantic models, TypedDict, output_type configuration |
+| `references/mcp.md` | MCP servers (stdio, HTTP, SSE), configuration, error handling |
+| `references/sessions.md` | Memory backends, persistence, session configuration |
+| `references/error-handling.md` | Exception handling, failure functions, recovery |
+| `references/tracing.md` | Observability, OpenAI Dashboard, custom tracing |
+| `references/context.md` | Dependency injection, context typing, lifecycle |
+| `references/advanced-patterns.md` | Dynamic instructions, custom hooks, lifecycle management |
+| `references/providers.md` | Provider setup, API keys, model selection |
 
 ## Templates
 
-| Template | Purpose |
-|----------|---------|
-| [templates/agent_gemini.py](templates/agent_gemini.py) | Basic Gemini agent template with direct integration |
-| [templates/agent_mcp.py](templates/agent_mcp.py) | Agent with MCP server integration |
+Copy-paste starters matching your provider:
 
-## Basic Agent with Function Tools
+| File | Provider | Model | Base Level |
+|------|----------|-------|-----------|
+| `assets/agent_openai.py` | OpenAI | gpt-4o-mini | L2 (tools) |
+| `assets/agent_gemini.py` | Gemini | gemini-2.5-flash | L2 (tools) |
+| `assets/agent_openrouter.py` | OpenRouter | free-model | L2 (tools) |
+| `assets/agent_litellm.py` | LiteLLM | gemini-2.5-flash | L2 (tools) |
+| `assets/agent_l1_hello_world.py` | OpenAI | gpt-4o-mini | L1 (no tools) |
+| `assets/agent_l3_handoff.py` | OpenAI | gpt-4o-mini | L3 (multi-agent) |
+| `assets/agent_l4_production.py` | OpenAI | gpt-4o-mini | L4 (full features) |
+| `assets/.env.example` | - | - | Configuration |
 
-```python
-import asyncio
-from agents import AsyncOpenAI, OpenAIChatCompletionsModel, Agent, Runner, function_tool
-from agents.run import RunConfig
-import os
+---
 
-@function_tool
-def get_weather(city: str) -> str:
-    """Get the weather for a city."""
-    return f"The weather in {city} is sunny."
+## Next Steps
 
-async def main():
-    # Setup Gemini client
-    external_provider = AsyncOpenAI(
-        api_key=os.getenv("GOOGLE_API_KEY"),
-        base_url="https://generativelanguage.googleapis.com/v1beta/openai",
-    )
+1. **Read Step 1 workflow** (choose provider)
+2. **Copy relevant template** from `assets/`
+3. **Add API key** to `.env`
+4. **Customize agent** (name, instructions, tools)
+5. **Read reference** for the feature you need (tools, guardrails, etc.)
+6. **Test locally** before deploying
 
-    model = OpenAIChatCompletionsModel(
-        openai_client=external_provider,
-        model="gemini-2.0-flash-exp",
-    )
+---
 
-    config = RunConfig(
-        model=model,
-        model_provider=external_provider,
-        tracing_disabled=True
-    )
+## Sources
 
-    agent = Agent(
-        name="Assistant",
-        instructions="You are a helpful assistant.",
-        tools=[get_weather],
-    )
-
-    result = await Runner.run(agent, "What's the weather in Tokyo?", config=config)
-    print(result.final_output)
-
-asyncio.run(main())
-```
-
-## Agent with MCP Server
-
-Connect your agent to an MCP server to access tools, resources, and prompts.
-
-```python
-import asyncio
-import os
-from agents import AsyncOpenAI, OpenAIChatCompletionsModel, Agent, Runner
-from agents.mcp import MCPServerStreamableHttp
-from agents.run import RunConfig
-
-async def main():
-    # Setup Gemini client
-    external_provider = AsyncOpenAI(
-        api_key=os.getenv("GOOGLE_API_KEY"),
-        base_url="https://generativelanguage.googleapis.com/v1beta/openai",
-    )
-
-    model = OpenAIChatCompletionsModel(
-        openai_client=external_provider,
-        model="gemini-2.0-flash-exp",
-    )
-
-    config = RunConfig(
-        model=model,
-        model_provider=external_provider,
-        tracing_disabled=True
-    )
-
-    async with MCPServerStreamableHttp(
-        name="Todo MCP Server",
-        params={
-            "url": "http://localhost:8000/api/mcp",
-            "timeout": 30,
-        },
-        cache_tools_list=True,
-    ) as mcp_server:
-        agent = Agent(
-            name="Todo Assistant",
-            instructions="""You are a task management assistant.
-Use the MCP tools to help users manage their tasks:
-- add_task: Create new tasks
-- list_tasks: View existing tasks
-- complete_task: Mark tasks as done
-- delete_task: Remove tasks
-- update_task: Modify tasks""",
-            mcp_servers=[mcp_server],
-        )
-
-        result = await Runner.run(
-            agent,
-            "Show me my pending tasks",
-            config=config
-        )
-        print(result.final_output)
-
-asyncio.run(main())
-```
-
-## Agent Handoffs
-
-Create specialized agents that hand off conversations. Note: When using handoffs, all agents share the same RunConfig.
-
-```python
-from agents import Agent, handoff, AsyncOpenAI, OpenAIChatCompletionsModel, Runner
-from agents.run import RunConfig
-from agents.extensions.handoff_prompt import prompt_with_handoff_instructions
-import os
-
-# Setup shared configuration
-external_provider = AsyncOpenAI(
-    api_key=os.getenv("GOOGLE_API_KEY"),
-    base_url="https://generativelanguage.googleapis.com/v1beta/openai",
-)
-
-model = OpenAIChatCompletionsModel(
-    openai_client=external_provider,
-    model="gemini-2.0-flash-exp",
-)
-
-config = RunConfig(
-    model=model,
-    model_provider=external_provider,
-    tracing_disabled=True
-)
-
-# Specialized agents (no model specified - uses config)
-task_agent = Agent(
-    name="Task Agent",
-    instructions=prompt_with_handoff_instructions(
-        "You specialize in task management. Help users create, update, and complete tasks."
-    ),
-)
-
-help_agent = Agent(
-    name="Help Agent",
-    instructions=prompt_with_handoff_instructions(
-        "You provide help and instructions about using the todo app."
-    ),
-)
-
-# Triage agent
-triage_agent = Agent(
-    name="Triage Agent",
-    instructions=prompt_with_handoff_instructions(
-        """Route users to the appropriate agent:
-- Task Agent: for creating, viewing, or managing tasks
-- Help Agent: for questions about how to use the app"""
-    ),
-    handoffs=[task_agent, help_agent],
-)
-
-# Run with config
-result = await Runner.run(triage_agent, "How do I add a task?", config=config)
-```
-
-## Streaming Responses
-
-```python
-from agents import Runner
-
-result = Runner.run_streamed(agent, "List my tasks", config=config)
-
-async for event in result.stream_events():
-    if event.type == "run_item_stream_event":
-        print(event.item, end="", flush=True)
-
-print(result.final_output)
-```
-
-## Model Settings
-
-```python
-from agents import Agent, ModelSettings, Runner
-
-agent = Agent(
-    name="Assistant",
-    model_settings=ModelSettings(
-        include_usage=True,  # Track token usage
-        tool_choice="auto",  # or "required", "none"
-    ),
-)
-
-result = await Runner.run(agent, "Hello!", config=config)
-print(f"Tokens used: {result.context_wrapper.usage.total_tokens}")
-```
-
-## Tracing Control
-
-Disable tracing when not using OpenAI:
-
-```python
-from agents.run import RunConfig
-
-# Tracing disabled in config
-config = RunConfig(
-    model=model,
-    model_provider=external_provider,
-    tracing_disabled=True  # Disable tracing
-)
-```
-
-## Supported Model Providers
-
-| Provider | Base URL | Model Examples |
-|----------|----------|----------------|
-| **Gemini** | `https://generativelanguage.googleapis.com/v1beta/openai` | `gemini-2.0-flash-exp`, `gemini-1.5-pro` |
-| **OpenRouter** | `https://openrouter.ai/api/v1` | `openai/gpt-oss-20b:free`, `google/gemini-2.0-flash-exp:free` |
-
-## MCP Connection Types
-
-| Type | Use Case | Class |
-|------|----------|-------|
-| **Streamable HTTP** | Production, low-latency | `MCPServerStreamableHttp` |
-| **SSE** | Web clients, real-time | `MCPServerSse` |
-| **Stdio** | Local processes | `MCPServerStdio` |
-| **Hosted** | OpenAI-hosted MCP | `HostedMCPTool` |
-
-## Error Handling
-
-```python
-from agents import Runner, AgentError
-
-try:
-    result = await Runner.run(agent, "Hello")
-    print(result.final_output)
-except AgentError as e:
-    print(f"Agent error: {e}")
-except Exception as e:
-    print(f"Unexpected error: {e}")
-```
-
-## Best Practices
-
-1. **Use Direct Integration** - Use AsyncOpenAI with custom base_url instead of LiteLLM to avoid quota issues
-2. **Pass RunConfig** - Always pass RunConfig to Runner.run() for non-OpenAI providers
-3. **Cache MCP tools** - Use `cache_tools_list=True` for performance
-4. **Use handoffs** - Create specialized agents for different functionality
-5. **Enable usage tracking** - Set `include_usage=True` in ModelSettings to monitor costs
-6. **Disable tracing** - Set `tracing_disabled=True` in RunConfig when not using OpenAI
-7. **Handle errors gracefully** - Use try/except for agent execution
-8. **Use streaming** - Implement streaming for better user experience
-9. **Share configuration** - When using handoffs, all agents share the same RunConfig
-
-## Troubleshooting
-
-### Quota Exceeded Error on First Request
-**Problem**: Getting quota exceeded error even on first request when using LiteLLM.
-
-**Solution**: Switch to direct integration using AsyncOpenAI:
-```python
-from agents import AsyncOpenAI, OpenAIChatCompletionsModel
-from agents.run import RunConfig
-
-external_provider = AsyncOpenAI(
-    api_key=os.getenv("GOOGLE_API_KEY"),
-    base_url="https://generativelanguage.googleapis.com/v1beta/openai",
-)
-
-model = OpenAIChatCompletionsModel(
-    openai_client=external_provider,
-    model="gemini-2.0-flash-exp",
-)
-
-config = RunConfig(
-    model=model,
-    model_provider=external_provider,
-    tracing_disabled=True
-)
-
-result = await Runner.run(agent, "Hello", config=config)
-```
-
-### MCP connection fails
-- Check MCP server is running
-- Verify URL is correct
-- Check timeout settings
-- Ensure cache_tools_list=True for performance
-
-### Gemini API errors
-- Verify GOOGLE_API_KEY is set correctly
-- Check model name: `gemini-2.0-flash-exp` or `gemini-1.5-pro`
-- Verify base_url is correct: `https://generativelanguage.googleapis.com/v1beta/openai`
-- Ensure API quota is not exceeded
-
-### Agent not using provided model
-**Problem**: Agent ignores model configuration.
-
-**Solution**: Always pass RunConfig to Runner.run():
-```python
-result = await Runner.run(agent, message, config=config)
-```
+- [OpenAI Agents SDK Official Docs](https://openai.github.io/openai-agents-python/)
+- [GitHub Repository](https://github.com/openai/openai-agents-python)
+- [Official Examples](https://openai.github.io/openai-agents-python/examples/)
+- [MCP Server Integration](https://openai.github.io/openai-agents-python/ref/mcp/server/)
+- [Tools API Reference](https://openai.github.io/openai-agents-python/tools/)
