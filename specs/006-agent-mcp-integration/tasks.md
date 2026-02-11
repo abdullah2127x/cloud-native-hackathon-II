@@ -36,6 +36,7 @@
 - [ ] T005 [P] Create ChatRequest (message: str 1–5000 chars, conversation_id: int | None) and ChatResponse (conversation_id: int, response: str, tool_calls: list[str]) Pydantic schemas — `backend/src/schemas/chat.py`
 - [ ] T006 Create CRUD functions: `create_conversation(user_id, session)`, `get_conversation(conversation_id, user_id, session)` (returns None if not found or wrong owner), `add_message(conversation_id, user_id, role, content, session)`, `get_messages(conversation_id, user_id, limit, session)` (last 50 ordered by created_at ASC) — `backend/src/crud/chat.py`
 - [ ] T007 Write unit tests covering: create_conversation returns Conversation with correct user_id; get_conversation returns None for wrong user_id (isolation enforced); add_message persists role and content; get_messages returns max 50 ordered correctly; get_messages with wrong user_id returns empty list — `backend/tests/unit/test_chat_crud.py`
+- [ ] T007a [P] Verify `backend/pyproject.toml` pytest configuration includes `--cov=src --cov-fail-under=70`; add it to the `[tool.pytest.ini_options]` `addopts` entry if absent (constitution III: 70% minimum coverage) — `backend/pyproject.toml`
 
 **Checkpoint**: Run `uv run pytest tests/unit/test_chat_crud.py -v` — all tests must pass before Phase 3
 
@@ -49,11 +50,12 @@
 
 **Acceptance Scenarios covered**: All 5 from US1 (add, list, complete, delete, update via natural language)
 
+- [ ] T007b [US1] Write unit tests for all 5 agent tool functions with a mocked `TodoMCPServer.call_tool`: add_task returns "Created task: X (ID: N)"; list_tasks returns formatted task list string; complete_task returns completion confirmation; delete_task returns deletion confirmation; update_task returns update confirmation; on `isError=True` each tool returns the error text (constitution I: TDD — tests before T008 implementation) — `backend/tests/unit/test_todo_agent.py`
 - [ ] T008 [US1] Create `TodoContext` dataclass (user_id: str, session: Session), instantiate TodoMCPServer at module level, implement 5 `@function_tool` functions each using `RunContextWrapper[TodoContext]` as first param and calling `mcp_server.call_tool(...)` with context injection; each tool must have a descriptive docstring; extract clean string from `structuredContent` (not raw MCP dict); on `isError` return the error text — `backend/src/agents/todo_agent.py`
-- [ ] T009 [US1] Implement `run_todo_agent(messages, user_id, session) -> tuple[str, list[str]]` that builds TodoContext, constructs OpenRouter AsyncOpenAI client + OpenAIChatCompletionsModel + RunConfig(tracing_disabled=True), creates Agent with system prompt + 5 tools, calls `await Runner.run(agent, messages, context=ctx, max_turns=10, run_config=run_config)`, returns `(result.final_output, tool_names_from_result.new_items)` — `backend/src/agents/todo_agent.py`
-- [ ] T010 [US1] Create `POST /api/{user_id}/chat` router: use `response_model=ChatResponse`; inject `SessionDep = Annotated[Session, Depends(get_session)]` and existing JWT auth dependency; implement stateless flow: resolve/create Conversation → persist user Message → load last 50 Messages → build input list (role/content dicts) → `await run_todo_agent(...)` → persist assistant Message → update conversation.updated_at → return ChatResponse; on provider exception: `session.rollback()` then raise HTTPException(503, detail="AI provider unavailable"); on conversation not found: HTTPException(404, detail="Conversation not found") — `backend/src/routers/chat.py`
+- [ ] T009 [US1] Implement `run_todo_agent(messages, user_id, session) -> tuple[str, list[str]]` that builds TodoContext, constructs OpenRouter AsyncOpenAI client + OpenAIChatCompletionsModel + RunConfig(tracing_disabled=True), creates Agent with system prompt + 5 tools, calls `await Runner.run(agent, messages, context=ctx, max_turns=10, run_config=run_config)`, returns `(result.final_output, [item.tool_name for item in result.new_items if hasattr(item, "tool_name")])` — `backend/src/agents/todo_agent.py`
+- [ ] T010 [US1] Create `POST /api/{user_id}/chat` router: use `response_model=ChatResponse`; inject `SessionDep = Annotated[Session, Depends(get_session)]` and existing JWT auth dependency; implement stateless flow in this EXACT order: (1) resolve/create Conversation, (2) persist and COMMIT user Message (user message must survive provider failures — do NOT defer commit), (3) load last 50 Messages, (4) build input list (role/content dicts), (5) `await run_todo_agent(...)`, (6) persist assistant Message + update conversation.updated_at + commit; on provider exception at step 5: raise HTTPException(503, detail="AI provider unavailable") WITHOUT rollback (user message already committed); on conversation not found: HTTPException(404, detail="Conversation not found") — `backend/src/routers/chat.py`
 - [ ] T011 [US1] Register `chat_router` with prefix `/api/{user_id}` in the FastAPI app — `backend/src/main.py`
-- [ ] T012 [P] [US1] Write integration tests for US1: new conversation creation (no conversation_id → 201 with new conversation_id); add_task via natural language (task appears in DB); list_tasks via "show my tasks"; complete_task via "mark task N as done"; delete_task via "delete task N"; update_task via "change task N to X"; 401 on missing/invalid auth token — `backend/tests/integration/test_chat_api.py`
+- [ ] T012 [P] [US1] Write integration tests for US1: new conversation creation (no conversation_id → 200 OK with new conversation_id in response body); add_task via natural language (task appears in DB); list_tasks via "show my tasks"; complete_task via "mark task N as done"; delete_task via "delete task N"; update_task via "change task N to X"; 401 on missing/invalid auth token; provider failure (mocked) → 503 AND user message still persisted in DB — `backend/tests/integration/test_chat_api.py`
 
 **Checkpoint**: Run `uv run pytest tests/integration/test_chat_api.py -k "us1" -v` — all US1 tests pass
 
@@ -100,19 +102,21 @@
 
 ```
 T001
-  └── T002 [P] ──┐
-  └── T003 [P] ──┤
-  └── T005 [P] ──┤
-                 └── T004
-                       └── T006
-                             └── T007 (unit tests — Phase 2 gate)
-                                   └── T008
-                                         └── T009
-                                               └── T010
-                                                     └── T011
-                                                           └── T012 [P] (US1 integration tests)
-                                                                 └── T013 (US2 tests)
-                                                                       └── T014 (US3 tests)
+  ├── T002 [P] ──┐
+  ├── T003 [P] ──┴── T004
+  ├── T005 [P] ────── (independent of T004)
+  └── T007a [P] ───── (independent, coverage gate)
+                       T004
+                         └── T006
+                               └── T007
+                                     └── T007b [US1] (agent unit tests — TDD gate for T008)
+                                           └── T008
+                                                 └── T009
+                                                       └── T010
+                                                             └── T011
+                                                                   └── T012 [P] (US1 integration tests)
+                                                                         └── T013 (US2 tests)
+                                                                               └── T014 (US3 tests)
 
 T015 [P] ── independent
 T016 [P] ── independent
@@ -168,9 +172,9 @@ uv run pytest tests/ -v --tb=short
 | Phase | Tasks | Parallelizable | Story |
 |-------|-------|---------------|-------|
 | Phase 1: Setup | T001 | — | — |
-| Phase 2: Foundational | T002–T007 | T002, T003, T005 | — |
-| Phase 3: US1 (MVP) | T008–T012 | T012 | US1 |
+| Phase 2: Foundational | T002–T007, T007a | T002, T003, T005, T007a | — |
+| Phase 3: US1 (MVP) | T007b, T008–T012 | T012 | US1 |
 | Phase 4: US2 | T013 | — | US2 |
 | Phase 5: US3 | T014 | — | US3 |
 | Phase 6: Polish | T015–T016 | T015, T016 | — |
-| **Total** | **16 tasks** | **5 parallelizable** | |
+| **Total** | **19 tasks** | **7 parallelizable** | |
