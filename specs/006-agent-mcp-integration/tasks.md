@@ -18,7 +18,7 @@
 
 **Purpose**: Verify the existing project has everything needed before writing new code.
 
-- [ ] T001 Verify `openai-agents>=0.2.0` is listed in `backend/pyproject.toml` dependencies and confirm `src/agents/`, `src/schemas/`, `src/crud/`, `tests/unit/`, `tests/integration/` directories all exist
+- [X] T001 Verify `openai-agents>=0.2.0` is listed in `backend/pyproject.toml` dependencies and confirm `src/agents/`, `src/schemas/`, `src/crud/`, `tests/unit/`, `tests/integration/` directories all exist
 
 **Checkpoint**: Environment confirmed — proceed to Phase 2
 
@@ -30,13 +30,13 @@
 
 **⚠️ CRITICAL**: T002–T007 must be completed before Phase 3
 
-- [ ] T002 [P] Create Conversation SQLModel table model (fields: id, user_id, created_at, updated_at; FK to user.id, index on user_id, Relationship to Message) — `backend/src/models/conversation.py`
-- [ ] T003 [P] Create Message SQLModel table model (fields: id, conversation_id, user_id, role, content, created_at; FK constraints, indexes on conversation_id and user_id, Relationship back to Conversation) — `backend/src/models/message.py`
-- [ ] T004 Update database.py to import Conversation and Message so SQLModel.metadata.create_all() creates both tables automatically — `backend/src/db/database.py`
-- [ ] T005 [P] Create ChatRequest (message: str 1–5000 chars, conversation_id: int | None) and ChatResponse (conversation_id: int, response: str, tool_calls: list[str]) Pydantic schemas — `backend/src/schemas/chat.py`
-- [ ] T006 Create CRUD functions: `create_conversation(user_id, session)`, `get_conversation(conversation_id, user_id, session)` (returns None if not found or wrong owner), `add_message(conversation_id, user_id, role, content, session)`, `get_messages(conversation_id, user_id, limit, session)` (last 50 ordered by created_at ASC) — `backend/src/crud/chat.py`
-- [ ] T007 Write unit tests covering: create_conversation returns Conversation with correct user_id; get_conversation returns None for wrong user_id (isolation enforced); add_message persists role and content; get_messages returns max 50 ordered correctly; get_messages with wrong user_id returns empty list — `backend/tests/unit/test_chat_crud.py`
-- [ ] T007a [P] Verify `backend/pyproject.toml` pytest configuration includes `--cov=src --cov-fail-under=70`; add it to the `[tool.pytest.ini_options]` `addopts` entry if absent (constitution III: 70% minimum coverage) — `backend/pyproject.toml`
+- [X] T002 [P] Create Conversation SQLModel table model (fields: id, user_id, created_at, updated_at; FK to user.id, index on user_id, Relationship to Message) — `backend/src/models/conversation.py`
+- [X] T003 [P] Create Message SQLModel table model (fields: id, conversation_id, user_id, role, content, created_at; FK constraints, indexes on conversation_id and user_id, Relationship back to Conversation) — `backend/src/models/message.py`
+- [X] T004 Update database.py to import Conversation and Message so SQLModel.metadata.create_all() creates both tables automatically — `backend/src/db/database.py`
+- [X] T005 [P] Create ChatRequest (message: str 1–5000 chars, conversation_id: int | None) and ChatResponse (conversation_id: int, response: str, tool_calls: list[str]) Pydantic schemas — `backend/src/schemas/chat.py`
+- [X] T006 Create CRUD functions: `create_conversation(user_id, session)`, `get_conversation(conversation_id, user_id, session)` (returns None if not found or wrong owner), `add_message(conversation_id, user_id, role, content, session)`, `get_messages(conversation_id, user_id, limit, session)` (last 50 ordered by created_at ASC) — `backend/src/crud/chat.py`
+- [X] T007 Write unit tests covering: create_conversation returns Conversation with correct user_id; get_conversation returns None for wrong user_id (isolation enforced); add_message persists role and content; get_messages returns max 50 ordered correctly; get_messages with wrong user_id returns empty list — `backend/tests/unit/test_chat_crud.py`
+- [X] T007a [P] Verify `backend/pyproject.toml` pytest configuration includes `--cov=src --cov-fail-under=70`; add it to the `[tool.pytest.ini_options]` `addopts` entry if absent (constitution III: 70% minimum coverage) — `backend/pyproject.toml`
 
 **Checkpoint**: Run `uv run pytest tests/unit/test_chat_crud.py -v` — all tests must pass before Phase 3
 
@@ -50,12 +50,12 @@
 
 **Acceptance Scenarios covered**: All 5 from US1 (add, list, complete, delete, update via natural language)
 
-- [ ] T007b [US1] Write unit tests for all 5 agent tool functions with a mocked `TodoMCPServer.call_tool`: add_task returns "Created task: X (ID: N)"; list_tasks returns formatted task list string; complete_task returns completion confirmation; delete_task returns deletion confirmation; update_task returns update confirmation; on `isError=True` each tool returns the error text (constitution I: TDD — tests before T008 implementation) — `backend/tests/unit/test_todo_agent.py`
-- [ ] T008 [US1] Create `TodoContext` dataclass (user_id: str, session: Session), instantiate TodoMCPServer at module level, implement 5 `@function_tool` functions each using `RunContextWrapper[TodoContext]` as first param and calling `mcp_server.call_tool(...)` with context injection; each tool must have a descriptive docstring; extract clean string from `structuredContent` (not raw MCP dict); on `isError` return the error text — `backend/src/agents/todo_agent.py`
-- [ ] T009 [US1] Implement `run_todo_agent(messages, user_id, session) -> tuple[str, list[str]]` that builds TodoContext, constructs OpenRouter AsyncOpenAI client + OpenAIChatCompletionsModel + RunConfig(tracing_disabled=True), creates Agent with system prompt + 5 tools, calls `await Runner.run(agent, messages, context=ctx, max_turns=10, run_config=run_config)`, returns `(result.final_output, [item.tool_name for item in result.new_items if hasattr(item, "tool_name")])` — `backend/src/agents/todo_agent.py`
-- [ ] T010 [US1] Create `POST /api/{user_id}/chat` router: use `response_model=ChatResponse`; inject `SessionDep = Annotated[Session, Depends(get_session)]` and existing JWT auth dependency; implement stateless flow in this EXACT order: (1) resolve/create Conversation, (2) persist and COMMIT user Message (user message must survive provider failures — do NOT defer commit), (3) load last 50 Messages, (4) build input list (role/content dicts), (5) `await run_todo_agent(...)`, (6) persist assistant Message + update conversation.updated_at + commit; on provider exception at step 5: raise HTTPException(503, detail="AI provider unavailable") WITHOUT rollback (user message already committed); on conversation not found: HTTPException(404, detail="Conversation not found") — `backend/src/routers/chat.py`
-- [ ] T011 [US1] Register `chat_router` with prefix `/api/{user_id}` in the FastAPI app — `backend/src/main.py`
-- [ ] T012 [P] [US1] Write integration tests for US1: new conversation creation (no conversation_id → 200 OK with new conversation_id in response body); add_task via natural language (task appears in DB); list_tasks via "show my tasks"; complete_task via "mark task N as done"; delete_task via "delete task N"; update_task via "change task N to X"; 401 on missing/invalid auth token; provider failure (mocked) → 503 AND user message still persisted in DB — `backend/tests/integration/test_chat_api.py`
+- [X] T007b [US1] Write unit tests for all 5 agent tool functions with a mocked `TodoMCPServer.call_tool`: add_task returns "Created task: X (ID: N)"; list_tasks returns formatted task list string; complete_task returns completion confirmation; delete_task returns deletion confirmation; update_task returns update confirmation; on `isError=True` each tool returns the error text (constitution I: TDD — tests before T008 implementation) — `backend/tests/unit/test_todo_agent.py`
+- [X] T008 [US1] Create `TodoContext` dataclass (user_id: str, session: Session), instantiate TodoMCPServer at module level, implement 5 `@function_tool` functions each using `RunContextWrapper[TodoContext]` as first param and calling `mcp_server.call_tool(...)` with context injection; each tool must have a descriptive docstring; extract clean string from `structuredContent` (not raw MCP dict); on `isError` return the error text — `backend/src/agents/todo_agent.py`
+- [X] T009 [US1] Implement `run_todo_agent(messages, user_id, session) -> tuple[str, list[str]]` that builds TodoContext, constructs OpenRouter AsyncOpenAI client + OpenAIChatCompletionsModel + RunConfig(tracing_disabled=True), creates Agent with system prompt + 5 tools, calls `await Runner.run(agent, messages, context=ctx, max_turns=10, run_config=run_config)`, returns `(result.final_output, [item.tool_name for item in result.new_items if hasattr(item, "tool_name")])` — `backend/src/agents/todo_agent.py`
+- [X] T010 [US1] Create `POST /api/{user_id}/chat` router: use `response_model=ChatResponse`; inject `SessionDep = Annotated[Session, Depends(get_session)]` and existing JWT auth dependency; implement stateless flow in this EXACT order: (1) resolve/create Conversation, (2) persist and COMMIT user Message (user message must survive provider failures — do NOT defer commit), (3) load last 50 Messages, (4) build input list (role/content dicts), (5) `await run_todo_agent(...)`, (6) persist assistant Message + update conversation.updated_at + commit; on provider exception at step 5: raise HTTPException(503, detail="AI provider unavailable") WITHOUT rollback (user message already committed); on conversation not found: HTTPException(404, detail="Conversation not found") — `backend/src/routers/chat.py`
+- [X] T011 [US1] Register `chat_router` with prefix `/api/{user_id}` in the FastAPI app — `backend/src/main.py`
+- [X] T012 [P] [US1] Write integration tests for US1: new conversation creation (no conversation_id → 200 OK with new conversation_id in response body); add_task via natural language (task appears in DB); list_tasks via "show my tasks"; complete_task via "mark task N as done"; delete_task via "delete task N"; update_task via "change task N to X"; 401 on missing/invalid auth token; provider failure (mocked) → 503 AND user message still persisted in DB — `backend/tests/integration/test_chat_api.py`
 
 **Checkpoint**: Run `uv run pytest tests/integration/test_chat_api.py -k "us1" -v` — all US1 tests pass
 
@@ -69,7 +69,7 @@
 
 **Acceptance Scenarios covered**: All 3 from US2 (multi-turn context; new session returns ID; restart persistence)
 
-- [ ] T013 [US2] Extend integration test file with US2 tests: continuation with conversation_id loads prior history correctly; "also add milk" follow-up after "add groceries" creates second task (agent uses context); new session (no conversation_id) returns fresh conversation_id with no prior history; same conversation_id after mock server restart still loads history from DB — `backend/tests/integration/test_chat_api.py`
+- [X] T013 [US2] Extend integration test file with US2 tests: continuation with conversation_id loads prior history correctly; "also add milk" follow-up after "add groceries" creates second task (agent uses context); new session (no conversation_id) returns fresh conversation_id with no prior history; same conversation_id after mock server restart still loads history from DB — `backend/tests/integration/test_chat_api.py`
 
 **Checkpoint**: Run `uv run pytest tests/integration/test_chat_api.py -k "us2" -v` — all US2 tests pass
 
@@ -83,7 +83,7 @@
 
 **Acceptance Scenarios covered**: All 3 from US3 (task not found; off-topic; DB error)
 
-- [ ] T014 [US3] Extend integration test file with US3 tests: task-not-found returns 200 with friendly agent message (not 500); off-topic message ("what's the weather?") returns 200 with helpful scope explanation; 503 returned when OpenRouter client is mocked to raise an exception; 404 returned when conversation_id belongs to a different user; empty message body returns 400 (Pydantic validation); message > 5000 chars returns 400 (Pydantic validation) — `backend/tests/integration/test_chat_api.py`
+- [X] T014 [US3] Extend integration test file with US3 tests: task-not-found returns 200 with friendly agent message (not 500); off-topic message ("what's the weather?") returns 200 with helpful scope explanation; 503 returned when OpenRouter client is mocked to raise an exception; 404 returned when conversation_id belongs to a different user; empty message body returns 400 (Pydantic validation); message > 5000 chars returns 400 (Pydantic validation) — `backend/tests/integration/test_chat_api.py`
 
 **Checkpoint**: Run `uv run pytest tests/integration/test_chat_api.py -k "us3" -v` — all US3 tests pass
 
@@ -93,8 +93,8 @@
 
 **Purpose**: Documentation and environment variable completeness.
 
-- [ ] T015 [P] Add `OPENROUTER_API_KEY`, `LLM_MODEL`, and `LLM_PROVIDER` entries with example values and comments to the backend environment example file — `backend/.env.example`
-- [ ] T016 [P] Verify `backend/src/agents/todo_agent.py` reads `openrouter_api_key` and `llm_model` from `settings` (Pydantic Settings) — not hardcoded; confirm `backend/src/config.py` already exposes these fields (no change needed if already present)
+- [X] T015 [P] Add `OPENROUTER_API_KEY`, `LLM_MODEL`, and `LLM_PROVIDER` entries with example values and comments to the backend environment example file — `backend/.env.example`
+- [X] T016 [P] Verify `backend/src/agents/todo_agent.py` reads `openrouter_api_key` and `llm_model` from `settings` (Pydantic Settings) — not hardcoded; confirm `backend/src/config.py` already exposes these fields (no change needed if already present)
 
 ---
 
