@@ -1,8 +1,4 @@
-"""Centralized error handling middleware with empathetic error messages.
-
-Task IDs: T401, T407
-Spec: specs/001-chat-interface/spec.md
-"""
+"""Centralized error handling middleware with empathetic error messages."""
 import logging
 from fastapi import Request, status
 from fastapi.responses import JSONResponse
