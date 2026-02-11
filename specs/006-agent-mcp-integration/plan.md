@@ -162,9 +162,12 @@ POST /api/{user_id}/chat
 ### Phase C: API Layer
 
 8. Create `src/routers/chat.py`:
-   - `POST /api/{user_id}/chat` handler
+   - `POST /api/{user_id}/chat` handler with `response_model=ChatResponse` on the decorator
+   - Use `SessionDep = Annotated[Session, Depends(get_session)]` (NOT `Session = Depends(...)` — fastapi-builder anti-pattern)
    - Stateless flow: resolve conversation → persist user message → load history → run agent → persist response → return
+   - On AI provider failure: `session.rollback()` then raise `HTTPException(503)`
    - 503 on AI provider failure; 404 on unknown conversation_id; 401 on auth failure
+   - All `HTTPException` calls must include descriptive `detail` strings (not just status codes)
 9. Update `src/main.py` — register chat router
 
 ### Phase D: Integration Tests
@@ -195,6 +198,9 @@ POST /api/{user_id}/chat
 | Stored roles | user + assistant only | From spec clarification (Q4) |
 | LLM provider | OpenRouter via `OpenAIChatCompletionsModel` | Already in settings; verified against skill template |
 | `RunConfig` | `RunConfig(model=model, model_provider=client, tracing_disabled=True)` | **Required** for non-OpenAI providers — tracing_disabled prevents SDK errors |
+| Session dependency | `SessionDep = Annotated[Session, Depends(get_session)]` | fastapi-builder: `Session = Depends(...)` is an anti-pattern (fails Python 3.10+) |
+| Router response model | `response_model=ChatResponse` on decorator | fastapi-builder: prevents sensitive field leaks, enables auto-serialization |
+| Sync DB in async endpoint | Intentional tradeoff — sync `Session` in `async def` | Existing backend is fully sync; DB calls are <5ms; full async migration is out-of-scope (see research Decision 5) |
 
 ---
 
