@@ -56,7 +56,7 @@ specs/006-agent-mcp-integration/
 ├── quickstart.md        ✅ Phase 1 complete
 ├── contracts/
 │   └── chat-endpoint.md ✅ Phase 1 complete
-└── tasks.md             ⏳ Phase 2 — /sp.tasks command
+└── tasks.md             ✅ Phase 2 complete
 ```
 
 ### Source Code Changes
