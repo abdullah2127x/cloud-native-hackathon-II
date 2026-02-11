@@ -151,7 +151,14 @@ asyncio.run(main())
 
 ## Pattern 3: LiteLLM (Unified Interface)
 
-### Setup
+⚠️ **See [litellm-provider.md](./litellm-provider.md) for complete LiteLLM guide** including:
+- Multi-provider setup
+- 20+ supported providers (Gemini, OpenAI, Anthropic, Azure, Cohere, local Ollama, etc.)
+- Per-request provider switching
+- Cost optimization patterns
+- Production troubleshooting
+
+### Quick Start
 
 ```python
 from agents.extensions.models.litellm_model import LitellmModel
@@ -161,16 +168,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 MODEL = "gemini/gemini-2.5-flash"  # Format: "provider/model-id"
-```
-
-### Create Agent
-
-```python
 model = LitellmModel(
     model=MODEL,
-    api_key=GEMINI_API_KEY,
+    api_key=os.getenv("GEMINI_API_KEY"),
 )
 
 agent = Agent(
@@ -178,28 +179,26 @@ agent = Agent(
     instructions="You are a helpful assistant.",
     model=model,
 )
+
+result = Runner.run_sync(agent, "Hello!")
+print(result.final_output)
 ```
 
-### Run Agent
+### When to Use LiteLLM
 
-```python
-import asyncio
+✅ **Use LiteLLM if you:**
+- Need to support multiple providers
+- Want unified interface across 20+ LLM providers
+- Plan per-request provider switching
+- Need cost optimization with fallbacks
+- Run enterprise multi-cloud deployments
 
-async def main():
-    result = await Runner.run(agent, "Hello!")
-    print(result.final_output)
+❌ **Use Pattern 1/2 if you:**
+- Only need one provider (cheaper to deploy)
+- Want simpler codebase for prototyping
+- Don't need provider flexibility
 
-asyncio.run(main())
-```
-
-### Available Model Prefixes
-
-- `gemini/` - Google Gemini
-- `anthropic/` - Anthropic Claude
-- `openai/` - OpenAI GPT models
-- `cohere/` - Cohere models
-- `replicate/` - Replicate models
-- [See LiteLLM docs for complete list](https://docs.litellm.ai/docs/providers)
+**→ Full guide:** [litellm-provider.md](./litellm-provider.md)
 
 ---
 

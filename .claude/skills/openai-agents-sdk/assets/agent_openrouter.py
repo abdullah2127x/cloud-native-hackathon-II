@@ -22,7 +22,7 @@ from src.config import settings
 
 # ── Pick a model ──────────────────────────────────────────────────────────
 # Uncomment the model you want to use:
-MODEL = "openai/gpt-4o-mini"               # OpenAI — fast, cheap
+MODEL = "stepfun/step-3.5-flash:free"               # OpenAI — fast, cheap
 # MODEL = "anthropic/claude-3-5-sonnet"    # Anthropic — smart, versatile
 # MODEL = "google/gemini-2.0-flash"        # Google — cost-effective
 # MODEL = "meta-llama/llama-3.2-3b-instruct:free"  # Meta — FREE
