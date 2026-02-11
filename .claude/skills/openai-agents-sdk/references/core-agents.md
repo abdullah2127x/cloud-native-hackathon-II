@@ -111,7 +111,7 @@ class AppContext:
 @function_tool
 async def my_tool(wrapper: RunContextWrapper[AppContext], param: str) -> str:
     """Tool description."""
-    user_id = wrapper.context.user_id   # access your context
+    user_id =  wrapper.context.user_id   # access your context
     usage = wrapper.usage               # token usage so far
     return f"Done for {user_id}"
 ```

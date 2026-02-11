@@ -1,7 +1,7 @@
 """Application configuration using Pydantic Settings"""
 from pydantic_settings import BaseSettings
 from pydantic import field_validator
-from typing import List
+from typing import List, Optional
 import json
 
 
@@ -25,6 +25,13 @@ class Settings(BaseSettings):
     # Application
     app_name: str = "Todo Backend"
     debug: bool = False
+
+    # LLM Configuration (for OpenAI Agents SDK)
+    openrouter_api_key: Optional[str] = None
+    openai_api_key: Optional[str] = None
+    gemini_api_key: Optional[str] = None
+    llm_provider: str = "openrouter"  # openrouter, openai, gemini
+    llm_model: str = "openai/gpt-4o-mini"  # Model to use with selected provider
 
     @field_validator("cors_origins", mode="before")
     @classmethod
