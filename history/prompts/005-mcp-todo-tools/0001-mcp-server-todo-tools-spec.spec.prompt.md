@@ -5,20 +5,20 @@ stage: spec
 date: 2026-02-05T00:00:00Z
 surface: project-level
 model: claude-sonnet-4-5
-feature: 007-mcp-todo-tools
-branch: 007-mcp-todo-tools
+feature: 005-mcp-todo-tools
+branch: 005-mcp-todo-tools
 user: abdullah
 command: /sp.specify
 labels: [specification, mcp-server, todo-crud, phase-3]
 links:
-  spec: specs/007-mcp-todo-tools/spec.md
+  spec: specs/005-mcp-todo-tools/spec.md
   ticket: null
   adr: null
   pr: null
 files:
-  - path: specs/007-mcp-todo-tools/spec.md
+  - path: specs/005-mcp-todo-tools/spec.md
     action: created
-  - path: specs/007-mcp-todo-tools/checklists/requirements.md
+  - path: specs/005-mcp-todo-tools/checklists/requirements.md
     action: created
 tests: []
 ---
@@ -40,7 +40,7 @@ Build an MCP server using the Official MCP SDK that exposes 5 todo operation too
 
 ## Response snapshot
 
-Successfully created comprehensive specification for MCP Server for Todo Operations on branch 007-mcp-todo-tools.
+Successfully created comprehensive specification for MCP Server for Todo Operations on branch 005-mcp-todo-tools.
 
 Specification includes:
 - 5 prioritized user stories (2 P1, 1 P2, 2 P3) with independent testability

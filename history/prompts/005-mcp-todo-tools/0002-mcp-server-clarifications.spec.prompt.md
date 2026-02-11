@@ -5,18 +5,18 @@ stage: spec
 date: 2026-02-05T00:00:00Z
 surface: project-level
 model: claude-sonnet-4-5
-feature: 007-mcp-todo-tools
-branch: 007-mcp-todo-tools
+feature: 005-mcp-todo-tools
+branch: 005-mcp-todo-tools
 user: abdullah
 command: /sp.clarify
 labels: [clarification, mcp-server, architecture, security, observability]
 links:
-  spec: specs/007-mcp-todo-tools/spec.md
+  spec: specs/005-mcp-todo-tools/spec.md
   ticket: null
   adr: null
   pr: null
 files:
-  - path: specs/007-mcp-todo-tools/spec.md
+  - path: specs/005-mcp-todo-tools/spec.md
     action: updated
 tests: []
 ---

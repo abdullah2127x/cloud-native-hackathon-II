@@ -1,7 +1,7 @@
 # Implementation Tasks: MCP Server for Todo Operations
 
-**Feature**: 007-mcp-todo-tools
-**Branch**: `007-mcp-todo-tools`
+**Feature**: 005-mcp-todo-tools
+**Branch**: `005-mcp-todo-tools`
 **Created**: 2026-02-05
 **Shipped**: 2026-02-05 ✅
 **Status**: PRODUCTION READY - MVP SHIPPED

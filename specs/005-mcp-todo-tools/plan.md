@@ -1,7 +1,7 @@
 # Implementation Plan: MCP Server for Todo Operations
 
-**Branch**: `007-mcp-todo-tools` | **Date**: 2026-02-05 | **Spec**: [spec.md](./spec.md)
-**Input**: Feature specification from `/specs/007-mcp-todo-tools/spec.md`
+**Branch**: `005-mcp-todo-tools` | **Date**: 2026-02-05 | **Spec**: [spec.md](./spec.md)
+**Input**: Feature specification from `/specs/005-mcp-todo-tools/spec.md`
 
 ## Summary
 
@@ -92,7 +92,7 @@ Build an MCP (Model Context Protocol) server that exposes 5 todo CRUD operation 
 ### Documentation (this feature)
 
 ```text
-specs/007-mcp-todo-tools/
+specs/005-mcp-todo-tools/
 ├── spec.md              # Feature specification
 ├── plan.md              # This file (implementation plan)
 ├── research.md          # Phase 0: MCP SDK patterns, FastAPI middleware, JWT validation

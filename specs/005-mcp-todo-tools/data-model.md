@@ -1,7 +1,7 @@
 # Data Model: MCP Server for Todo Operations
 
 **Date**: 2026-02-05
-**Feature**: 007-mcp-todo-tools
+**Feature**: 005-mcp-todo-tools
 **Purpose**: Define Pydantic schemas for tool parameters, responses, and internal models
 
 ## Existing Entities (Reused)
