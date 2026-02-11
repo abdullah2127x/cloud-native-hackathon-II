@@ -148,10 +148,16 @@ POST /api/{user_id}/chat
 ### Phase B: Agent Layer
 
 7. Create `src/agents/todo_agent.py`:
-   - Instantiate `TodoMCPServer`
-   - Define 5 `@function_tool` wrappers (one per MCP tool), each passing `user_id` and DB `session`
+   - Define `TodoContext` dataclass with `user_id: str` and `session: Session`
+   - Instantiate `TodoMCPServer` at module level
+   - Define 5 `@function_tool` functions using `RunContextWrapper[TodoContext]` as first param — NOT closures
+   - Each tool calls `mcp_server.call_tool(...)` with `wrapper.context.user_id` and `wrapper.context.session`, then extracts clean string from `structuredContent` (no raw MCP dicts)
+   - Each tool has a descriptive docstring (this is what the LLM sees to decide when to call it)
    - Create `Agent` with OpenRouter model + tools + system prompt
-   - Expose `run_agent(messages, user_id, session) -> (response_text, tool_calls)`
+   - Expose `run_todo_agent(messages, user_id, session) -> (response_text, tool_calls)` that:
+     - Builds `TodoContext(user_id=user_id, session=session)`
+     - Calls `await Runner.run(agent, messages, context=ctx, max_turns=10, run_config=run_config)`
+     - Returns `result.final_output` and list of tool names from `result.new_items`
 
 ### Phase C: API Layer
 
@@ -177,9 +183,12 @@ POST /api/{user_id}/chat
 
 | Decision | Choice | Reason |
 |----------|--------|--------|
-| MCP integration pattern | Function tool wrappers | In-process server, no subprocess needed |
+| MCP integration pattern | `@function_tool` wrappers calling `mcp_server.call_tool()` | In-process server, no subprocess overhead |
 | Agent state | Stateless, created per request | Satisfies constitution IX |
-| DB session in agent tools | Passed via closure from router | Session lifetime matches request |
+| DB session + user_id injection | `RunContextWrapper[TodoContext]` as first tool param | Official SDK pattern; context never sent to LLM |
+| `Runner.run()` context | `context=TodoContext(user_id, session)` | Injects request-scoped deps into all tools |
+| `max_turns` | `max_turns=10` | Required in production per skill reference |
+| Tool return format | Extract `structuredContent`, return clean string | Avoid context bloat; agent needs concise tool outputs |
 | Conversation history cap | Last 50 messages | From spec clarification (Q1) |
 | Provider failure | 503 immediately, no retry | From spec clarification (Q2) |
 | Concurrent requests | Process independently | From spec clarification (Q3) |

@@ -17,24 +17,55 @@
 
 ---
 
-## Decision 2: Agent Construction Pattern
+## Decision 2: Agent Construction Pattern + RunContextWrapper
 
-**Decision**: Construct a single `Agent` instance with 5 function tools, one per MCP operation. The agent is created fresh per request (stateless), receives the user message + loaded history, and runs to completion.
+**Decision**: Use `RunContextWrapper[AppContext]` for dependency injection (DB session + user_id) into each function tool. This is the SDK's official mechanism — NOT closures.
 
-**Rationale**: The OpenAI Agents SDK `Agent` is lightweight and stateless. Creating it per request is idiomatic for a stateless endpoint. The `Runner.run()` call is synchronous-compatible via `asyncio.run()` from a sync FastAPI route, or by using `asyncio` event loop management.
+**Rationale**: Verified from `references/core-agents.md`. `RunContextWrapper` is the correct way to inject request-scoped dependencies (DB session, user_id) into tools. It is **local only** — never sent to the LLM. The context is passed via `context=ctx` to `Runner.run()`.
 
-**Pattern**:
+**Verified Pattern** (from `references/core-agents.md`):
 ```python
-agent = Agent(
-    name="TodoAgent",
-    instructions="You are a todo assistant...",
-    tools=[add_task_tool, list_tasks_tool, ...],
-    model=settings.llm_model,
-)
-result = await Runner.run(agent, input=messages)
+from dataclasses import dataclass
+from agents import Agent, Runner, RunContextWrapper, function_tool
+
+@dataclass
+class TodoContext:
+    user_id: str
+    session: Session   # SQLModel sync session — NOT sent to LLM
+
+@function_tool
+def add_task(
+    wrapper: RunContextWrapper[TodoContext],
+    title: str,
+    description: str | None = None,
+) -> str:
+    """Create a new task for the current user. Use when user wants to add, create, or remember a task."""
+    response = asyncio.run(
+        mcp_server.call_tool("add_task", {
+            "user_id": wrapper.context.user_id,
+            "title": title,
+            "description": description,
+        }, session=wrapper.context.session)
+    )
+    # Extract clean response — don't return raw MCP dict
+    if response.get("isError"):
+        return response["content"][0]["text"]
+    return f"Created task: {response['structuredContent']['title']} (ID: {response['structuredContent']['task_id']})"
+
+# Runner call with context + max_turns (required in production)
+ctx = TodoContext(user_id=user_id, session=session)
+result = await Runner.run(agent, messages, context=ctx, max_turns=10, run_config=run_config)
+response_text = result.final_output
 ```
 
+**Key rules from skill**:
+- First param `wrapper: RunContextWrapper[TodoContext]` → injects context (not sent to LLM)
+- All other params → schema sent to LLM (use type annotations + descriptive docstrings)
+- `max_turns=10` — always set in production (raises `MaxTurnsExceeded` if exceeded)
+- `agent.clone(instructions=f"...")` can inject per-request user info into system prompt
+
 **Alternatives considered**:
+- Closures for session injection: Works but not idiomatic SDK pattern. Rejected in favour of RunContextWrapper.
 - Persistent agent across requests: Would require in-memory state, violating stateless constraint (Constitution IX). Rejected.
 
 ---
