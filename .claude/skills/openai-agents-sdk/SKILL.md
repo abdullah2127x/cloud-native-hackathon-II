@@ -230,6 +230,113 @@ Need a single agent?
 
 ---
 
+## Best Practices
+
+| Practice | Why |
+|----------|-----|
+| **Direct Integration over LiteLLM** | Use AsyncOpenAI + OpenAIChatCompletionsModel; avoids quota issues, clearer control |
+| **Always pass RunConfig for non-OpenAI** | Ensures model/provider/tracing settings apply to Runner.run() |
+| **Cache MCP tool lists** | Use `cache_tools_list=True` on MCPServer to avoid re-fetching every turn |
+| **Use handoffs for specialization** | Create separate agents per domain; route with triage agent |
+| **Enable usage tracking** | Set `include_usage=True` in ModelSettings to monitor token/cost |
+| **Disable tracing for non-OpenAI** | Built-in tracing only works with OpenAI; set `tracing_disabled=True` |
+| **Handle errors gracefully** | Catch `AgentError`, `InputGuardrailTripwireTriggered`, `OutputGuardrailTripwireTriggered` |
+| **Use streaming for UX** | Implement Runner.run_streamed() for real-time responses to users |
+| **Share RunConfig across handoffs** | All agents in a handoff chain must use same RunConfig for consistent behavior |
+
+---
+
+## Error Handling
+
+Catch SDK-specific exceptions:
+
+```python
+from agents import Runner, AgentError
+from agents import InputGuardrailTripwireTriggered, OutputGuardrailTripwireTriggered
+
+try:
+    result = await Runner.run(agent, "Hello", max_turns=10)
+    print(result.final_output)
+except InputGuardrailTripwireTriggered as e:
+    print(f"Input blocked by guardrail: {e.output}")
+except OutputGuardrailTripwireTriggered as e:
+    print(f"Output blocked by guardrail: {e.output}")
+except AgentError as e:
+    print(f"Agent execution error: {e}")
+except Exception as e:
+    print(f"Unexpected error: {e}")
+```
+
+---
+
+## Troubleshooting
+
+### Quota Exceeded Error on First Request
+
+**Problem**: Getting quota exceeded when using LiteLLM or direct Gemini.
+
+**Solution**: Switch to direct AsyncOpenAI integration (see `references/custom-llm-providers.md`):
+
+```python
+from agents import AsyncOpenAI, OpenAIChatCompletionsModel
+from agents.run import RunConfig
+
+client = AsyncOpenAI(
+    api_key=os.getenv("GEMINI_API_KEY"),
+    base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
+)
+
+model = OpenAIChatCompletionsModel(model="gemini-2.5-flash", openai_client=client)
+config = RunConfig(model=model, model_provider=client, tracing_disabled=True)
+result = await Runner.run(agent, "Hello", run_config=config)
+```
+
+### MCP Server Connection Fails
+
+- **Verify server is running**: Check port/URL is accessible
+- **Set timeout**: Add `timeout=30` to MCPServerStreamableHttp params
+- **Enable caching**: Use `cache_tools_list=True` to reduce handshakes
+- **Check headers**: If auth required, pass `headers={"Authorization": "Bearer TOKEN"}`
+
+### Gemini/OpenRouter API Errors
+
+| Error | Check | Solution |
+|-------|-------|----------|
+| "Invalid API key" | `GEMINI_API_KEY` or `OPENROUTER_API_KEY` env var | Verify key is not wrapped in quotes; call `load_dotenv()` first |
+| "Model not found" | Model name in base_url endpoint | Gemini: `gemini-2.5-flash`, `gemini-2.0-flash`; OpenRouter: check `https://openrouter.ai/docs/models` |
+| "Bad request" | base_url format | Gemini: `https://generativelanguage.googleapis.com/v1beta/openai/`; OpenRouter: `https://openrouter.ai/api/v1` |
+| "Timeout" | Network or server down | Add `timeout=Timeout(30)` to AsyncOpenAI; check provider status page |
+
+### Agent Ignoring Model Configuration
+
+**Problem**: Agent uses default OpenAI model even though you set custom model.
+
+**Solution**: Always pass `run_config` to Runner.run():
+
+```python
+# ❌ Wrong — ignores your model
+result = await Runner.run(agent, "Hello")
+
+# ✅ Correct — applies your RunConfig
+result = await Runner.run(agent, "Hello", run_config=config)
+```
+
+### Tracing Errors with Non-OpenAI Providers
+
+**Problem**: "Tracing not supported" or "Invalid trace credentials" when using Gemini/OpenRouter.
+
+**Solution**: Disable tracing in RunConfig:
+
+```python
+config = RunConfig(
+    model=model,
+    model_provider=client,
+    tracing_disabled=True  # ← Required for non-OpenAI
+)
+```
+
+---
+
 ## Reference Files
 
 | File | When to Read |
