@@ -4,30 +4,27 @@ Gemini Agent Template — OpenAI Agents SDK
 Copy this file and modify for your use case.
 
 Requirements:
-    pip install openai-agents python-dotenv
-    # or: uv add openai-agents python-dotenv
+    uv add openai-agents
+    # (or: pip install openai-agents)
 
-.env file:
-    GEMINI_API_KEY=your_key_here
+Environment:
+    GEMINI_API_KEY set in .env (or loaded via src/config.py)
 """
 
 import asyncio
-import os
-from dotenv import load_dotenv
 from openai import AsyncOpenAI
 from agents import Agent, Runner, OpenAIChatCompletionsModel, function_tool
 from agents.run import RunConfig
 
-# ── Load environment variables ────────────────────────────────────────────
-load_dotenv()
+# ── Import global config (type-safe, auto-completion) ────────────────────
+from src.config import settings
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+# ── Build provider client + model wrapper ────────────────────────────────
 MODEL = "gemini-2.5-flash"          # Change to gemini-2.0-flash if needed
 BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/"
 
-# ── Build provider client + model wrapper ────────────────────────────────
 client = AsyncOpenAI(
-    api_key=GEMINI_API_KEY,
+    api_key=settings.gemini_api_key,  # Type-safe access from config
     base_url=BASE_URL,
 )
 

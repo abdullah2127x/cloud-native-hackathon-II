@@ -145,57 +145,100 @@ Use the clarifying questions in **Step 0** above to determine user's provider pr
 
 **Default path** if user is unsure: OpenRouter + `openai/gpt-4o-mini` + RunConfig
 
-### Step 2: Detect Project Type & Install
+### Step 2: Install Dependencies & Setup Configuration
 
-First, inspect the codebase to determine the package manager and whether `openai-agents` is already installed:
+#### Install openai-agents Package
 
-```bash
-# 1. Check for uv project markers
-ls pyproject.toml uv.lock 2>/dev/null
-
-# 2. Check if openai-agents is already installed
-pip show openai-agents 2>/dev/null || uv pip show openai-agents 2>/dev/null
-```
-
-Also check `pyproject.toml` and `requirements.txt` for existing declarations:
-```
-pyproject.toml       ← look for openai-agents in [project.dependencies] or [tool.uv.dev-dependencies]
-requirements.txt     ← look for openai-agents line
-uv.lock              ← presence confirms uv project
-```
-
-**Decision table:**
-
-| Condition | Action |
-|-----------|--------|
-| `uv.lock` exists AND `openai-agents` NOT in deps | `uv add openai-agents` |
-| `uv.lock` exists AND needs MCP support | `uv add "openai-agents[mcp]"` |
-| `uv.lock` exists AND already installed | Skip — already available |
-| No `uv.lock`, no `pyproject.toml` | `pip install openai-agents` |
-| No `uv.lock`, needs MCP support | `pip install "openai-agents[mcp]"` |
-| Already in `requirements.txt` or `pyproject.toml` | Skip install, verify with `pip show openai-agents` |
+First, check for uv project markers:
 
 ```bash
-# uv project (uv.lock present)
-uv add openai-agents python-dotenv
+# 1. Check if uv.lock exists (uv project)
+ls uv.lock 2>/dev/null && echo "uv project" || echo "pip project"
+
+# 2. Check if openai-agents already installed
+uv pip show openai-agents 2>/dev/null || pip show openai-agents 2>/dev/null
+```
+
+**Installation commands:**
+
+```bash
+# ✅ PRIMARY: uv project (uv.lock present)
+uv add openai-agents
 uv add "openai-agents[mcp]"        # if MCP servers needed
 
-# standard pip project
-pip install openai-agents python-dotenv
+# ⚠️ FALLBACK: pip project (no uv.lock)
+pip install openai-agents
 pip install "openai-agents[mcp]"   # if MCP servers needed
 ```
 
-**Check for `.env` / `.env.example`:** Copy `assets/.env.example` to `.env` and fill in the API key for your provider:
+#### Configure Environment Variables (Global Pydantic Settings)
+
+**✅ Existing Setup (Recommended)**
+
+Your project already has global config at `src/config.py`. **Extend it to include LLM keys:**
+
+```python
+# src/config.py
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from typing import Optional
+
+class Settings(BaseSettings):
+    """Application settings (read from .env)"""
+
+    # Existing settings...
+    database_url: str = "sqlite:///./test.db"
+
+    # LLM Configuration (new)
+    openai_api_key: Optional[str] = None
+    gemini_api_key: Optional[str] = None
+    openrouter_api_key: Optional[str] = None
+
+    model_config = SettingsConfigDict(env_file=".env")
+
+# Global instance
+settings = Settings()
+```
+
+**Then in `.env`:**
 
 ```bash
-# OpenAI (default)
+# LLM Keys (fill based on provider choice from Step 0)
 OPENAI_API_KEY=sk-proj-...
+GEMINI_API_KEY=your-gemini-key
+OPENROUTER_API_KEY=your-openrouter-key
+```
 
-# Gemini
-GEMINI_API_KEY=...
+**✅ Usage in Agent Code (Type-Safe)**
 
-# OpenRouter
-OPENROUTER_API_KEY=...
+```python
+from src.config import settings
+from openai import AsyncOpenAI
+from agents import OpenAIChatCompletionsModel
+
+# Type-safe access to config (no need for load_dotenv or os.getenv)
+if settings.openrouter_api_key:
+    client = AsyncOpenAI(
+        base_url="https://openrouter.ai/api/v1",
+        api_key=settings.openrouter_api_key,
+    )
+elif settings.gemini_api_key:
+    client = AsyncOpenAI(
+        base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+        api_key=settings.gemini_api_key,
+    )
+else:
+    client = AsyncOpenAI(api_key=settings.openai_api_key)
+```
+
+**⚠️ Anti-Pattern: Don't use this**
+
+```python
+# ❌ NEVER do this
+import os
+from dotenv import load_dotenv
+
+load_dotenv()  # Duplicates config.py loading
+api_key = os.getenv("OPENAI_API_KEY")  # No type safety, duplicates config
 ```
 
 ### Step 3: Choose Pattern (see Decision Tree below)
