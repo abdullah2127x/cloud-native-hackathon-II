@@ -74,9 +74,16 @@ Level 4 — Production
   └── MCP server connections
   └── Tracing configuration
   └── Error handling, env vars, max_turns
+
+Level 5 — Custom LLM Providers (Optional)
+  └── Gemini via AsyncOpenAI + OpenAIChatCompletionsModel
+  └── OpenRouter (any model: Claude, Llama, Gemini, GPT)
+  └── LiteLLM unified wrapper
+  └── load_dotenv() + os.getenv() for env vars
+  └── RunConfig(tracing_disabled=True) for non-OpenAI
 ```
 
-**Decision:** "Simple agent" → L2. "Route between agents" → L3. "Safety / MCP / tracing" → L4.
+**Decision:** "Simple agent" → L2. "Route between agents" → L3. "Safety / MCP / tracing" → L4. "Not using OpenAI API" → L5.
 
 ---
 
@@ -114,15 +121,25 @@ uv.lock              ← presence confirms uv project
 
 ```bash
 # uv project (uv.lock present)
-uv add openai-agents
+uv add openai-agents python-dotenv
 uv add "openai-agents[mcp]"        # if MCP servers needed
 
 # standard pip project
-pip install openai-agents
+pip install openai-agents python-dotenv
 pip install "openai-agents[mcp]"   # if MCP servers needed
+```
 
-# Set API key (always needed)
-export OPENAI_API_KEY=sk-proj-...
+**Check for `.env` / `.env.example`:** Copy `assets/.env.example` to `.env` and fill in the API key for your provider:
+
+```bash
+# OpenAI (default)
+OPENAI_API_KEY=sk-proj-...
+
+# Gemini
+GEMINI_API_KEY=...
+
+# OpenRouter
+OPENROUTER_API_KEY=...
 ```
 
 ### Step 2: Choose Pattern (see Decision Tree below)
@@ -177,6 +194,13 @@ async for event in result.stream_events():
 ## Decision Tree
 
 ```
+Using OpenAI API?
+  ├── Yes → Start with Level 1–4 (OPENAI_API_KEY in .env)
+  └── No  → Level 5 (Custom Provider)
+      ├── Gemini? → AsyncOpenAI(base_url=GEMINI_URL) + OpenAIChatCompletionsModel
+      ├── OpenRouter? → AsyncOpenAI(base_url=OPENROUTER_URL) + OpenAIChatCompletionsModel
+      └── Multi-provider? → LiteLLM wrapper
+
 Need a single agent?
   ├── No tools needed → Level 1
   └── Tools needed → Level 2
@@ -201,6 +225,8 @@ Need a single agent?
 | Missing docstring on `@function_tool` | Docstring becomes the tool description sent to LLM |
 | Passing context to LLM | Context is local only — never sent to model |
 | Unbounded `max_turns` | Always set `max_turns` in production to prevent runaway loops |
+| Using non-OpenAI provider without disabling tracing | Built-in tracing only works with OpenAI; use `RunConfig(tracing_disabled=True)` |
+| Calling `os.getenv()` before `load_dotenv()` | Always call `load_dotenv()` first at module top level |
 
 ---
 
@@ -213,3 +239,14 @@ Need a single agent?
 | `references/guardrails.md` | Input/output guardrails, tool guardrails, tripwires |
 | `references/mcp-tracing.md` | MCP servers (stdio/HTTP/manager), tracing, RunConfig advanced |
 | `references/streaming.md` | Streaming event types, token streaming, progress patterns |
+| `references/custom-llm-providers.md` | Gemini, OpenRouter, LiteLLM setup; RunConfig provider switching; env var best practices |
+
+## Templates
+
+Copy-paste starters in `assets/`:
+
+| File | Use For |
+|------|---------|
+| `assets/agent_gemini.py` | Gemini-backed agent with tools |
+| `assets/agent_openrouter.py` | OpenRouter agent (swap model in one line) |
+| `assets/.env.example` | Copy to `.env` and fill keys |
