@@ -1,7 +1,7 @@
 """Task API endpoints"""
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Query, status
 from sqlmodel import Session, select, func
-from typing import List
+from typing import List, Optional
 import logging
 
 from src.db.database import get_session
@@ -31,7 +31,7 @@ async def list_tasks(
     search: str = None,
     status: str = "all",
     priority: str = "all",
-    tags: list[str] = None,
+    tags: Optional[List[str]] = Query(default=None),
     no_tags: bool = False,
     sort: str = "priority",
     order: str = None,

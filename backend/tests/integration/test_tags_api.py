@@ -91,9 +91,12 @@ def test_api_get_tags_case_insensitive_merge(client, auth_headers):
     assert tags[0]["task_count"] == 2  # Should have 2 tasks
 
 
-def test_api_get_tags_different_users_isolated(client, auth_headers, mock_auth):
+def test_api_get_tags_different_users_isolated(client, auth_headers):
     """Test GET /api/tags returns only tags for the authenticated user"""
-    # Create task with tags for current user
+    from src.main import app
+    from src.auth.dependencies import get_current_user
+
+    # Create task with tags for current user (test-user-id)
     client.post(
         "/api/todos",
         json={
@@ -103,19 +106,27 @@ def test_api_get_tags_different_users_isolated(client, auth_headers, mock_auth):
         headers=auth_headers
     )
 
-    # Mock a different user
-    mock_auth.return_value = {"sub": "other-user-id"}
+    # Switch to a different user via dependency override
+    async def mock_other_user() -> str:
+        return "other-user-id"
 
-    # Create task with tags for other user
-    other_headers = {"Authorization": "Bearer mock-token"}
-    client.post(
-        "/api/todos",
-        json={
-            "title": "Other user's personal task",
-            "tags": ["personal", "fun"]
-        },
-        headers=other_headers
-    )
+    app.dependency_overrides[get_current_user] = mock_other_user
+
+    try:
+        # Create task with tags for other user
+        client.post(
+            "/api/todos",
+            json={
+                "title": "Other user's personal task",
+                "tags": ["personal", "fun"]
+            },
+            headers=auth_headers
+        )
+    finally:
+        # Restore original mock (test-user-id)
+        async def mock_test_user() -> str:
+            return "test-user-id"
+        app.dependency_overrides[get_current_user] = mock_test_user
 
     # Current user should only see their tags
     response = client.get("/api/tags", headers=auth_headers)
