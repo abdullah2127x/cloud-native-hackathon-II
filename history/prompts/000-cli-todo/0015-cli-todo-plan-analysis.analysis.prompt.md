@@ -6,20 +6,20 @@ date_iso: "2026-01-07"
 surface: "agent"
 model: "claude-sonnet-4-5-20250929"
 feature: "cli-todo"
-branch: "001-cli-todo"
+branch: "000-cli-todo"
 user: "AbdullahQureshi"
 command: "/sp.analyze"
 labels: ["analysis", "plan", "spec", "tasks", "compliance"]
 links:
-  spec: "specs/001-cli-todo/spec.md"
-  plan: "specs/001-cli-todo/plan.md"
-  tasks: "specs/001-cli-todo/tasks.md"
+  spec: "specs/000-cli-todo/spec.md"
+  plan: "specs/000-cli-todo/plan.md"
+  tasks: "specs/000-cli-todo/tasks.md"
   ticket: "null"
   adr: "null"
   pr: "null"
 files_yaml: |
-  - specs/001-cli-todo/plan.md
-  - specs/001-cli-todo/tasks.md
+  - specs/000-cli-todo/plan.md
+  - specs/000-cli-todo/tasks.md
 tests_yaml: |
   - "spec-plan-tasks-analysis"
 prompt_text: |
@@ -83,8 +83,8 @@ Analysis identified:
 All constitution alignment issues addressed and edge cases properly covered.
 
 ## Files Created/Modified
-- specs/001-cli-todo/plan.md
-- specs/001-cli-todo/tasks.md
+- specs/000-cli-todo/plan.md
+- specs/000-cli-todo/tasks.md
 
 ## Outcome
 Successfully completed specification analysis and updated artifacts with improved clarity, constitution compliance verification, and comprehensive edge case coverage.

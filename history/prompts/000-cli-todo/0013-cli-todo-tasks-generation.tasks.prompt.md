@@ -6,18 +6,18 @@ date_iso: "2026-01-07"
 surface: "agent"
 model: "claude-sonnet-4-5-20250929"
 feature: "cli-todo"
-branch: "001-cli-todo"
+branch: "000-cli-todo"
 user: "AbdullahQureshi"
 command: "/sp.tasks"
 labels: ["tasks", "cli", "todo", "tdd", "implementation"]
 links:
-  spec: "specs/001-cli-todo/spec.md"
-  plan: "specs/001-cli-todo/plan.md"
+  spec: "specs/000-cli-todo/spec.md"
+  plan: "specs/000-cli-todo/plan.md"
   ticket: "null"
   adr: "null"
   pr: "null"
 files_yaml: |
-  - specs/001-cli-todo/tasks.md
+  - specs/000-cli-todo/tasks.md
 tests_yaml: |
   - "tasks-validation"
 prompt_text: |
@@ -72,7 +72,7 @@ Generated comprehensive task list for CLI Todo Application implementation with 5
 All tasks follow the required checklist format with Task IDs, story labels, and file paths. Tasks incorporate TDD approach with test generation, interactive CLI with arrow-key navigation, and UI beautification with colors and icons as specified.
 
 ## Files Created/Modified
-- specs/001-cli-todo/tasks.md
+- specs/000-cli-todo/tasks.md
 
 ## Outcome
 Successfully created detailed task breakdown with all required functionality organized in priority order with proper dependencies and parallel execution opportunities.

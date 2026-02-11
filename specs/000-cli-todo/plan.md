@@ -1,7 +1,7 @@
 # Implementation Plan: CLI Todo Application
 
-**Branch**: `001-cli-todo` | **Date**: 2026-01-07 | **Spec**: specs/001-cli-todo/spec.md
-**Input**: Feature specification from `/specs/001-cli-todo/spec.md`
+**Branch**: `000-cli-todo` | **Date**: 2026-01-07 | **Spec**: specs/000-cli-todo/spec.md
+**Input**: Feature specification from `/specs/000-cli-todo/spec.md`
 
 **Note**: This template is filled in by the `/sp.plan` command. See `.specify/templates/commands/plan.md` for the execution workflow.
 
@@ -37,7 +37,7 @@ Implement a CLI-based todo application with in-memory storage following TDD prin
 ### Documentation (this feature)
 
 ```text
-specs/001-cli-todo/
+specs/000-cli-todo/
 ├── plan.md              # This file (/sp.plan command output)
 ├── research.md          # Phase 0 output (/sp.plan command)
 ├── data-model.md        # Phase 1 output (/sp.plan command)

@@ -6,17 +6,17 @@ date_iso: "2026-01-07"
 surface: "agent"
 model: "claude-sonnet-4-5-20250929"
 feature: "cli-todo"
-branch: "001-cli-todo"
+branch: "000-cli-todo"
 user: "AbdullahQureshi"
 command: "/sp.clarify"
 labels: ["clarify", "cli", "todo", "specification"]
 links:
-  spec: "specs/001-cli-todo/spec.md"
+  spec: "specs/000-cli-todo/spec.md"
   ticket: "null"
   adr: "null"
   pr: "null"
 files_yaml: |
-  - specs/001-cli-todo/spec.md
+  - specs/000-cli-todo/spec.md
 tests_yaml: |
   - "spec-validation"
 prompt_text: |
@@ -60,7 +60,7 @@ Completed clarification workflow, resolving 5 key ambiguities:
 5. Descriptions: Optional with max 500 characters
 
 ## Files Created/Modified
-- specs/001-cli-todo/spec.md
+- specs/000-cli-todo/spec.md
 
 ## Outcome
 Successfully clarified specification with 5 key decisions recorded in the clarifications section of the spec file.

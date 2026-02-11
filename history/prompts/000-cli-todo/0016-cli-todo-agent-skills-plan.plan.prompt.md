@@ -6,22 +6,22 @@ date_iso: "2026-01-07"
 surface: "agent"
 model: "claude-sonnet-4-5-20250929"
 feature: "cli-todo"
-branch: "001-cli-todo"
+branch: "000-cli-todo"
 user: "AbdullahQureshi"
 command: "/sp.plan in the existing plan there is mention the use of py-cli-beautifier and python-test-generator both are not the python packages instead they are the agent skill in claude code that the agent can you so update it"
 labels: ["plan", "cli", "todo", "agent-skills", "tdd", "interactive"]
 links:
-  spec: "specs/001-cli-todo/spec.md"
-  plan: "specs/001-cli-todo/plan.md"
+  spec: "specs/000-cli-todo/spec.md"
+  plan: "specs/000-cli-todo/plan.md"
   ticket: "null"
   adr: "null"
   pr: "null"
 files_yaml: |
-  - specs/001-cli-todo/plan.md
-  - specs/001-cli-todo/research.md
-  - specs/001-cli-todo/data-model.md
-  - specs/001-cli-todo/quickstart.md
-  - specs/001-cli-todo/contracts/task_service_contract.md
+  - specs/000-cli-todo/plan.md
+  - specs/000-cli-todo/research.md
+  - specs/000-cli-todo/data-model.md
+  - specs/000-cli-todo/quickstart.md
+  - specs/000-cli-todo/contracts/task_service_contract.md
   - CLAUDE.md
 tests_yaml: |
   - "plan-validation"
@@ -72,11 +72,11 @@ Successfully updated the implementation plan to correctly reflect that py-cli-be
 - All artifacts now consistently reflect that these are Claude Code agent skills
 
 ## Files Created/Modified
-- specs/001-cli-todo/plan.md
-- specs/001-cli-todo/research.md
-- specs/001-cli-todo/data-model.md
-- specs/001-cli-todo/quickstart.md
-- specs/001-cli-todo/contracts/task_service_contract.md
+- specs/000-cli-todo/plan.md
+- specs/000-cli-todo/research.md
+- specs/000-cli-todo/data-model.md
+- specs/000-cli-todo/quickstart.md
+- specs/000-cli-todo/contracts/task_service_contract.md
 - CLAUDE.md
 
 ## Outcome

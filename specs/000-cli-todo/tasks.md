@@ -1,8 +1,8 @@
 # Tasks: CLI Todo Application
 
 **Feature**: CLI Todo Application
-**Branch**: 001-cli-todo
-**Input**: Feature specification and implementation plan from `/specs/001-cli-todo/`
+**Branch**: 000-cli-todo
+**Input**: Feature specification and implementation plan from `/specs/000-cli-todo/`
 
 ## Implementation Strategy
 

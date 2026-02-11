@@ -1,6 +1,6 @@
 # Feature Specification: CLI Todo Application
 
-**Feature Branch**: `001-cli-todo`
+**Feature Branch**: `000-cli-todo`
 **Created**: 2026-01-07
 **Status**: Draft
 **Input**: User description: "use the upper discussion to create the specification for the cli todo application not mention claudecode specdrivenapproach"

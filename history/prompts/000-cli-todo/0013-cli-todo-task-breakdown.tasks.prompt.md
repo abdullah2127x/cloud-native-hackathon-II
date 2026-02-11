@@ -6,18 +6,18 @@ date_iso: "2026-01-07"
 surface: "agent"
 model: "claude-sonnet-4-5-20250929"
 feature: "cli-todo"
-branch: "001-cli-todo"
+branch: "000-cli-todo"
 user: "AbdullahQureshi"
 command: "/sp.tasks"
 labels: ["tasks", "cli", "todo", "breakdown"]
 links:
-  spec: "specs/001-cli-todo/spec.md"
-  plan: "specs/001-cli-todo/plan.md"
+  spec: "specs/000-cli-todo/spec.md"
+  plan: "specs/000-cli-todo/plan.md"
   ticket: "null"
   adr: "null"
   pr: "null"
 files_yaml: |
-  - specs/001-cli-todo/tasks.md
+  - specs/000-cli-todo/tasks.md
 tests_yaml: |
   - "task-breakdown-validation"
 prompt_text: |
@@ -78,7 +78,7 @@ Analyzed the existing implementation and found that all functionality described 
 Updated all 52 tasks across 8 phases to [X] (completed) status to reflect the current implementation state.
 
 ## Files Modified
-- specs/001-cli-todo/tasks.md
+- specs/000-cli-todo/tasks.md
 
 ## Outcome
 Successfully updated tasks.md to reflect that all CLI Todo Application functionality is already implemented according to specifications.

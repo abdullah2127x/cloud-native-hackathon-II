@@ -6,7 +6,7 @@ date_iso: "2026-01-07"
 surface: "agent"
 model: "claude-sonnet-4-5-20250929"
 feature: "cli-todo"
-branch: "001-cli-todo"
+branch: "000-cli-todo"
 user: "AbdullahQureshi"
 command: "/sp.specify use the upper discussion to create the specification for the cli todo application not mention claudecode specdrivenapproach"
 labels: ["spec", "cli", "todo", "console-app"]
@@ -16,8 +16,8 @@ links:
   adr: "null"
   pr: "null"
 files_yaml: |
-  - specs/001-cli-todo/spec.md
-  - specs/001-cli-todo/checklists/requirements.md
+  - specs/000-cli-todo/spec.md
+  - specs/000-cli-todo/checklists/requirements.md
 tests_yaml: |
   - "spec-validation"
 prompt_text: |
@@ -62,8 +62,8 @@ Created a complete specification with:
 - Edge cases and acceptance scenarios
 
 ## Files Created/Modified
-- specs/001-cli-todo/spec.md
-- specs/001-cli-todo/checklists/requirements.md
+- specs/000-cli-todo/spec.md
+- specs/000-cli-todo/checklists/requirements.md
 
 ## Outcome
 Successfully created comprehensive specification for CLI todo application following the required format without mentioning Claude Code or spec-driven approach.

@@ -2,7 +2,7 @@
 
 **Purpose**: Validate specification completeness and quality before proceeding to planning
 **Created**: 2026-01-07
-**Feature**: D:/AbdullahQureshi/workspace/Hackathon-2025/hackathon-2/todo-in-memory-console-app/specs/001-cli-todo/spec.md
+**Feature**: D:/AbdullahQureshi/workspace/Hackathon-2025/hackathon-2/todo-in-memory-console-app/specs/000-cli-todo/spec.md
 
 ## Content Quality
 

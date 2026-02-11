@@ -6,23 +6,23 @@ date_iso: "2026-01-07"
 surface: "agent"
 model: "claude-sonnet-4-5-20250929"
 feature: "cli-todo"
-branch: "001-cli-todo"
+branch: "000-cli-todo"
 user: "AbdullahQureshi"
 command: "/sp.plan The todo app should follow Test-Driven Development (TDD). Use the \"python-test-generator\" skill to generate tests for each feature before implementation. Interactive CLI (FR-006) must be fully implemented and tested: - Display todos as an interactive selectable list rather than requiring number input. - Support arrow-key navigation for selection, updating, deleting, and marking tasks complete. - Handle pagination or scrolling if there are many todos. - Use the \"py-cli-beautifier\" skill to format and beautify the CLI output with colors, spacing, and icons for completed vs pending tasks. Edge cases from the specification must have dedicated tasks and tests: - Empty task title input - Non-existent task update/delete - Empty task list when viewing - Invalid task IDs during operations - Duplicate task handling (if applicable) Performance requirements: - Handle 100+ tasks in memory - Ensure operations complete in <5 seconds per action - Memory usage must remain under 100MB Constitution compliance: - No network communication during runtime; inquirer library must operate locally only - Use in-memory storage only - All features implemented with TDD approach - Add a verification task to ensure all implemented functionality complies with these constitution principles Update tasks.md with specific tasks for: - Arrow-key navigation in interactive CLI - Each edge case handling - Performance verification - Constitution compliance verification"
 labels: ["plan", "cli", "todo", "tdd", "interactive", "enhanced"]
 links:
-  spec: "specs/001-cli-todo/spec.md"
-  tasks: "specs/001-cli-todo/tasks.md"
+  spec: "specs/000-cli-todo/spec.md"
+  tasks: "specs/000-cli-todo/tasks.md"
   ticket: "null"
   adr: "null"
   pr: "null"
 files_yaml: |
-  - specs/001-cli-todo/plan.md
-  - specs/001-cli-todo/tasks.md
-  - specs/001-cli-todo/research.md
-  - specs/001-cli-todo/data-model.md
-  - specs/001-cli-todo/quickstart.md
-  - specs/001-cli-todo/contracts/task_service_contract.md
+  - specs/000-cli-todo/plan.md
+  - specs/000-cli-todo/tasks.md
+  - specs/000-cli-todo/research.md
+  - specs/000-cli-todo/data-model.md
+  - specs/000-cli-todo/quickstart.md
+  - specs/000-cli-todo/contracts/task_service_contract.md
   - CLAUDE.md
 tests_yaml: |
   - "enhanced-plan-validation"
@@ -153,12 +153,12 @@ Enhanced tasks.md with 52 specific tasks across 8 phases:
 All requirements from user input have been incorporated with specific tasks for arrow-key navigation, edge cases, performance, and constitution compliance.
 
 ## Files Created/Modified
-- specs/001-cli-todo/plan.md
-- specs/001-cli-todo/tasks.md
-- specs/001-cli-todo/research.md
-- specs/001-cli-todo/data-model.md
-- specs/001-cli-todo/quickstart.md
-- specs/001-cli-todo/contracts/task_service_contract.md
+- specs/000-cli-todo/plan.md
+- specs/000-cli-todo/tasks.md
+- specs/000-cli-todo/research.md
+- specs/000-cli-todo/data-model.md
+- specs/000-cli-todo/quickstart.md
+- specs/000-cli-todo/contracts/task_service_contract.md
 - CLAUDE.md
 
 ## Outcome
