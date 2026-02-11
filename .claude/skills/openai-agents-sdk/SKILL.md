@@ -34,7 +34,7 @@ allowed-tools: Read, Glob, Grep, Bash, Write, Edit
 | Source | What to Look For |
 |--------|-----------------|
 | **Codebase** | Existing `Agent(...)` definitions, `@function_tool` functions, `Runner` calls, context dataclasses |
-| **Conversation** | Build level, agent purpose, tools needed, multi-agent topology, guardrail requirements |
+| **Conversation** | LLM provider choice, build level, agent purpose, tools needed, multi-agent topology, guardrail requirements |
 | **Skill References** | Patterns from `references/` — authoritative source for all API usage |
 | **User Guidelines** | Naming conventions, file structure, env var naming |
 
@@ -47,6 +47,56 @@ main.py / app.py  ← existing runner calls
 ```
 
 Only ask user for THEIR requirements. All SDK knowledge is in `references/`.
+
+---
+
+## Step 0: Choose Your LLM Provider (Always Ask First)
+
+This skill supports 4 LLM provider options. **Always ask the user which they prefer** before proceeding with implementation:
+
+### Provider Options
+
+| Provider | Cost | Speed | Best For |
+|----------|------|-------|----------|
+| **OpenRouter** (Recommended) | Free + $$ | Fast | Model flexibility, always available, free Llama/Qwen models |
+| **Direct Gemini** | $ (cheap) | Fast | Prototyping, cost-sensitive projects |
+| **LiteLLM** | Multi-provider | Varies | Unified interface, easy provider switching |
+| **OpenAI API** | $$ | Very Fast | Production with GPT models, best performance |
+
+### Default Recommendation
+→ **OpenRouter with `openai/gpt-4o-mini`** (cheap, fast, reliable)
+
+### Clarifying Questions to Ask User
+
+**Question 1**: Which LLM provider do you prefer?
+- ○ OpenRouter (my recommendation — free & paid models, **default**)
+- ○ Direct Gemini (cheap, good performance)
+- ○ LiteLLM (multi-provider abstraction)
+- ○ OpenAI API (GPT-4o/o1 models)
+
+**If OpenRouter selected:**
+- "Would you like to use the free tier (`openai/gpt-4o-mini`) or explore other models?"
+- Options: `openai/gpt-4o-mini` (free, fast) | `meta-llama/llama-3.2-3b-instruct:free` (free, slower) | `openai/gpt-4o` (paid, faster)
+- **Default**: `openai/gpt-4o-mini`
+
+**If Direct Gemini selected:**
+- "Which Gemini model do you prefer?"
+- Options: `gemini-2.5-flash` (latest, fast) | `gemini-2.0-flash` (proven, stable) | `gemini-1.5-pro` (powerful, slower)
+- **Default**: `gemini-2.5-flash`
+
+**If LiteLLM selected:**
+- "Which provider/model do you want?"
+- Options: `gemini/gemini-2.5-flash` | `anthropic/claude-3-5-sonnet` | `openai/gpt-4o-mini`
+
+**If OpenAI API selected:**
+- "Which OpenAI model do you prefer?"
+- Options: `gpt-4o` (latest) | `gpt-4o-mini` (cheap) | `o1-preview` (reasoning)
+- **Default**: `gpt-4o-mini`
+
+**Follow-up (Always):**
+- "Do you want to be able to switch models later in your code?" (Yes/No)
+- If Yes → Use RunConfig pattern (see `references/custom-llm-providers.md`)
+- If No → Simple Agent(model=...) pattern
 
 ---
 
@@ -89,7 +139,13 @@ Level 5 — Custom LLM Providers (Optional)
 
 ## Workflow
 
-### Step 1: Detect Project Type & Install
+### Step 1: Choose Your LLM Provider (Always Start Here!)
+
+Use the clarifying questions in **Step 0** above to determine user's provider preference.
+
+**Default path** if user is unsure: OpenRouter + `openai/gpt-4o-mini` + RunConfig
+
+### Step 2: Detect Project Type & Install
 
 First, inspect the codebase to determine the package manager and whether `openai-agents` is already installed:
 
@@ -142,9 +198,9 @@ GEMINI_API_KEY=...
 OPENROUTER_API_KEY=...
 ```
 
-### Step 2: Choose Pattern (see Decision Tree below)
+### Step 3: Choose Pattern (see Decision Tree below)
 
-### Step 3: Generate Code
+### Step 4: Generate Code
 
 **Level 1 — Hello World**
 ```python
@@ -171,7 +227,7 @@ print(result.final_output)
 
 **Level 4 — Production** (see `references/guardrails.md`, `references/mcp-tracing.md`)
 
-### Step 4: Run
+### Step 5: Run
 
 ```python
 # Synchronous

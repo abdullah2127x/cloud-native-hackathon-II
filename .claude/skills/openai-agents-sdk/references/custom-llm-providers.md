@@ -94,14 +94,26 @@ BASE_URL = "https://openrouter.ai/api/v1"
 
 ```python
 # Available via OpenRouter:
-MODEL = "openai/gpt-4o-mini"           # OpenAI (default)
-MODEL = "anthropic/claude-3-5-sonnet"  # Anthropic
-MODEL = "google/gemini-2.0-flash"      # Google
-MODEL = "meta-llama/llama-3.1-70b"     # Meta
-MODEL = "xai/grok-2"                   # xAI
+MODEL = "openai/gpt-4o-mini"                    # Fast, cheap ($)
+MODEL = "anthropic/claude-3-5-sonnet"           # Smart, versatile ($$)
+MODEL = "google/gemini-2.0-flash"               # Cheap ($)
+MODEL = "meta-llama/llama-3.2-3b-instruct:free" # FREE (via Venice provider)
+MODEL = "xai/grok-2"                            # Advanced ($$)
 
 # See https://openrouter.ai/docs/models for all options
 ```
+
+### 🆓 Free Models Available (via `:free` suffix)
+
+OpenRouter offers several free models via the `:free` variant suffix:
+
+| Model | Provider | Speed | Notes |
+|-------|----------|-------|-------|
+| `meta-llama/llama-3.2-3b-instruct:free` | Venice | Medium | Good for prototyping, may have rate limits |
+| `z-ai/glm-4.5-air:free` | Z.AI | Medium | Multilingual support |
+| `openai/gpt-4o-mini` | Default | Fast | Cheap but not free (~$0.00015 per 1K tokens) |
+
+**⚠️ Note**: Free variants may have different rate limits or availability. See https://openrouter.ai/docs/guides/routing/model-variants/free
 
 ### Create Agent
 
