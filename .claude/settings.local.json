@@ -31,7 +31,12 @@
       "Bash(pwsh:*)",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:platform.openai.com)",
-      "WebFetch(domain:openai.github.io)"
+      "WebFetch(domain:openai.github.io)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_wait_for",
+      "Bash(curl:*)"
     ]
   },
   "disabledMcpjsonServers": [

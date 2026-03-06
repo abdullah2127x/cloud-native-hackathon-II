@@ -1,4 +1,4 @@
-import { LayoutDashboard, CheckSquare, Flag, Tag, Settings } from "lucide-react";
+import { LayoutDashboard, CheckSquare, Flag, Tag, MessageSquare, Settings } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 export interface NavigationSection {
@@ -33,6 +33,12 @@ export const navigationSections: NavigationSection[] = [
     label: "By Tags",
     icon: Tag,
     href: "/dashboard/tags",
+  },
+  {
+    id: "chat",
+    label: "AI Chat",
+    icon: MessageSquare,
+    href: "/dashboard/chat",
   },
   // {
   //   id: "settings",
