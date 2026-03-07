@@ -6,7 +6,7 @@ import logging
 
 from src.api.deps import CurrentUser, DbSession
 from src.schemas.task import TaskCreate, TaskUpdate, TaskRead, TaskListResponse
-from src.crud import task as task_crud
+from src.services.task_service import task_service as task_crud
 from src.models.task import Task
 
 

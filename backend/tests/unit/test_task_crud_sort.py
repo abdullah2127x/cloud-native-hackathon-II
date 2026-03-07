@@ -2,7 +2,9 @@
 import time
 import pytest
 from sqlmodel import Session
-from src.crud.task import create_task, list_tasks
+from src.services.task_service import task_service
+create_task = task_service.create_task
+list_tasks = task_service.list_tasks
 from src.schemas.task import TaskCreate
 
 

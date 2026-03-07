@@ -3,7 +3,7 @@ from fastapi import APIRouter
 
 from src.api.deps import CurrentUser, DbSession
 from src.schemas.task import TagListResponse
-from src.crud import tag as tag_crud
+from src.services.tag_service import tag_service as tag_crud
 
 router = APIRouter(prefix="/api/tags", tags=["tags"])
 
