@@ -35,8 +35,10 @@ async def list_tasks(
     no_tags: bool = False,
     sort: str = "priority",
     order: Optional[str] = None,
+    offset: int = Query(default=0, ge=0),
+    limit: int = Query(default=100, ge=1, le=100),
 ):
-    """List tasks for the authenticated user with filtering, searching, and sorting."""
+    """List tasks for the authenticated user with filtering, searching, sorting, and pagination."""
     total_statement = select(func.count(Task.id)).where(Task.user_id == user_id)
     total = session.exec(total_statement).one()
 
@@ -49,7 +51,9 @@ async def list_tasks(
         tags=tags,
         no_tags=no_tags,
         sort_field=sort,
-        sort_order=order or ("desc" if sort == "created_at" else "asc")
+        sort_order=order or ("desc" if sort == "created_at" else "asc"),
+        offset=offset,
+        limit=limit,
     )
 
     query = select(func.count(Task.id)).where(Task.user_id == user_id)

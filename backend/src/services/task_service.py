@@ -57,8 +57,11 @@ def list_tasks(
     no_tags: bool = False,
     sort_field: str = "priority",
     sort_order: str = "asc",
+    offset: int = 0,
+    limit: int = 100,
 ) -> List[Task]:
-    """List tasks with filtering, searching, and sorting."""
+    """List tasks with filtering, searching, sorting, and pagination."""
+    limit = min(limit, 100)
     return task_repo.find_all(
         session,
         user_id=user_id,
@@ -69,6 +72,8 @@ def list_tasks(
         no_tags=no_tags,
         sort_field=sort_field,
         sort_order=sort_order,
+        offset=offset,
+        limit=limit,
     )
 
 

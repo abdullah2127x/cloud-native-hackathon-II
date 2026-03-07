@@ -41,6 +41,8 @@ def find_all(
     no_tags: bool = False,
     sort_field: str = "priority",
     sort_order: str = "asc",
+    offset: int = 0,
+    limit: int = 100,
 ) -> List[Task]:
     """Query tasks with filtering, searching, and sorting."""
     statement = (
@@ -92,6 +94,7 @@ def find_all(
         col = Task.created_at.desc() if sort_order == "desc" else Task.created_at.asc()
         statement = statement.order_by(col)
 
+    statement = statement.offset(offset).limit(limit)
     return list(session.exec(statement).all())
 
 

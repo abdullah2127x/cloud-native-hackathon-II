@@ -1,10 +1,15 @@
-"""FastAPI application entry point"""
+"""FastAPI application entry point."""
 from fastapi import FastAPI
+from fastapi.middleware.gzip import GZipMiddleware
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+
 from src.core.config import settings
 from src.core.database import create_db_and_tables
 from src.middleware.cors import configure_cors
 from src.middleware.logging import logging_middleware
 from src.middleware.error_handler import error_handler_middleware
+from src.middleware.rate_limit import limiter
 from src.routers import health, tasks, tags
 from src.routers.chat import router as chat_router
 from src.routers.chatkit import router as chatkit_router
@@ -33,17 +38,21 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
+# Attach rate limiter state
+app.state.limiter = limiter
 
 # Configure middleware (order matters: first added = outermost layer)
-app.middleware("http")(logging_middleware)  # 1. Log first
+app.middleware("http")(logging_middleware)  # 1. Log + X-Process-Time
 app.middleware("http")(error_handler_middleware)  # 2. Handle errors
-configure_cors(app)  # 3. CORS last
+configure_cors(app)  # 3. CORS
+app.add_middleware(GZipMiddleware, minimum_size=500)  # 4. Compress responses
 
 
 # Register exception handlers
 app.add_exception_handler(TaskNotFoundError, task_not_found_handler)
 app.add_exception_handler(UnauthorizedError, unauthorized_handler)
 app.add_exception_handler(ValidationError, validation_error_handler)
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 
 # Register routers
