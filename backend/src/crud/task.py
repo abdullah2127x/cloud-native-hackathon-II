@@ -6,7 +6,7 @@ from src.models.tag import Tag, TaskTag
 from src.models.priority import Priority, PRIORITY_SORT_ORDER
 from src.schemas.task import TaskCreate, TaskUpdate
 from src.exceptions.base import TaskNotFoundError, UnauthorizedError
-from datetime import datetime, UTC
+from src.utils.helpers import utc_now
 from typing import List, Optional
 
 
@@ -293,7 +293,7 @@ def update_task(session: Session, task_id: str, task_data: TaskUpdate, user_id: 
             task_tag = TaskTag(task_id=task.id, tag_id=tag.id)
             session.add(task_tag)
 
-    task.updated_at = datetime.now(UTC)
+    task.updated_at = utc_now()
 
     session.add(task)
     session.commit()
@@ -335,7 +335,7 @@ def toggle_task_completion(session: Session, task_id: str, user_id: str) -> Task
     """
     task = get_task(session, task_id, user_id)
     task.completed = not task.completed
-    task.updated_at = datetime.now(UTC)
+    task.updated_at = utc_now()
 
     session.add(task)
     session.commit()

@@ -1,26 +1,32 @@
-"""Application configuration using Pydantic Settings"""
+"""Application configuration using Pydantic Settings."""
 from pydantic_settings import BaseSettings
-from pydantic import field_validator
-from typing import List, Optional
+from pydantic import ConfigDict, field_validator
+from typing import List, Literal, Optional
 import json
 
 
 class Settings(BaseSettings):
-    """Application settings"""
+    """Application settings loaded from environment variables."""
+
+    model_config = ConfigDict(
+        env_file=".env",
+        case_sensitive=False,
+        extra="ignore",
+    )
 
     # Database
     database_url: str = "sqlite:///./test.db"
 
     # Better Auth
     better_auth_url: str = "http://localhost:3000"
-    better_auth_secret: str = "your-secret-key-change-in-production"
+    better_auth_secret: Optional[str] = None
 
     # CORS
     cors_origins: List[str] = ["http://localhost:3000"]
 
     # JWT - Better Auth uses EdDSA (Ed25519) by default, audience is BASE_URL
     jwt_algorithm: str = "EdDSA"
-    jwt_audience: str = None  # Will be set from env or default to better_auth_url
+    jwt_audience: Optional[str] = None
 
     # Application
     app_name: str = "Todo Backend"
@@ -30,13 +36,13 @@ class Settings(BaseSettings):
     openrouter_api_key: Optional[str] = None
     openai_api_key: Optional[str] = None
     gemini_api_key: Optional[str] = None
-    llm_provider: str = "openrouter"  # openrouter, openai, gemini
-    llm_model: str = "openai/gpt-4o-mini"  # Model to use with selected provider
+    llm_provider: Literal["openrouter", "openai", "gemini"] = "openrouter"
+    llm_model: str = "openai/gpt-4o-mini"
 
     @field_validator("cors_origins", mode="before")
     @classmethod
     def parse_cors_origins(cls, v):
-        """Parse CORS origins from JSON string or list"""
+        """Parse CORS origins from JSON string or list."""
         if isinstance(v, str):
             try:
                 return json.loads(v)
@@ -47,14 +53,10 @@ class Settings(BaseSettings):
     @field_validator("jwt_audience", mode="before")
     @classmethod
     def set_jwt_audience(cls, v, info):
-        """Set JWT audience to better_auth_url if not explicitly set"""
+        """Set JWT audience to better_auth_url if not explicitly set."""
         if v is None:
             return info.data.get("better_auth_url", "http://localhost:3000")
         return v
-
-    class Config:
-        env_file = ".env"
-        case_sensitive = False
 
 
 # Global settings instance

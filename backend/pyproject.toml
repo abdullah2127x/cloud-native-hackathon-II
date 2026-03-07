@@ -12,7 +12,6 @@ dependencies = [
     "openai-agents>=0.2.0",
     "openai-chatkit>=1.6.0",
     "passlib[bcrypt]>=1.7.4",
-    "psycopg2>=2.9.11",
     "psycopg[binary]>=3.3.2",
     "pydantic>=2.12.5",
     "pydantic-settings>=2.12.0",
