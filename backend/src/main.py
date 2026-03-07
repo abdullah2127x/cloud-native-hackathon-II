@@ -1,4 +1,6 @@
 """FastAPI application entry point."""
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.gzip import GZipMiddleware
 from slowapi import _rate_limit_exceeded_handler
@@ -30,12 +32,23 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Application lifespan — startup and shutdown logic."""
+    logger.info("Starting up Todo Backend API...")
+    create_db_and_tables()
+    logger.info("Database tables created/verified")
+    yield
+    logger.info("Shutting down Todo Backend API...")
+
+
 # Create FastAPI app
 app = FastAPI(
     title=settings.app_name,
     debug=settings.debug,
     docs_url="/docs",
     redoc_url="/redoc",
+    lifespan=lifespan,
 )
 
 # Attach rate limiter state
@@ -61,21 +74,6 @@ app.include_router(tasks.router)
 app.include_router(tags.router)
 app.include_router(chat_router)
 app.include_router(chatkit_router)
-
-
-@app.on_event("startup")
-async def startup_event():
-    """Run on application startup"""
-    logger.info("Starting up Todo Backend API...")
-    # Create database tables
-    create_db_and_tables()
-    logger.info("Database tables created/verified")
-
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    """Run on application shutdown"""
-    logger.info("Shutting down Todo Backend API...")
 
 
 @app.get("/")
