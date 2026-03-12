@@ -36,8 +36,11 @@ class Settings(BaseSettings):
     openrouter_api_key: Optional[str] = None
     openai_api_key: Optional[str] = None
     gemini_api_key: Optional[str] = None
+    
     llm_provider: Literal["openrouter", "openai", "gemini"] = "openrouter"
     llm_model: str = "openai/gpt-4o-mini"
+
+    jwt_token: Optional[str] = ""
 
     @field_validator("cors_origins", mode="before")
     @classmethod

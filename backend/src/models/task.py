@@ -45,7 +45,7 @@ class Task(SQLModel, table=True):
     )
 
     created_at: datetime = Field(default_factory=utc_now, index=True)
-    updated_at: Optional[datetime] = Field(default=None)
+    updated_at: Optional[datetime] = Field(default_factory=utc_now)
 
     tags: List["Tag"] = Relationship(
         back_populates="tasks",

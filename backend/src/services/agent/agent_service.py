@@ -1,0 +1,221 @@
+"""AI Agent service for todo management.
+
+Uses OpenAI Agents SDK with Gemini 2.5 Flash via OpenAI-compatible API.
+Connects to the MCP server (mounted at /mcp in the same FastAPI app)
+via MCPServerStreamableHttp.
+
+Implements the stateless conversation flow per spec:
+  1. Receive user message
+  2. Fetch conversation history from database
+  3. Build message array for agent (history + new message)
+  4. Store user message in database
+  5. Run agent with MCP tools
+  6. Agent invokes appropriate MCP tool(s)
+  7. Store assistant response in database
+  8. Return response to client
+  9. Server holds NO state
+"""
+
+import asyncio
+import sys
+import json
+import logging
+from typing import Optional
+
+from sqlmodel import Session
+
+from agents import (
+    Agent,
+    AsyncOpenAI,
+    OpenAIChatCompletionsModel,
+    Runner,
+    set_tracing_disabled,
+)
+from agents.mcp import MCPServerStreamableHttp
+
+from src.core.config import settings
+from src.services.conversation_service import conversation_service
+from src.schemas.chat import ChatResponse, ToolCallInfo
+
+logger = logging.getLogger(__name__)
+
+# Disable tracing for cleaner output
+set_tracing_disabled(True)
+
+# ── Model Setup (Gemini via OpenAI-compatible API) ──
+GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta/openai/"
+MODEL_ID = "gemini-2.5-flash"
+
+# MCP server URL (same FastAPI app, mounted at /mcp)
+MCP_SERVER_URL = "http://localhost:8000/mcp/"
+
+# Agent system prompt per spec's Agent Behavior Specification
+AGENT_SYSTEM_PROMPT = """You are a helpful Todo assistant that manages tasks through natural language.
+
+You have access to MCP tools for task management. Here are your behaviors:
+
+**Task Creation**: When user mentions adding/creating/remembering something, use the `add_task` tool.
+**Task Listing**: When user asks to see/show/list tasks, use the `list_tasks` tool with appropriate filter.
+**Task Completion**: When user says done/complete/finished, use the `complete_task` tool.
+**Task Deletion**: When user says delete/remove/cancel, use the `delete_task` tool.
+**Task Update**: When user says change/update/rename, use the `update_task` tool.
+
+IMPORTANT RULES:
+- You will be given a `user_id` in the conversation context. ALWAYS pass this `user_id` to every tool call.
+- Always confirm actions with a friendly response.
+- Gracefully handle errors (e.g., task not found).
+- When deleting a task by name, use `list_tasks` first to find the task ID, then `delete_task`.
+- Be conversational and helpful.
+"""
+
+
+def _get_model():
+    """Create the LLM model instance."""
+    if not settings.gemini_api_key:
+        raise ValueError(
+            "GEMINI_API_KEY not set in .env file. "
+            "Get your API key from: https://aistudio.google.com/apikey"
+        )
+    client = AsyncOpenAI(api_key=settings.gemini_api_key, base_url=GEMINI_API_BASE)
+    return OpenAIChatCompletionsModel(model=MODEL_ID, openai_client=client)
+
+
+def _extract_tool_calls(result) -> list[ToolCallInfo]:
+    """Extract tool call information from agent result."""
+    tool_calls = []
+    try:
+        # Walk through the result's raw responses to find tool calls
+        if hasattr(result, "raw_responses"):
+            for response in result.raw_responses:
+                if hasattr(response, "output"):
+                    for item in response.output:
+                        if hasattr(item, "type") and item.type == "tool_call":
+                            tool_calls.append(
+                                ToolCallInfo(
+                                    tool_name=(
+                                        item.name
+                                        if hasattr(item, "name")
+                                        else "unknown"
+                                    ),
+                                    arguments=(
+                                        json.loads(item.arguments)
+                                        if hasattr(item, "arguments")
+                                        else {}
+                                    ),
+                                    result=None,
+                                )
+                            )
+        # Also check new_items for tool usage
+        if hasattr(result, "new_items"):
+            for item in result.new_items:
+                if hasattr(item, "type") and "tool_call" in str(item.type):
+                    name = getattr(item, "name", None) or getattr(
+                        item, "tool_name", "unknown"
+                    )
+                    args = getattr(item, "arguments", None)
+                    if isinstance(args, str):
+                        try:
+                            args = json.loads(args)
+                        except json.JSONDecodeError:
+                            args = {"raw": args}
+                    tool_calls.append(
+                        ToolCallInfo(
+                            tool_name=name,
+                            arguments=args or {},
+                            result=getattr(item, "output", None),
+                        )
+                    )
+    except Exception as e:
+        logger.warning(f"Could not extract tool calls: {e}")
+    return tool_calls
+
+
+async def handle_chat(
+    user_id: str,
+    message: str,
+    conversation_id: Optional[str],
+    session: Session,
+) -> ChatResponse:
+    """Handle a chat message — the main entry point.
+
+    Per spec stateless conversation flow:
+    1. Get or create conversation
+    2. Fetch history from DB
+    3. Store user message
+    4. Build message array (history + new user message + user_id context)
+    5. Run agent with MCP tools
+    6. Store assistant response
+    7. Return response
+    """
+    # 1. Get or create conversation
+    conversation = conversation_service.get_or_create_conversation(
+        session, user_id, conversation_id
+    )
+
+    # 2. Fetch conversation history from DB
+    history = conversation_service.get_history(session, conversation.id)
+
+    # 3. Store user message in database
+    conversation_service.add_message(
+        session, conversation.id, user_id, role="user", content=message
+    )
+
+    # 4. Build message array for agent
+    # Add user_id context so agent knows which user_id to pass to tools
+    context_message = f"[System context: The current user_id is '{user_id}'. Always pass this user_id to every tool call.]"
+
+    # Build full input: history + context + new message
+    messages = []
+    for msg in history:
+        messages.append({"role": msg["role"], "content": msg["content"]})
+    messages.append({"role": "user", "content": f"{context_message}\n\n{message}"})
+
+    # Build the input string for Runner.run
+    # We combine history and new message into a single prompt
+    input_for_agent = messages
+
+    # 5. Run agent with MCP tools
+    model = _get_model()
+
+    mcp_server = MCPServerStreamableHttp(
+        name="todo-mcp",
+        params={
+            "url": MCP_SERVER_URL,
+        },
+    )
+
+    tool_calls = []
+    response_text = ""
+
+    try:
+        async with mcp_server:
+            agent = Agent(
+                name="Todo Assistant",
+                instructions=AGENT_SYSTEM_PROMPT,
+                mcp_servers=[mcp_server],
+                model=model,
+            )
+
+            result = await Runner.run(agent, input=input_for_agent, max_turns=10)
+            response_text = (
+                result.final_output or "I'm sorry, I couldn't process that request."
+            )
+            
+            # Extract tool calls
+            # tool_calls = _extract_tool_calls(result)
+
+    except Exception as e:
+        logger.error(f"Agent error: {e}", exc_info=True)
+        response_text = f"I encountered an error processing your request: {str(e)}"
+
+    # 6. Store assistant response in database
+    conversation_service.add_message(
+        session, conversation.id, user_id, role="assistant", content=response_text
+    )
+
+    # 7. Return response
+    return ChatResponse(
+        conversation_id=conversation.id,
+        response=response_text,
+        # tool_calls=tool_calls,
+    )

@@ -1,82 +1,52 @@
-# Task: T010 | Spec: specs/006-agent-mcp-integration/spec.md
-"""Stateless chat endpoint — POST /api/{user_id}/chat."""
-from typing import Annotated
+"""Chat API endpoint for AI-powered todo management.
 
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlmodel import Session
+Per spec: POST /api/chat — sends message & gets AI response.
+The endpoint is authenticated via JWT, conversation state is persisted to DB.
+"""
+import logging
 
-from src.auth.dependencies import get_current_user
-from src.crud.chat import (
-    add_message,
-    create_conversation,
-    get_conversation,
-    get_messages,
-    update_conversation_timestamp,
-)
-from src.db.database import get_session
+from fastapi import APIRouter, status
+
+from src.api.deps import CurrentUser, DbSession
 from src.schemas.chat import ChatRequest, ChatResponse
-from src.agents.todo_agent import run_todo_agent
+from src.services.agent.agent_service import handle_chat
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api", tags=["chat"])
 
-SessionDep = Annotated[Session, Depends(get_session)]
 
-
-@router.post("/{user_id}/chat", response_model=ChatResponse)
+@router.post("/chat", response_model=ChatResponse, status_code=status.HTTP_200_OK)
 async def chat(
-    user_id: str,
-    body: ChatRequest,
-    session: SessionDep,
-    authenticated_user_id: str = Depends(get_current_user),
-) -> ChatResponse:
-    """Send a natural language message and receive an AI agent response."""
-    # Verify JWT user matches path user_id
-    if authenticated_user_id != user_id:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token user does not match path user_id",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+    chat_request: ChatRequest,
+    user_id: CurrentUser,
+    session: DbSession,
+):
+    """Send a message and get an AI response.
 
-    # Resolve or create conversation
-    if body.conversation_id is not None:
-        conversation = get_conversation(body.conversation_id, user_id, session)
-        if conversation is None:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Conversation not found",
-                headers={"code": "CONVERSATION_NOT_FOUND"},
-            )
-    else:
-        conversation = create_conversation(user_id, session)
+    Per spec stateless flow:
+    1. Receives user message
+    2. Fetches conversation history from database
+    3. Runs agent with MCP tools
+    4. Stores messages in database
+    5. Returns response (server holds NO state)
 
-    # Persist user message BEFORE calling provider (critical: must survive provider failure)
-    add_message(conversation.id, user_id, "user", body.message, session)
+    Request:
+        - message: User's natural language message (required)
+        - conversation_id: Existing conversation ID (optional, creates new if not provided)
 
-    # Load last 50 messages for agent context
-    db_messages = get_messages(conversation.id, user_id, session)
-    agent_messages = [{"role": m.role, "content": m.content} for m in db_messages]
+    Response:
+        - conversation_id: The conversation ID
+        - response: AI assistant's response
+        - tool_calls: List of MCP tools invoked
+    """
+    logger.info(f"Chat request from user {user_id}: {chat_request.message[:50]}...")
 
-    # Run agent
-    try:
-        response_text, tool_calls = await run_todo_agent(
-            messages=agent_messages,
-            user_id=user_id,
-            session=session,
-        )
-    except Exception:
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="AI provider is currently unavailable. Please try again later.",
-            headers={"code": "AI_PROVIDER_UNAVAILABLE"},
-        )
-
-    # Persist assistant response
-    add_message(conversation.id, user_id, "assistant", response_text, session)
-    update_conversation_timestamp(conversation, session)
-
-    return ChatResponse(
-        conversation_id=conversation.id,
-        response=response_text,
-        tool_calls=tool_calls,
+    response = await handle_chat(
+        user_id=user_id,
+        message=chat_request.message,
+        conversation_id=chat_request.conversation_id,
+        session=session,
     )
+
+    return response
