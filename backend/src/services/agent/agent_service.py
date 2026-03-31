@@ -20,7 +20,11 @@ import asyncio
 import sys
 import json
 import logging
-from typing import Optional
+import re
+from typing import Optional, AsyncGenerator
+
+from fastapi.responses import StreamingResponse
+from sse_starlette.sse import EventSourceResponse
 
 from sqlmodel import Session
 
@@ -147,18 +151,23 @@ async def handle_chat(
     6. Store assistant response
     7. Return response
     """
+    logger.info(f"Handling chat for user {user_id}, conversation: {conversation_id or 'new'}")
+    
     # 1. Get or create conversation
     conversation = conversation_service.get_or_create_conversation(
         session, user_id, conversation_id
     )
+    logger.debug(f"Conversation ID: {conversation.id}")
 
     # 2. Fetch conversation history from DB
     history = conversation_service.get_history(session, conversation.id)
+    logger.debug(f"Fetched {len(history)} messages from history")
 
     # 3. Store user message in database
     conversation_service.add_message(
         session, conversation.id, user_id, role="user", content=message
     )
+    logger.debug(f"Stored user message: {message[:50]}...")
 
     # 4. Build message array for agent
     # Add user_id context so agent knows which user_id to pass to tools
@@ -173,6 +182,7 @@ async def handle_chat(
     # Build the input string for Runner.run
     # We combine history and new message into a single prompt
     input_for_agent = messages
+    logger.debug(f"Sending {len(messages)} messages to AI agent")
 
     # 5. Run agent with MCP tools
     model = _get_model()
@@ -188,6 +198,7 @@ async def handle_chat(
     response_text = ""
 
     try:
+        logger.info(f"Running AI agent with MCP server at {MCP_SERVER_URL}")
         async with mcp_server:
             agent = Agent(
                 name="Todo Assistant",
@@ -200,7 +211,9 @@ async def handle_chat(
             response_text = (
                 result.final_output or "I'm sorry, I couldn't process that request."
             )
-            
+
+            logger.info(f"AI agent completed. Response length: {len(response_text)} chars")
+
             # Extract tool calls
             # tool_calls = _extract_tool_calls(result)
 
@@ -212,10 +225,162 @@ async def handle_chat(
     conversation_service.add_message(
         session, conversation.id, user_id, role="assistant", content=response_text
     )
+    logger.debug(f"Stored assistant response: {response_text[:50]}...")
 
     # 7. Return response
+    logger.info(f"Chat completed for user {user_id}, conversation: {conversation.id}")
     return ChatResponse(
         conversation_id=conversation.id,
         response=response_text,
         # tool_calls=tool_calls,
     )
+
+
+async def handle_chat_stream(
+    user_id: str,
+    message: str,
+    conversation_id: Optional[str],
+    session: Session,
+) -> AsyncGenerator[str, None]:
+    """Handle a chat message with streaming response.
+
+    Per spec stateless conversation flow with streaming:
+    1. Get or create conversation
+    2. Fetch history from DB
+    3. Store user message
+    4. Build message array (history + new user message + user_id context)
+    5. Run agent with MCP tools
+    6. Stream response tokens as they arrive
+    7. Store complete assistant response in database
+    8. Send final SSE event with conversation_id
+
+    Yields:
+        SSE-formatted strings: "data: {...}\n\n"
+    """
+    logger.info(f"Starting streaming chat for user {user_id}, conversation: {conversation_id or 'new'}")
+    
+    # 1. Get or create conversation
+    conversation = conversation_service.get_or_create_conversation(
+        session, user_id, conversation_id
+    )
+    logger.debug(f"Stream conversation ID: {conversation.id}")
+
+    # 2. Fetch conversation history from DB
+    history = conversation_service.get_history(session, conversation.id)
+    logger.debug(f"Stream: Fetched {len(history)} messages from history")
+
+    # 3. Store user message in database
+    conversation_service.add_message(
+        session, conversation.id, user_id, role="user", content=message
+    )
+    logger.debug(f"Stream: Stored user message: {message[:50]}...")
+
+    # 4. Build message array for agent
+    context_message = f"[System context: The current user_id is '{user_id}'. Always pass this user_id to every tool call.]"
+
+    messages = []
+    for msg in history:
+        messages.append({"role": msg["role"], "content": msg["content"]})
+    messages.append({"role": "user", "content": f"{context_message}\n\n{message}"})
+
+    input_for_agent = messages
+    logger.debug(f"Stream: Sending {len(messages)} messages to AI agent")
+
+    # 5. Run agent with MCP tools and stream response
+    model = _get_model()
+
+    mcp_server = MCPServerStreamableHttp(
+        name="todo-mcp",
+        params={
+            "url": MCP_SERVER_URL,
+        },
+    )
+
+    response_text = ""
+    token_count = 0
+
+    try:
+        logger.info(f"Stream: Running AI agent with MCP server at {MCP_SERVER_URL}")
+        async with mcp_server:
+            agent = Agent(
+                name="Todo Assistant",
+                instructions=AGENT_SYSTEM_PROMPT,
+                mcp_servers=[mcp_server],
+                model=model,
+            )
+
+            # Use run_streamed() for proper streaming (per OpenAI Agents SDK docs)
+            streamed = Runner.run_streamed(
+                agent,
+                input=input_for_agent,
+                max_turns=10,
+            )
+
+            # Stream the response events
+            async for event in streamed.stream_events():
+                # Handle different event types per SDK documentation
+                if hasattr(event, 'type'):
+                    if event.type == "raw_response_event":
+                        # Token-by-token streaming - extract just the text delta
+                        if hasattr(event, 'data') and event.data:
+                            # Extract text from various event types
+                            text_delta = ""
+                            event_data = event.data
+                            
+                            # Handle different event data structures
+                            if hasattr(event_data, 'type'):
+                                # ResponseTextDeltaEvent - has 'delta' attribute
+                                if hasattr(event_data, 'delta') and event_data.delta:
+                                    text_delta = event_data.delta
+                                # ResponseFunctionCallArgumentsDeltaEvent - tool call arguments
+                                elif hasattr(event_data, 'delta') and hasattr(event_data, 'item_id'):
+                                    text_delta = event_data.delta or ""
+                            elif isinstance(event_data, str):
+                                text_delta = event_data
+                            else:
+                                # Fallback: convert to string
+                                text_delta = str(event_data)
+                            
+                            # Only yield if we have actual text content
+                            if text_delta:
+                                response_text += text_delta
+                                token_count += 1
+                                # EventSourceResponse adds 'data: ' automatically
+                                yield json.dumps({'type': 'token', 'content': text_delta})
+
+                    elif event.type == "agent_updated_stream_event":
+                        # Agent handoff happened (if using multiple agents)
+                        logger.debug(f"Stream: Agent updated to {getattr(event, 'new_agent', 'unknown')}")
+
+                    elif event.type == "final_output":
+                        # Final output event
+                        final_text = getattr(event, 'output', response_text)
+                        if final_text and final_text != response_text:
+                            response_text = final_text
+                            # EventSourceResponse adds 'data: ' automatically
+                            yield json.dumps({'type': 'token', 'content': final_text})
+
+            # Get final output from the streamed result
+            if hasattr(streamed, 'final_output') and streamed.final_output:
+                response_text = streamed.final_output
+
+            logger.info(f"Stream: AI agent completed. Tokens streamed: {token_count}, Response length: {len(response_text)} chars")
+
+    except Exception as e:
+        logger.error(f"Stream: Agent error: {e}", exc_info=True)
+        error_message = f"I encountered an error processing your request: {str(e)}"
+        # EventSourceResponse adds 'data: ' automatically
+        yield json.dumps({'type': 'error', 'content': error_message})
+        response_text = error_message
+
+    # 6. Store assistant response in database
+    if response_text:
+        conversation_service.add_message(
+            session, conversation.id, user_id, role="assistant", content=response_text
+        )
+        logger.debug(f"Stream: Stored assistant response: {response_text[:50]}...")
+
+    # 7. Send final event with conversation_id
+    logger.info(f"Stream: Completed for user {user_id}, conversation: {conversation.id}, tokens: {token_count}")
+    # EventSourceResponse adds 'data: ' automatically
+    yield json.dumps({'type': 'done', 'conversation_id': str(conversation.id), 'response': response_text})

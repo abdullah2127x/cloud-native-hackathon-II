@@ -65,6 +65,50 @@ class ConversationService:
             for msg in messages
         ]
 
+    def get_latest_conversation_history(self, session: Session, user_id: str, limit: int = 50) -> dict:
+        """Fetch the user's latest conversation and its messages.
+
+        Returns {"conversation_id": Optional[str], "messages": list[dict]}
+        """
+        conversation = self._repo.get_latest_conversation(session, user_id)
+        if not conversation:
+            return {"conversation_id": None, "messages": []}
+
+        messages = self._repo.get_messages(session, str(conversation.id), limit=limit)
+        return {
+            "conversation_id": str(conversation.id),
+            "messages": [{"role": msg.role, "content": msg.content} for msg in messages]
+        }
+
+    def list_conversations(
+        self, session: Session, user_id: str, limit: int = 100
+    ) -> List[dict]:
+        """List all conversations for a user with metadata.
+        
+        Returns list of conversation summaries with:
+        - id: Conversation UUID
+        - created_at: When conversation was created
+        - updated_at: Last message time
+        - message_count: Total messages in conversation
+        - first_message_preview: First message content (for preview)
+        """
+        conversations = self._repo.get_all_conversations(session, user_id, limit)
+        
+        result = []
+        for conv in conversations:
+            message_count = self._repo.get_message_count(session, conv.id)
+            first_message = self._repo.get_first_message(session, conv.id)
+            
+            result.append({
+                "id": str(conv.id),
+                "created_at": conv.created_at,
+                "updated_at": conv.updated_at,
+                "message_count": message_count,
+                "first_message_preview": first_message.content if first_message else None,
+            })
+        
+        return result
+
 
 # Module-level singleton
 conversation_service = ConversationService(conversation_repo)

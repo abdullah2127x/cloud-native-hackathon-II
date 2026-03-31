@@ -1,5 +1,5 @@
 """Repository for Conversation and Message DB operations."""
-from sqlmodel import Session, select
+from sqlmodel import Session, select, func
 from typing import List, Optional
 
 from src.models.conversation import Conversation
@@ -25,6 +25,48 @@ class ConversationRepository:
         statement = select(Conversation).where(
             Conversation.id == conversation_id,
             Conversation.user_id == user_id,
+        )
+        return session.exec(statement).first()
+
+    def get_latest_conversation(self, session: Session, user_id: str) -> Optional[Conversation]:
+        """Get the user's most recently updated conversation."""
+        statement = (
+            select(Conversation)
+            .where(Conversation.user_id == user_id)
+            .order_by(Conversation.updated_at.desc())
+        )
+        return session.exec(statement).first()
+
+    def get_all_conversations(
+        self, session: Session, user_id: str, limit: int = 100
+    ) -> List[Conversation]:
+        """Get all conversations for a user, ordered by updated_at (newest first)."""
+        statement = (
+            select(Conversation)
+            .where(Conversation.user_id == user_id)
+            .order_by(Conversation.updated_at.desc())
+            .limit(limit)
+        )
+        return list(session.exec(statement).all())
+
+    def get_message_count(
+        self, session: Session, conversation_id: str
+    ) -> int:
+        """Get the total number of messages in a conversation."""
+        statement = select(func.count(Message.id)).where(
+            Message.conversation_id == conversation_id
+        )
+        return session.exec(statement).one()
+
+    def get_first_message(
+        self, session: Session, conversation_id: str
+    ) -> Optional[Message]:
+        """Get the first message in a conversation (for preview)."""
+        statement = (
+            select(Message)
+            .where(Message.conversation_id == conversation_id)
+            .order_by(Message.created_at.asc())
+            .limit(1)
         )
         return session.exec(statement).first()
 
